@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\PN">
+      <UniqueIdentifier>{f3fa0852-e352-47c3-b28f-68282c872790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\Input">
+      <UniqueIdentifier>{982adc32-e8ac-4a93-9936-7f6bd325bf50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\GameState">
+      <UniqueIdentifier>{6db93f75-5c11-41e8-b129-b44982787902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\Settings">
+      <UniqueIdentifier>{cac78eaf-66e6-47a2-bc61-16818b8548a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\Window">
+      <UniqueIdentifier>{56ff48e5-e087-49b1-9e6d-3dacdf18eaaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\ConcreteStates">
+      <UniqueIdentifier>{382316df-6816-453a-bfe4-6a62ba6f3374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\Render">
+      <UniqueIdentifier>{cf1498b3-3f11-40f5-b014-11582674ce9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\Util">
+      <UniqueIdentifier>{b8557a63-8fea-4f71-8f8a-971f0f454612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{6307700f-6734-447f-84fd-82548bb167e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameState">
+      <UniqueIdentifier>{1685327c-188b-4283-a157-d3c38be604a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Render">
+      <UniqueIdentifier>{1112cdf7-33e7-4a04-a570-baf4dc9251fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ConcreteStates">
+      <UniqueIdentifier>{eac3769c-1381-4e7b-9c86-009d0d21018d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{0b28713d-96a1-4099-a9c0-9cf40a05339e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{9b50cfd7-49fd-45fa-b72c-6cdbb1542e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{0a832bea-0868-4d4e-89da-220ff2328889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\Physics">
+      <UniqueIdentifier>{3c33ecbe-a2b0-4eb3-9965-160fbd4639e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\ECS">
+      <UniqueIdentifier>{8dbcddb8-8176-4177-ad15-a5d5db6658a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\ECS\Component">
+      <UniqueIdentifier>{349e5395-140e-4dbf-8d12-3f8a7bc170c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PN\ECS\Entity">
+      <UniqueIdentifier>{b727ae24-6ce3-486c-b410-20df1e2653c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS">
+      <UniqueIdentifier>{83a3d323-cba7-407e-a64d-5f16925c721f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS\Entity">
+      <UniqueIdentifier>{389be89b-f589-498d-9f9b-6746c8fbb229}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Input\InputEventHandler.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Input\InputManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Render\Image.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\ConcreteStates\InitialState.cpp">
+      <Filter>Source Files\ConcreteStates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Util\PString.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Util\ShaderLoader.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Window\WindowManager.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Settings\SettingsManager.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Render\RenderFactory.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Render\Mesh.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\GameState\GameStateManager.cpp">
+      <Filter>Source Files\GameState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\ConcreteStates\LoadingState.cpp">
+      <Filter>Source Files\ConcreteStates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Util\ResourceManager.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Util\FileType.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LodePNG\lodepng.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\GameState\GameState.cpp">
+      <Filter>Source Files\GameState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Render\Camera.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Input\FirstPersonListener.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\ECS\Entity\Entity.cpp">
+      <Filter>Source Files\ECS\Entity</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\PN\GameState\GameState.h">
+      <Filter>Header Files\PN\GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\GameState\GameStateManager.h">
+      <Filter>Header Files\PN\GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Input\InputEventHandler.h">
+      <Filter>Header Files\PN\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Input\InputEventListener.h">
+      <Filter>Header Files\PN\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Input\InputManager.h">
+      <Filter>Header Files\PN\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Window\WindowManager.h">
+      <Filter>Header Files\PN\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Settings\SettingsManager.h">
+      <Filter>Header Files\PN\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Util\PString.h">
+      <Filter>Header Files\PN\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\Image.h">
+      <Filter>Header Files\PN\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Util\ShaderLoader.h">
+      <Filter>Header Files\PN\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\RenderFactory.h">
+      <Filter>Header Files\PN\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\Mesh.h">
+      <Filter>Header Files\PN\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ConcreteStates\InitialState.h">
+      <Filter>Header Files\PN\ConcreteStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ConcreteStates\LoadingState.h">
+      <Filter>Header Files\PN\ConcreteStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Util\ResourceManager.h">
+      <Filter>Header Files\PN\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Util\FileType.h">
+      <Filter>Header Files\PN\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\Renderable.h">
+      <Filter>Header Files\PN\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\Camera.h">
+      <Filter>Header Files\PN\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Util\Math.h">
+      <Filter>Header Files\PN\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Input\FirstPersonListener.h">
+      <Filter>Header Files\PN\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Physics\AABB.h">
+      <Filter>Header Files\PN\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ECS\Entity\Entity.h">
+      <Filter>Header Files\PN\ECS\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ECS\Component\IComponent.h">
+      <Filter>Header Files\PN\ECS\Component</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config\config.ini">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

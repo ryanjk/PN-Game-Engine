@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E8412E83-1CCE-4A5D-9E5C-D2EE0BFA01DB}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>PN_Beginning</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib\;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
+    <SourcePath>$(ProjectDir)src\;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib\;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
+    <SourcePath>$(ProjectDir)src\;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>jsoncpp_dbg.lib;glew32s.lib; glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>jsoncpp_rel.lib;glew32s.lib; glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\PN\ConcreteStates\LoadingState.cpp" />
+    <ClCompile Include="src\PN\ECS\Entity\Entity.cpp" />
+    <ClCompile Include="src\PN\GameState\GameState.cpp" />
+    <ClCompile Include="src\PN\GameState\GameStateManager.cpp" />
+    <ClCompile Include="src\PN\Input\FirstPersonListener.cpp" />
+    <ClCompile Include="src\PN\Render\Camera.cpp" />
+    <ClCompile Include="src\PN\Render\Image.cpp" />
+    <ClCompile Include="src\PN\Render\Mesh.cpp" />
+    <ClCompile Include="src\PN\Render\RenderFactory.cpp" />
+    <ClCompile Include="src\PN\ConcreteStates\InitialState.cpp" />
+    <ClCompile Include="src\PN\Input\InputEventHandler.cpp" />
+    <ClCompile Include="src\PN\Input\InputManager.cpp" />
+    <ClCompile Include="src\LodePNG\lodepng.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\PN\Util\FileType.cpp" />
+    <ClCompile Include="src\PN\Util\PString.cpp" />
+    <ClCompile Include="src\PN\Settings\SettingsManager.cpp" />
+    <ClCompile Include="src\PN\Util\ResourceManager.cpp" />
+    <ClCompile Include="src\PN\Util\ShaderLoader.cpp" />
+    <ClCompile Include="src\PN\Window\WindowManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\PN\ECS\Component\IComponent.h" />
+    <ClInclude Include="include\PN\ECS\Entity\Entity.h" />
+    <ClInclude Include="include\PN\GameState\GameState.h" />
+    <ClInclude Include="include\PN\GameState\GameStateManager.h" />
+    <ClInclude Include="include\PN\Input\FirstPersonListener.h" />
+    <ClInclude Include="include\PN\Input\InputEventHandler.h" />
+    <ClInclude Include="include\PN\Input\InputEventListener.h" />
+    <ClInclude Include="include\PN\Input\InputManager.h" />
+    <ClInclude Include="include\PN\Physics\AABB.h" />
+    <ClInclude Include="include\PN\Render\Camera.h" />
+    <ClInclude Include="include\PN\Render\Image.h" />
+    <ClInclude Include="include\PN\Render\Mesh.h" />
+    <ClInclude Include="include\PN\Render\Renderable.h" />
+    <ClInclude Include="include\PN\Render\RenderFactory.h" />
+    <ClInclude Include="include\PN\Settings\SettingsManager.h" />
+    <ClInclude Include="include\PN\ConcreteStates\InitialState.h" />
+    <ClInclude Include="include\PN\ConcreteStates\LoadingState.h" />
+    <ClInclude Include="include\PN\Util\FileType.h" />
+    <ClInclude Include="include\PN\Util\Math.h" />
+    <ClInclude Include="include\PN\Util\PString.h" />
+    <ClInclude Include="include\PN\Util\ResourceManager.h" />
+    <ClInclude Include="include\PN\Window\WindowManager.h" />
+    <ClInclude Include="include\PN\Util\ShaderLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config\config.ini" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

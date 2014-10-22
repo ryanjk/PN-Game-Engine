@@ -1,0 +1,25 @@
+{
+    "resource": {
+        "image": [
+            
+        ],
+        "mesh": [
+            "monkey.obj",
+			"floor.obj"
+        ],
+        "shader": [
+            "monkey.vglsl",
+            "monkey.fglsl"
+        ]
+    },
+	"entities": {
+		"entity" : {
+			"id":1,
+			"components" : {
+				"transform" : {
+					
+				}
+			}
+		}
+	}
+}

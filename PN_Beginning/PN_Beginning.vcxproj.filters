@@ -76,6 +76,9 @@
     <Filter Include="Source Files\ECS\Entity">
       <UniqueIdentifier>{389be89b-f589-498d-9f9b-6746c8fbb229}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ECS\Component">
+      <UniqueIdentifier>{517f99e3-5242-42a3-b53c-e400e5b7c0b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -137,6 +140,12 @@
     </ClCompile>
     <ClCompile Include="src\PN\ECS\Entity\Entity.cpp">
       <Filter>Source Files\ECS\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\ECS\Component\TransformComponent.cpp">
+      <Filter>Source Files\ECS\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\ECS\Component\CameraComponent.cpp">
+      <Filter>Source Files\ECS\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -207,6 +216,12 @@
       <Filter>Header Files\PN\ECS\Entity</Filter>
     </ClInclude>
     <ClInclude Include="include\PN\ECS\Component\IComponent.h">
+      <Filter>Header Files\PN\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ECS\Component\TransformComponent.h">
+      <Filter>Header Files\PN\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ECS\Component\CameraComponent.h">
       <Filter>Header Files\PN\ECS\Component</Filter>
     </ClInclude>
   </ItemGroup>

@@ -85,6 +85,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\PN\ConcreteStates\LoadingState.cpp" />
+    <ClCompile Include="src\PN\ECS\Component\CameraComponent.cpp" />
+    <ClCompile Include="src\PN\ECS\Component\TransformComponent.cpp" />
     <ClCompile Include="src\PN\ECS\Entity\Entity.cpp" />
     <ClCompile Include="src\PN\GameState\GameState.cpp" />
     <ClCompile Include="src\PN\GameState\GameStateManager.cpp" />
@@ -106,7 +108,9 @@
     <ClCompile Include="src\PN\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\PN\ECS\Component\CameraComponent.h" />
     <ClInclude Include="include\PN\ECS\Component\IComponent.h" />
+    <ClInclude Include="include\PN\ECS\Component\TransformComponent.h" />
     <ClInclude Include="include\PN\ECS\Entity\Entity.h" />
     <ClInclude Include="include\PN\GameState\GameState.h" />
     <ClInclude Include="include\PN\GameState\GameStateManager.h" />

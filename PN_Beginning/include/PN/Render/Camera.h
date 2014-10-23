@@ -10,8 +10,8 @@ namespace pn {
 
 		void translate(vec3 amount);
 
-		void applyPitch(float radians);
-		void applyYaw(float radians);
+		void applyPitch(double radians);
+		void applyYaw(double radians);
 
 		mat4 getView();
 
@@ -21,8 +21,8 @@ namespace pn {
 		vec3 m_origin = vec3(0.0f, 0.0f, 5.0f);
 		vec3 m_at = vec3(0.0f, 0.0f, -1.0f);
 
-		float m_pitch = 0.0f;
-		float m_yaw = 0.0f;
+		double m_pitch = 0.0;
+		double m_yaw = 0.0;
 	};
 }
 

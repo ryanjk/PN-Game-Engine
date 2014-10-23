@@ -101,6 +101,7 @@ T& pn::ResourceManager::get(const PString& filename) {
 	}
 		break;
 	default:
+		return;
 		break;
 	}
 }

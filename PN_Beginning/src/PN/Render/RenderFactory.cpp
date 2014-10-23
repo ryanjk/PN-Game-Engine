@@ -30,35 +30,6 @@ pn::Image pn::RenderFactory::makeFromPNG(const char* filename) {
 	if (error) {
 		std::cout << "LodePNG: Could not load file '" << filename << "' : " << lodepng_error_text(error) << std::endl;
 	}
-/*
-	// Flip the image over the x-axis
-	int times; // Amount of swaps to make
-	if (height % 2 == 0) {
-		times = (height / 2);
-	}
-	else {
-		times = ((height - 1) / 2);
-	}
-
-	for (int i = 0; i < times; i++) {
-		int current = i * 4;
-		PixelFormat& top_r = pixels[current];
-		PixelFormat& top_g = pixels[current + 1];
-		PixelFormat& top_b = pixels[current + 2];
-		PixelFormat& top_a = pixels[current + 3];
-
-		int offset = (width * 4 * ((height - 1) - (2 * (i / width))));
-		PixelFormat& bottom_r = pixels[current + offset];
-		PixelFormat& bottom_g = pixels[(current + 1) + offset];
-		PixelFormat& bottom_b = pixels[(current + 2) + offset];
-		PixelFormat& bottom_a = pixels[(current + 3) + offset];
-
-		swap(top_r, bottom_r);
-		swap(top_g, bottom_g);
-		swap(top_b, bottom_b);
-		swap(top_a, bottom_a);
-
-	} */	
 
 	pn::Image image(std::move(pixels), width, height);
 
@@ -99,8 +70,6 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 	if (!filestream) {
 		std::cout << "OBJ Loader: Could not load file " << filename << std::endl;
 	}
-
-	std::cout << "Loading " << filename << " to RAM . . ." << std::endl;
 
 	std::string line_stream;
 	while (std::getline(filestream, line_stream)){
@@ -166,8 +135,6 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 	std::vector<GLfloat> vertices(v_size);
 	std::vector<GLfloat> normals(vn_size);
 	std::vector<GLfloat> texes(vt_size);
-
-	std::cout << "Initializing " << filename << " for use . . ." << std::endl;
 
 	unsigned int current_vertex = 0;
 	for (auto i : v_indices) {

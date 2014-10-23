@@ -137,11 +137,13 @@ void pn::InitialState::render() {
 	glDrawArraysInstanced(GL_TRIANGLES, 0, resources.getMesh(m_r.mesh).getVertices().size(), 1);
 
 	// Draw floor
+	/*
 	glBindVertexArray(m_floor_r.VAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(m_floor_world_transform));
 	glDrawArraysInstanced(GL_TRIANGLES, 0, resources.getMesh(m_floor_r.mesh).getVertices().size(), 1);
+	*/
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);

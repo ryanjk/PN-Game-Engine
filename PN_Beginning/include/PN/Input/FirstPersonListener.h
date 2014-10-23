@@ -23,8 +23,8 @@ namespace pn {
 
 	private:
 		pn::Camera* m_camera;
-		float m_scrollSpeed;
-		float m_moveSpeed;
+		double m_scrollSpeed;
+		double m_moveSpeed;
 	};
 }
 

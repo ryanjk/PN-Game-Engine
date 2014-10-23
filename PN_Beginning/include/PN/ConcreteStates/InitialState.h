@@ -34,6 +34,8 @@ namespace pn {
 
 		vec3 m_light_pos;
 		vec3 m_light2_pos;
+
+		
 	};
 }
 

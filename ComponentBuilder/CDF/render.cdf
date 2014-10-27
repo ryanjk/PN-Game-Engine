@@ -3,7 +3,11 @@
    "data":{
 		"Mesh": {
 			"type":"pn::PString",
-			"default":"this_model_is_not_set.obj"
+			"default":"default.obj"
+		},
+		"ShaderProgram": {
+			"type":"pn::PString",
+			"default":"default.sp"
 		},
 		"Ambient": {
 			"type":"vec4",

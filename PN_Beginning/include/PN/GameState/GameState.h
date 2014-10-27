@@ -4,9 +4,14 @@
 #include "PN/Util/PString.h"
 #include "PN/Util/ResourceManager.h"
 
+#include "PN/ECS/Entity/Entity.h"
+
 #include "json/json.h"
 
 #include <fstream>
+
+using EntityPointer = std::shared_ptr < pn::Entity > ;
+using Entities = std::vector < std::shared_ptr<pn::Entity> >;
 
 namespace pn {
 	class GameState {
@@ -16,19 +21,26 @@ namespace pn {
 		virtual void update(double dt) = 0;
 		virtual void render();  // call rendering functions
 
-		virtual void startUp() final;  // set up the state (load resources, set rendering state, etc)
+		void startUp();  // set up the state (load resources, set rendering state, etc)
+		void shutdown();   // shutdown state
 
-		virtual void shutdown() final;   // shutdown state
+		Entities& getEntities();
 
 	protected:
 		virtual void startUpAssist();
 		virtual void shutdownAssist();
 
+		Entities m_entities;
+
 	private:
 		pn::PString m_stateFilename;
 		Json::Value m_root;
+
 		void loadResources();
 		void releaseResources();
+
+		void loadEntities();
+		void releaseEntities();
 	};
 }
 

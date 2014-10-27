@@ -1,4 +1,7 @@
 #include "PN/Util/ShaderLoader.h"
+#include "PN/Util/ResourceManager.h"
+
+#include "json/json.h"
 
 #include <fstream>
 #include <iostream>
@@ -31,6 +34,70 @@ GLuint pn::ShaderLoader::loadShader(const char* filename, ShaderType shaderType)
 	}
 
 	return shader;
+}
+
+pn::ShaderProgram pn::ShaderLoader::loadProgram(const char* filename) {
+	Json::Reader reader;
+	Json::Value root;
+
+	std::ifstream program_file;
+	program_file.open(filename);
+
+	if (!program_file.is_open()) {
+		std::cout << "ShaderLoader: Could not locate shader program file: " << std::string(filename) << std::endl;
+		getchar();
+		exit(-1);
+	}
+
+	bool success = reader.parse(program_file, root);
+	if (!success) {
+		std::cout << "ShaderLoader: Could not parse shader program file: " << reader.getFormattedErrorMessages() << std::endl;
+		getchar();
+		exit(-1);
+	}
+
+	program_file.close();
+
+	auto vertex_shader = root["vertex"];
+	if (vertex_shader.isNull()) {
+		std::cout << "ShaderLoader: Could not find vertex shader" << std::endl;
+		getchar();
+		exit(-1);
+	}
+	pn::ResourceManager::g_resourceManager.load(vertex_shader.asString());
+
+	auto fragment_shader = root["fragment"];
+	if (fragment_shader.isNull()) {
+		std::cout << "ShaderLoader: Could not find fragment shader" << std::endl;
+		getchar();
+		exit(-1);
+	}
+	pn::ResourceManager::g_resourceManager.load(fragment_shader.asString());
+
+	GLuint vertex_shader_object = pn::ResourceManager::g_resourceManager.getVertexShader(vertex_shader.asString());
+	GLuint fragment_shader_object = pn::ResourceManager::g_resourceManager.getFragmentShader(fragment_shader.asString());
+	GLuint program = pn::ShaderLoader::loadProgram(vertex_shader_object, fragment_shader_object);
+
+	pn::ShaderProgram shader_program(program, vertex_shader.asString(), fragment_shader.asString());
+
+	GLint num_active_uniforms;
+	glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &num_active_uniforms);
+
+	std::vector<GLchar> nameData(256);
+	std::vector<GLenum> properties = { GL_NAME_LENGTH };
+	std::vector<GLint> values(properties.size());
+	for (int uniform = 0; uniform < num_active_uniforms; uniform++) {
+		glGetProgramResourceiv(program, GL_UNIFORM, uniform, properties.size(), &properties[0], values.size(), NULL, &values[0]);
+
+		nameData.resize(values[0]);
+
+		glGetProgramResourceName(program, GL_UNIFORM, uniform, nameData.size(), NULL, &nameData[0]);
+
+		std::string name((char*)&nameData[0], nameData.size() - 1);
+		shader_program.addUniform(name);
+	}
+
+	return shader_program;
 }
 
 GLuint pn::ShaderLoader::loadProgram(GLuint vertexShader, GLuint fragmentShader) {

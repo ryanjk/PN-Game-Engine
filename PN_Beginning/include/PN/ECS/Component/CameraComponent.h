@@ -9,11 +9,10 @@
 namespace pn {
 	class CameraComponent : public pn::IComponent {
 	public:
-		static CameraComponent make(const ComponentData& data);
+		static std::shared_ptr<CameraComponent> make(const ComponentData& data);
 		ComponentType getType() const override;
 
-		bool getFov() const;
-		void setFov(bool fov);
+		CameraComponent();
 
 		vec3 getRotation() const;
 		void setRotation(vec3 rotation);
@@ -22,7 +21,6 @@ namespace pn {
 		void setTranslation(vec3 translation);
 
 	private:
-		bool m_fov = true;
 		vec3 m_rotation = { 0.0f, 0.0f, 0.0f };
 		vec3 m_translation = { 0.0f, 0.0f, 0.0f };
 	};

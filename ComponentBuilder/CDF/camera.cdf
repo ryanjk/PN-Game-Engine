@@ -8,10 +8,6 @@
 		"Rotation": {
 			"type":"vec3",
 			"default":["0.0f", "0.0f", "0.0f"]
-		},
-		"Fov": {
-			"type":"bool",
-			"default":true
 		}
    }
 }

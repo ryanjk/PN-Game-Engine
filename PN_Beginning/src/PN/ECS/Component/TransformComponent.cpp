@@ -1,24 +1,24 @@
 #include "PN/ECS/Component/TransformComponent.h"
 
-pn::TransformComponent pn::TransformComponent::make(const ComponentData& data) {
-	TransformComponent component;
+std::shared_ptr<pn::TransformComponent> pn::TransformComponent::make(const ComponentData& data) {
+	auto component = std::make_shared<TransformComponent>();
 
 	auto translationData = data["translation"];
 	if (!translationData.isNull()) {
-		component.m_translation = vec3(translationData[0].asFloat(), translationData[1].asFloat(), translationData[2].asFloat());
+		component->m_translation = vec3(translationData[0].asFloat(), translationData[1].asFloat(), translationData[2].asFloat());
 	}
 	
 	auto scaleData = data["scale"];
 	if (!scaleData.isNull()) {
-		component.m_scale = vec3(scaleData[0].asFloat(), scaleData[1].asFloat(), scaleData[2].asFloat());
+		component->m_scale = vec3(scaleData[0].asFloat(), scaleData[1].asFloat(), scaleData[2].asFloat());
 	}
 
 	auto rotationData = data["rotation"];
 	if (!rotationData.isNull()) {
-		component.m_rotation = vec3(rotationData[0].asFloat(), rotationData[1].asFloat(), rotationData[2].asFloat());
+		component->m_rotation = vec3(rotationData[0].asFloat(), rotationData[1].asFloat(), rotationData[2].asFloat());
 	}
 
-	component.updateTransformMatrix();
+	component->updateTransformMatrix();
 
 	return component;
 }
@@ -26,7 +26,7 @@ pn::TransformComponent pn::TransformComponent::make(const ComponentData& data) {
 pn::TransformComponent::TransformComponent() {}
 
 pn::ComponentType pn::TransformComponent::getType() const {
-	return pn::ComponentType::Transform;
+	return pn::ComponentType::TRANSFORM;
 }
 
 mat4 pn::TransformComponent::getTransformMatrix() const {

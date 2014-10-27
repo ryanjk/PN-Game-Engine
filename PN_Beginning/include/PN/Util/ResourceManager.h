@@ -7,12 +7,14 @@
 
 #include "PN/Render/Image.h"
 #include "PN/Render/Mesh.h"
+#include "PN/Render/ShaderProgram.h"
 
 #include <map>
 
 using ImageMap = std::map < HashValue, pn::Image > ;
 using MeshMap = std::map < HashValue, pn::Mesh > ;
 using ShaderMap = std::map < HashValue, GLuint > ;
+using ShaderProgramMap = std::map < HashValue, pn::ShaderProgram > ;
 
 namespace pn {
 	class ResourceManager {
@@ -23,9 +25,6 @@ namespace pn {
 		void shutdown();
 
 		void load(const PString& filename);
-
-		template<class T>
-		T& get(const PString& filename);
 
 		Image& getImage(const PString& filename);
 		Image& getImage(const HashValue& key);
@@ -39,6 +38,9 @@ namespace pn {
 		GLuint& getFragmentShader(const PString& filename);
 		GLuint& getFragmentShader(const HashValue& key);
 
+		pn::ShaderProgram& getShaderProgram(const PString& filename);
+		pn::ShaderProgram& getShaderProgram(const HashValue& key);
+
 		void remove(const PString& filename);
 
 	private:
@@ -48,6 +50,7 @@ namespace pn {
 		MeshMap m_meshMap;
 		ShaderMap m_vshaderMap;
 		ShaderMap m_fshaderMap;
+		ShaderProgramMap m_shaderProgramMap;
 	};
 }
 

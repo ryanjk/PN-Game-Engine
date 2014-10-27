@@ -102,6 +102,7 @@ int main()
 	double past_time = 0;
 	double accumulator = 0;
 
+	/*
 	mat4 m = glm::rotate(mat4(), glm::radians(90.0f), vec3(1.0f, 0.0f, 0.0f));
 
 	for (int i = 0; i < 4; i++) {
@@ -110,7 +111,7 @@ int main()
 			std::cout << m[i][j] << " ";
 		}
 	}
-
+	*/
 	while (!glfwWindowShouldClose(window))
 	{
 		double frame_time = current_time - past_time;
@@ -143,4 +144,5 @@ int main()
 	pn::ResourceManager::g_resourceManager.shutdown();
 	pn::InputManager::g_inputManager.shutdown();
 	pn::WindowManager::g_windowManager.shutdown();
+
 }

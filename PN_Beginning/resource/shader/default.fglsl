@@ -3,8 +3,12 @@
 in VS_OUT {
 	vec3 position;
 	vec3 normal;
-	vec3 colour;
 } fs_in;
+
+uniform vec4 ambient;
+uniform vec4 diffuse;
+uniform vec4 specular;
+uniform int gloss;
 
 uniform vec3 lightPosition;
 uniform vec3 cameraPosition;
@@ -21,7 +25,7 @@ void main() {
 	
 	vec3 R = reflect(-1 * normalize(lightPosition - fs_in.position), normalize(fs_in.normal));
 	
-	int blinnExp = 10;
+	int blinnExp = 100;
 	
 	colour =  vec4(ambientLight + 
 		(max(0, dot(normalize(fs_in.normal), normalize(lightPosition - fs_in.position))) * light +

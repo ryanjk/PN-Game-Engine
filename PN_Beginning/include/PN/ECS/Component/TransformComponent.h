@@ -8,8 +8,10 @@
 namespace pn {
 	class TransformComponent : public pn::IComponent {
 	public:
-		static TransformComponent make(const ComponentData& data);
+		static std::shared_ptr<TransformComponent> make(const ComponentData& data);
 		ComponentType getType() const override;
+
+		TransformComponent();
 
 		mat4 getTransformMatrix() const;
 		vec3 getTranslation() const;
@@ -21,7 +23,6 @@ namespace pn {
 		void setRotation(vec3 rotation);
 
 	private:
-		TransformComponent();
 		void updateTransformMatrix();
 
 		mat4 m_transformMatrix = {

@@ -1,6 +1,8 @@
 #include "PN/GameState/GameState.h"
 
 #include <iostream>
+#include <bitset>
+#include <cassert>
 
 static const pn::PString STATE_RESOURCE_FILEPATH = "resource/state/";
 
@@ -13,11 +15,13 @@ startUp() and shutdown() use template method pattern -- concrete classes may imp
 
 void pn::GameState::startUp() {
 	loadResources();
+	loadEntities();
 	startUpAssist();
 }
 
 void pn::GameState::shutdown() {
 	shutdownAssist();
+	releaseEntities();
 	releaseResources();
 }
 
@@ -64,6 +68,34 @@ void pn::GameState::releaseResources() {
 			pn::ResourceManager::g_resourceManager.remove(resourceFilename.asString());
 		}
 	}
+}
+
+void pn::GameState::loadEntities() {
+	auto& entityTree = m_root["entities"];
+
+	auto num_entities = entityTree.size();
+	m_entities.reserve(num_entities);
+
+	for (auto& entity : entityTree.getMemberNames()) {
+		auto new_entity = pn::Entity::makeEntity(entityTree[entity], entity);
+		m_entities.push_back(new_entity);
+	}
+
+	#ifdef _DEBUG
+	for (size_t i = 0; i < m_entities.size(); i++) {
+		for (size_t j = i + 1; j < m_entities.size(); j++) {
+			assert(m_entities[i]->getKey() != m_entities[j]->getKey());
+		}
+	}
+	#endif
+}
+
+void pn::GameState::releaseEntities() {
+
+}
+
+Entities& pn::GameState::getEntities() {
+	return m_entities;
 }
 
 void pn::GameState::render() {}

@@ -10,14 +10,13 @@ uniform mat4 proj;
 out VS_OUT {
 	vec3 position;
 	vec3 normal;
-	vec3 colour;
 } vs_out;
 
 void main() {
-	vec4 n_pos = (world * vec4(position, 1.0) + gl_InstanceID * vec4(3.0, 0.0, 0.0, 0.0));
+	vec4 n_pos = (world * vec4(position, 1.0));
 	gl_Position = proj * view * n_pos;
 	
 	vs_out.normal =  (transpose(inverse(world)) * vec4(normal, 1.0)).xyz;
 	vs_out.position = n_pos.xyz;
-	vs_out.colour = vec3(gl_InstanceID * 0.04, gl_InstanceID * 0.02, gl_InstanceID * 0.8);
+	
 }

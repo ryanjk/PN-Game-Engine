@@ -23,6 +23,7 @@ void pn::GameStateManager::startUp() {
 
 void pn::GameStateManager::shutdown() {
 	m_currentState->shutdown();
+	m_loadingState->shutdown();
 }
 
 void pn::GameStateManager::beginLoad() {

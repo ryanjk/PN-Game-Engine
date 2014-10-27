@@ -86,6 +86,8 @@
   <ItemGroup>
     <ClCompile Include="src\PN\ConcreteStates\LoadingState.cpp" />
     <ClCompile Include="src\PN\ECS\Component\CameraComponent.cpp" />
+    <ClCompile Include="src\PN\ECS\Component\IComponent.cpp" />
+    <ClCompile Include="src\PN\ECS\Component\RenderComponent.cpp" />
     <ClCompile Include="src\PN\ECS\Component\TransformComponent.cpp" />
     <ClCompile Include="src\PN\ECS\Entity\Entity.cpp" />
     <ClCompile Include="src\PN\GameState\GameState.cpp" />
@@ -100,6 +102,7 @@
     <ClCompile Include="src\PN\Input\InputManager.cpp" />
     <ClCompile Include="src\LodePNG\lodepng.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\PN\Render\ShaderProgram.cpp" />
     <ClCompile Include="src\PN\Util\FileType.cpp" />
     <ClCompile Include="src\PN\Util\PString.cpp" />
     <ClCompile Include="src\PN\Settings\SettingsManager.cpp" />
@@ -110,6 +113,7 @@
   <ItemGroup>
     <ClInclude Include="include\PN\ECS\Component\CameraComponent.h" />
     <ClInclude Include="include\PN\ECS\Component\IComponent.h" />
+    <ClInclude Include="include\PN\ECS\Component\RenderComponent.h" />
     <ClInclude Include="include\PN\ECS\Component\TransformComponent.h" />
     <ClInclude Include="include\PN\ECS\Entity\Entity.h" />
     <ClInclude Include="include\PN\GameState\GameState.h" />
@@ -124,6 +128,7 @@
     <ClInclude Include="include\PN\Render\Mesh.h" />
     <ClInclude Include="include\PN\Render\Renderable.h" />
     <ClInclude Include="include\PN\Render\RenderFactory.h" />
+    <ClInclude Include="include\PN\Render\ShaderProgram.h" />
     <ClInclude Include="include\PN\Settings\SettingsManager.h" />
     <ClInclude Include="include\PN\ConcreteStates\InitialState.h" />
     <ClInclude Include="include\PN\ConcreteStates\LoadingState.h" />

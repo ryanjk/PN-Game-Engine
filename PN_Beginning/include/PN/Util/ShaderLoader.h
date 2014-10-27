@@ -3,6 +3,8 @@
 
 #include "PN/Window/WindowManager.h"
 
+#include "PN/Render/ShaderProgram.h"
+
 #include <string>
 
 using ShaderType = GLenum;
@@ -11,6 +13,8 @@ namespace pn {
 	class ShaderLoader {
 	public:
 		static GLuint loadShader(const char* filename, ShaderType shaderType);
+
+		static pn::ShaderProgram loadProgram(const char* filename);
 		static GLuint loadProgram(GLuint vertexShader, GLuint fragmentShader);
 	private:
 		static std::string readFile(const char* filename);

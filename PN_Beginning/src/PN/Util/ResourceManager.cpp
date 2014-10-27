@@ -13,6 +13,7 @@ std::mutex meshMutex;
 static const pn::PString IMAGE_FOLDER_PATH = "resource/image/";
 static const pn::PString MESH_FOLDER_PATH = "resource/mesh/";
 static const pn::PString SHADER_FOLDER_PATH = "resource/shader/";
+static const pn::PString SHADER_PROGRAM_FOLDER_PATH = "resource/shaderProgram/";
 
 pn::ResourceManager pn::ResourceManager::g_resourceManager;
 
@@ -32,7 +33,7 @@ void pn::ResourceManager::load(const PString& filename) {
 	case pn::FileTypeEnum::PNG: {
 		if (m_imageMap.find(filename.getHash()) == m_imageMap.end()) {
 			Image image = pn::RenderFactory::makeFromPNG((IMAGE_FOLDER_PATH + filename).c_str());
-			std::lock_guard<std::mutex> imageLock(imageMutex);
+	//		std::lock_guard<std::mutex> imageLock(imageMutex);
 			m_imageMap.insert({ filename.getHash(), std::move(image) });
 		}
 	}
@@ -40,7 +41,7 @@ void pn::ResourceManager::load(const PString& filename) {
 	case pn::FileTypeEnum::OBJ: {
 		if (m_meshMap.find(filename.getHash()) == m_meshMap.end()) {
 			Mesh mesh = pn::RenderFactory::loadMeshFromObj((MESH_FOLDER_PATH + filename).c_str());
-			std::lock_guard<std::mutex> meshLock(meshMutex);
+	//		std::lock_guard<std::mutex> meshLock(meshMutex);
 			m_meshMap.insert({ filename.getHash(), std::move(mesh) });
 		}
 	}
@@ -59,51 +60,18 @@ void pn::ResourceManager::load(const PString& filename) {
 		}
 	}
 		break;
+	case pn::FileTypeEnum::SHADER_PROGRAM: {
+		if (m_shaderProgramMap.find(filename.getHash()) == m_shaderProgramMap.end()) {
+			pn::ShaderProgram shader = pn::ShaderLoader::loadProgram((SHADER_PROGRAM_FOLDER_PATH + filename).c_str());
+			m_shaderProgramMap.insert({ filename.getHash(), shader });
+		}
+	}
+		break;
 	default:
 		std::cout << "ResourceManager: Couldn't load " << filename.getText() << " -- No identifiable file type" << std::endl;
 		break;
 	}
 
-}
-
-template<class T>
-T& pn::ResourceManager::get(const PString& filename) {
-	auto filetype = pn::FileType::toFileTypeEnum(filename);
-	auto key = filename.getHash();
-
-	switch (filetype) {
-	case pn::FileTypeEnum::PNG: {
-		auto image_itr = m_imageMap.find(key);
-		if (image_itr != m_imageMap.end()) {
-			return image_itr->second;
-		}
-	}
-		break;
-	case pn::FileTypeEnum::OBJ: {
-		auto mesh_itr = m_meshMap.find(key);
-		if (mesh_itr != m_meshMap.end()) {
-			return mesh_itr->second;
-		}
-	}
-		break;
-	case pn::FileTypeEnum::VERTEX_SHADER: {
-		auto shader_itr = m_vshaderMap.find(key);
-		if (shader_itr != m_vshaderMap.end()) {
-			return shader_itr->second;
-		}
-	}
-		break;
-	case pn::FileTypeEnum::FRAGMENT_SHADER: {
-		auto shader_itr = m_fshaderMap.find(key);
-		if (shader_itr != m_fshaderMap.end()) {
-			return shader_itr->second;
-		}
-	}
-		break;
-	default:
-		return;
-		break;
-	}
 }
 
 pn::Image& pn::ResourceManager::getImage(const PString& filename) {
@@ -150,6 +118,17 @@ GLuint& pn::ResourceManager::getFragmentShader(const HashValue& key) {
 	}
 }
 
+pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename) {
+	return getShaderProgram(filename.getHash());
+}
+
+pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const HashValue& key) {
+	auto shader_itr = m_shaderProgramMap.find(key);
+	if (shader_itr != m_shaderProgramMap.end()) {
+		return shader_itr->second;
+	}
+}
+
 void pn::ResourceManager::remove(const PString& filename) {
 	auto filetype = pn::FileType::toFileTypeEnum(filename);
 
@@ -170,6 +149,14 @@ void pn::ResourceManager::remove(const PString& filename) {
 		GLuint fshader = getFragmentShader(filename);
 		glDeleteShader(fshader);
 		m_fshaderMap.erase(filename.getHash());
+	}
+		break;
+	case pn::FileTypeEnum::SHADER_PROGRAM: {
+		pn::ShaderProgram shaderProgram = getShaderProgram(filename);
+		g_resourceManager.remove(shaderProgram.getVertexShaderFilename());
+		g_resourceManager.remove(shaderProgram.getFragmentShaderFilename());
+		glDeleteProgram(shaderProgram.getProgram());
+		m_shaderProgramMap.erase(filename.getHash());
 	}
 		break;
 	default:

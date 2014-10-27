@@ -147,6 +147,15 @@
     <ClCompile Include="src\PN\ECS\Component\CameraComponent.cpp">
       <Filter>Source Files\ECS\Component</Filter>
     </ClCompile>
+    <ClCompile Include="src\PN\ECS\Component\RenderComponent.cpp">
+      <Filter>Source Files\ECS\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\ECS\Component\IComponent.cpp">
+      <Filter>Source Files\ECS\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\Render\ShaderProgram.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\PN\GameState\GameState.h">
@@ -223,6 +232,12 @@
     </ClInclude>
     <ClInclude Include="include\PN\ECS\Component\CameraComponent.h">
       <Filter>Header Files\PN\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ECS\Component\RenderComponent.h">
+      <Filter>Header Files\PN\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\ShaderProgram.h">
+      <Filter>Header Files\PN\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

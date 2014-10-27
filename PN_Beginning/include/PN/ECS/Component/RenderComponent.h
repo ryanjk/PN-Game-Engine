@@ -9,8 +9,10 @@
 namespace pn {
 	class RenderComponent : public pn::IComponent {
 	public:
-		static RenderComponent make(const ComponentData& data);
+		static std::shared_ptr<RenderComponent> make(const ComponentData& data);
 		ComponentType getType() const override;
+
+		RenderComponent();
 
 		vec4 getAmbient() const;
 		void setAmbient(vec4 ambient);
@@ -24,6 +26,9 @@ namespace pn {
 		pn::PString getMesh() const;
 		void setMesh(pn::PString mesh);
 
+		pn::PString getShaderProgram() const;
+		void setShaderProgram(pn::PString shaderProgram);
+
 		vec4 getSpecular() const;
 		void setSpecular(vec4 specular);
 
@@ -31,7 +36,8 @@ namespace pn {
 		vec4 m_ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
 		vec4 m_diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
 		float m_gloss = 0;
-		pn::PString m_mesh = "this_model_is_not_set.obj";
+		pn::PString m_mesh = "default.obj";
+		pn::PString m_shaderProgram = "default.sp";
 		vec4 m_specular = { 0.0f, 0.0f, 0.0f, 0.0f };
 	};
 }

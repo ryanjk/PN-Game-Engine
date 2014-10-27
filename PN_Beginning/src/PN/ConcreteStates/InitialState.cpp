@@ -15,9 +15,7 @@ static auto& resources = pn::ResourceManager::g_resourceManager;
 static void setUpRenderable(pn::Renderable& m_r) {
 	m_r.mesh = pn::PString("monkey.obj").getHash();
 
-	m_r.SHADER_v = resources.getVertexShader("monkey.vglsl");
-	m_r.SHADER_f = resources.getFragmentShader("monkey.fglsl");
-	m_r.SHADER_program = pn::ShaderLoader::loadProgram(m_r.SHADER_v, m_r.SHADER_f);
+	m_r.SHADER_program = pn::ResourceManager::g_resourceManager.getShaderProgram("default.sp").getProgram();
 
 	glGenVertexArrays(1, &m_r.VAO);
 	glBindVertexArray(m_r.VAO);
@@ -104,20 +102,23 @@ void pn::InitialState::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
-	glUseProgram(m_r.SHADER_program);
+	auto& program = pn::ResourceManager::g_resourceManager.getShaderProgram("default.sp");
+
+	glUseProgram(program.getProgram());
 
 	// Light position
-	auto light_position_index = glGetUniformLocation(m_r.SHADER_program, "lightPosition");
+/*	auto light_position_index = glGetUniformLocation(m_r.SHADER_program, "lightPosition");
 	glUniform3fv(light_position_index, 1, glm::value_ptr(m_light_pos));
-
+*/
+	program.setUniform("lightPosition", m_light_pos);
+	
 	// Camera position
-	auto view_matrix = m_camera.getView();
 	auto camera_position = m_camera.getPosition();
 	auto camera_position_index = glGetUniformLocation(m_r.SHADER_program, "cameraPosition");
 	glUniform3fv(camera_position_index, 1, glm::value_ptr(camera_position));
 
 	// Get view transform from camera
-	auto view_transform = view_matrix;
+	auto view_transform = m_camera.getView();
 	auto view_transform_index = glGetUniformLocation(m_r.SHADER_program, "view");
 	glUniformMatrix4fv(view_transform_index, 1, GL_FALSE, glm::value_ptr(view_transform));
 

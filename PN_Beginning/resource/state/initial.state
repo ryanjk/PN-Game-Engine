@@ -4,17 +4,14 @@
             
         ],
         "mesh": [
-            "monkey.obj",
 			"floor.obj"
         ],
-        "shader": [
-            "monkey.vglsl",
-            "monkey.fglsl"
+        "shaderProgram": [
+            
         ]
     },
 	"entities": {
-		"entity": {
-			"name":"monkey",
+		"monkey": {
 			"components": {
 				"transform": {
 					"translation": [0.0, 0.0, 0.0],
@@ -23,17 +20,14 @@
 				},
 				"render": {
 					"mesh":"monkey.obj",
-					"material": {
-						"ambient": [0.1, 0.0, 0.0, 1.0],
-						"diffuse": [0.6, 0.0, 0.0, 1.0],
-						"specular": [0.4, 0.4, 0.4, 1.0],
-						"glossiness":100
-					}
+					"ambient": [0.1, 0.0, 0.0, 1.0],
+					"diffuse": [0.6, 0.0, 0.0, 1.0],
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":100
 				}
 			}
 		},
-		"entity": {
-			"name":"player",
+		"player": {
 			"components" : {
 				"transform" : {
 					"translation": [0.0, 0.0, 0.0],

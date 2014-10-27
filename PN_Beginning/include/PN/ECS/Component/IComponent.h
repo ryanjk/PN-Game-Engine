@@ -3,30 +3,36 @@
 
 #include "json/json.h"
 
-using ID = int;
+#include <memory>
+
+using EntityID = unsigned int;
 using ComponentData = Json::Value;
 
 namespace pn {
 	enum ComponentType {
-		Transform = 1,
-		Camera = 2,
-		Render = 4
+		NONE = 0,
+		TRANSFORM = 1,
+		CAMERA = 2,
+		RENDER = 4
 	};
 
 	class IComponent {
 	public:
 		virtual ComponentType getType() const = 0;
 		
-		ID getOwner() const {
+		static ComponentType textToType(std::string type);
+		static std::shared_ptr<pn::IComponent> make(const ComponentData& data, std::string componentName);
+
+		EntityID getOwner() const {
 			return m_owner;
 		}
 
-		void setOwner(ID entity) {
+		void setOwner(EntityID entity) {
 			m_owner = entity;
 		}
 
 	private:
-		ID m_owner;
+		EntityID m_owner;
 	};
 }
 

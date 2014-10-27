@@ -155,7 +155,7 @@ void pn::ResourceManager::remove(const PString& filename) {
 		pn::ShaderProgram shaderProgram = getShaderProgram(filename);
 		g_resourceManager.remove(shaderProgram.getVertexShaderFilename());
 		g_resourceManager.remove(shaderProgram.getFragmentShaderFilename());
-		glDeleteProgram(shaderProgram.getProgram());
+		glDeleteProgram(shaderProgram.getGLProgramObject());
 		m_shaderProgramMap.erase(filename.getHash());
 	}
 		break;

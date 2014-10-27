@@ -84,7 +84,7 @@ void pn::GameState::loadEntities() {
 	#ifdef _DEBUG
 	for (size_t i = 0; i < m_entities.size(); i++) {
 		for (size_t j = i + 1; j < m_entities.size(); j++) {
-			assert(m_entities[i]->getKey() != m_entities[j]->getKey());
+			assert(m_entities[i]->getID() != m_entities[j]->getID());
 		}
 	}
 	#endif

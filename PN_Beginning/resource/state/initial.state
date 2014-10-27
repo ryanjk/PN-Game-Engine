@@ -27,6 +27,54 @@
 				}
 			}
 		},
+		"monkey2": {
+			"components": {
+				"transform": {
+					"translation": [-2.0, 3.0, 0.0],
+					"scale": [2.0, 1.0, 2.0],
+					"rotation": [0.7, 0.2, 0.0]
+				},
+				"render": {
+					"mesh":"monkey.obj",
+					"ambient": [0.0, 0.1, 0.0, 1.0],
+					"diffuse": [0.0, 0.7, 0.0, 1.0],
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":100
+				}
+			}
+		},
+		"dragon": {
+			"components": {
+				"transform": {
+					"translation": [-2.0, 0.0, -3.0],
+					"scale": [3.0, 3.0, 3.0],
+					"rotation": [0.0, 0.0, 0.0]
+				},
+				"render": {
+					"mesh":"dragon_lr.obj",
+					"ambient": [0.1, 0.0, 0.1, 1.0],
+					"diffuse": [0.6, 0.0, 0.6, 1.0],
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":10
+				}
+			}
+		},
+		"dragon2": {
+			"components": {
+				"transform": {
+					"translation": [2.0, 0.0, 3.0],
+					"scale": [2.0, 2.0, 2.0],
+					"rotation": [0.0, 1.57, 0.0]
+				},
+				"render": {
+					"mesh":"dragon_lr.obj",
+					"ambient": [0.0, 0.0, 0.1, 1.0],
+					"diffuse": [0.0, 0.0, 0.6, 1.0],
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":1000
+				}
+			}
+		},
 		"player": {
 			"components" : {
 				"transform" : {

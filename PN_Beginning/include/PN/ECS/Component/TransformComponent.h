@@ -18,6 +18,10 @@ namespace pn {
 		vec3 getScale() const;
 		vec3 getRotation() const;
 
+		void translate(vec3 by);
+		void scale(vec3 by);
+		void rotate(vec3 angles);
+
 		void setTranslation(vec3 translation);
 		void setScale(vec3 scale);
 		void setRotation(vec3 rotation);

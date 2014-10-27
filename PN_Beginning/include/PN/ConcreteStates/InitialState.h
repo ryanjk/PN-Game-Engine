@@ -12,6 +12,8 @@
 
 #include "LodePNG/lodepng.h"
 
+#include <map>
+
 namespace pn {
 	class InitialState : public pn::GameState {
 	public:
@@ -24,13 +26,9 @@ namespace pn {
 		void startUpAssist() override;
 
 	private:
-		pn::Renderable m_r;
-		pn::Renderable m_floor_r;
+		std::map<EntityID, pn::Renderable> m_renderables;
 
 		pn::Camera m_camera;
-
-		mat4 m_monkey_world_transform;
-		mat4 m_floor_world_transform;
 
 		vec3 m_light_pos;
 		vec3 m_light2_pos;

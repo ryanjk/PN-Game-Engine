@@ -7,7 +7,7 @@
 pn::ShaderProgram::ShaderProgram(GLuint program, pn::PString vertex_shader, pn::PString fragment_shader) 
 	: m_program(program), m_vertex_shader_filename(vertex_shader), m_fragment_shader_filename(fragment_shader) {}
 
-GLuint pn::ShaderProgram::getProgram() const {
+GLuint pn::ShaderProgram::getGLProgramObject() const {
 	return m_program;
 }
 
@@ -62,7 +62,7 @@ void pn::ShaderProgram::setUniform<mat4>(pn::PString uniform, mat4 value) {
 GLint pn::ShaderProgram::getUniformLocation(pn::PString uniform) {
 	GLint uniform_location = glGetUniformLocation(m_program, uniform.getText().c_str());
 	if (uniform_location == -1) {
-		std::cout << "ERROR: Couldn't set uniform " << uniform.getText() << ": Not found in program" << std::endl;
+	//	std::cout << "ERROR: Couldn't set uniform " << uniform.getText() << ": Not found in program" << std::endl;
 	}
 	return uniform_location;
 }

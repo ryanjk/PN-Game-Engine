@@ -33,12 +33,12 @@ namespace pn {
 		void setSpecular(vec4 specular);
 
 	private:
-		vec4 m_ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
-		vec4 m_diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
-		float m_gloss = 0;
+		vec4 m_ambient = { 0.0f, 0.0f, 0.0f, 1.0f };
+		vec4 m_diffuse = { 0.0f, 0.0f, 0.0f, 1.0f };
+		float m_gloss = 1;
 		pn::PString m_mesh = "default.obj";
 		pn::PString m_shaderProgram = "default.sp";
-		vec4 m_specular = { 0.0f, 0.0f, 0.0f, 0.0f };
+		vec4 m_specular = { 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 }
 

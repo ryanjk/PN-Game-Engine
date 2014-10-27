@@ -12,7 +12,7 @@ namespace pn {
 	public:
 		ShaderProgram(GLuint program, pn::PString vertex_shader, pn::PString fragment_shader);
 
-		GLuint getProgram() const;
+		GLuint getGLProgramObject() const;
 
 		pn::PString getVertexShaderFilename() const;
 		pn::PString getFragmentShaderFilename() const;

@@ -8,7 +8,7 @@ in VS_OUT {
 uniform vec4 ambient;
 uniform vec4 diffuse;
 uniform vec4 specular;
-uniform int gloss;
+uniform float gloss;
 
 uniform vec3 lightPosition;
 uniform vec3 cameraPosition;
@@ -16,19 +16,22 @@ uniform vec3 cameraPosition;
 out vec4 colour;
 
 void main() {
-	vec3 ambientLight = vec3(0.1, 0.1, 0.0);
-	vec3 light = vec3(0.6, 0.6, 0.0);
-	vec3 specularHighlight = vec3(0.5, 0.5, 0.5);
+	vec4 ambientLightStrength = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 diffuseLightStrength = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 specularLightStrength = vec4(1.0, 1.0, 1.0, 1.0);
 	
-	vec3 LandV = lightPosition - fs_in.position + cameraPosition - fs_in.position;
-	vec3 H = normalize(LandV);
+	vec4 ambientColour = ambientLightStrength * ambient;
+	vec4 diffuseColour = diffuseLightStrength * diffuse;
+	vec4 specularColour = specularLightStrength * specular;
 	
 	vec3 R = reflect(-1 * normalize(lightPosition - fs_in.position), normalize(fs_in.normal));
 	
-	int blinnExp = 100;
-	
-	colour =  vec4(ambientLight + 
-		(max(0, dot(normalize(fs_in.normal), normalize(lightPosition - fs_in.position))) * light +
-		pow(max(0, dot(R, normalize(cameraPosition - fs_in.position))), blinnExp) * specularHighlight) * (1 / pow(length(lightPosition - fs_in.position), 1))
-		, 1.0);
+//	colour =  vec4((ambientColour + 
+//		(max(0, dot(normalize(fs_in.normal), normalize(lightPosition - fs_in.position))) * diffuseColour +
+//		pow(max(0, dot(R, normalize(cameraPosition - fs_in.position))), gloss) * specularColour) * (1 / pow(length(lightPosition - fs_in.position), 1))).xyz, 1.0);
+
+	colour = ambientColour + 
+			(diffuseColour * (max(0, dot(normalize(fs_in.normal), normalize(lightPosition - fs_in.position)))) +
+			specularColour * pow(max(0, dot(R, normalize(cameraPosition - fs_in.position))), gloss)) *
+			(1 / pow(length(lightPosition - fs_in.position), 1));
 }

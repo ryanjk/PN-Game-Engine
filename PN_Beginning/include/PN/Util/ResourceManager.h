@@ -32,11 +32,11 @@ namespace pn {
 		Mesh& getMesh(const PString& filename);
 		Mesh& getMesh(const HashValue& key);
 
-		GLuint& getVertexShader(const PString& filename);
-		GLuint& getVertexShader(const HashValue& key);
+		GLuint getVertexShader(const PString& filename);
+		GLuint getVertexShader(const HashValue& key);
 
-		GLuint& getFragmentShader(const PString& filename);
-		GLuint& getFragmentShader(const HashValue& key);
+		GLuint getFragmentShader(const PString& filename);
+		GLuint getFragmentShader(const HashValue& key);
 
 		pn::ShaderProgram& getShaderProgram(const PString& filename);
 		pn::ShaderProgram& getShaderProgram(const HashValue& key);

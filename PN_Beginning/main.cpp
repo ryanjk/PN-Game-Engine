@@ -16,8 +16,6 @@
 
 #include <iostream>
 #include <memory>
-#include <thread>
-#include <tuple>
 
 void error_callback(int error, const char * description) {
 	std::cerr << "GLFW: " << description << std::endl;
@@ -29,8 +27,8 @@ int main()
 	pn::SettingsManager::g_SettingsManager.startUp("config/config.ini");
 	
 	bool fullscreen = pn::SettingsManager::g_SettingsManager.isWindowFullscreen();
-	int width = pn::SettingsManager::g_SettingsManager.getWindowWidth();
-	int height = pn::SettingsManager::g_SettingsManager.getWindowHeight();
+	auto width = pn::SettingsManager::g_SettingsManager.getWindowWidth();
+	auto height = pn::SettingsManager::g_SettingsManager.getWindowHeight();
 
 	// Initialize GLFW and GLEW
 	glfwSetErrorCallback(error_callback);
@@ -102,16 +100,6 @@ int main()
 	double past_time = 0;
 	double accumulator = 0;
 
-	/*
-	mat4 m = glm::rotate(mat4(), glm::radians(90.0f), vec3(1.0f, 0.0f, 0.0f));
-
-	for (int i = 0; i < 4; i++) {
-		std::cout << std::endl;
-		for (int j = 0; j < 4; j++) {
-			std::cout << m[i][j] << " ";
-		}
-	}
-	*/
 	while (!glfwWindowShouldClose(window))
 	{
 		double frame_time = current_time - past_time;

@@ -20,9 +20,9 @@ namespace pn {
 		Window* getWindow();
 		Window* getLoaderWindow();
 
-		bool isFullscreen();
-		unsigned getWidth();
-		unsigned getHeight();
+		bool isFullscreen() const;
+		unsigned int getWidth() const;
+		unsigned int getHeight() const;
 
 	private:
 		WindowManager();
@@ -32,8 +32,8 @@ namespace pn {
 		Window* m_loader_window;
 
 		bool m_fullscreen;
-		unsigned m_width;
-		unsigned m_height;
+		unsigned int m_width;
+		unsigned int m_height;
 
 		bool m_started;
 	};

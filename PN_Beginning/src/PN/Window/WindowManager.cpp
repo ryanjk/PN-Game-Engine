@@ -8,7 +8,7 @@ pn::WindowManager::WindowManager() {
 	m_started = false;
 }
 
-void pn::WindowManager::startUp(bool fullscreen, unsigned width, unsigned height) {
+void pn::WindowManager::startUp(bool fullscreen, unsigned int width, unsigned int height) {
 	
 	if (m_started) return;
 
@@ -88,14 +88,14 @@ Window* pn::WindowManager::getLoaderWindow() {
 	return m_loader_window;
 }
 
-bool pn::WindowManager::isFullscreen() {
+bool pn::WindowManager::isFullscreen() const {
 	return m_fullscreen;
 }
 
-unsigned pn::WindowManager::getHeight() {
+unsigned int pn::WindowManager::getHeight() const {
 	return m_height;
 }
 
-unsigned pn::WindowManager::getWidth() {
+unsigned int pn::WindowManager::getWidth() const {
 	return m_width;
 }

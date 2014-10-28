@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <cassert>
 
 std::mutex imageMutex;
 std::mutex meshMutex;
@@ -80,9 +81,8 @@ pn::Image& pn::ResourceManager::getImage(const PString& filename) {
 
 pn::Image& pn::ResourceManager::getImage(const HashValue& key) {
 	auto image_itr = m_imageMap.find(key);
-	if (image_itr != m_imageMap.end()) {
-		return image_itr->second;
-	}
+	assert(image_itr != m_imageMap.end());
+	return image_itr->second;
 }
 
 pn::Mesh& pn::ResourceManager::getMesh(const PString& filename) {
@@ -91,31 +91,28 @@ pn::Mesh& pn::ResourceManager::getMesh(const PString& filename) {
 
 pn::Mesh& pn::ResourceManager::getMesh(const HashValue& key) {
 	auto mesh_itr = m_meshMap.find(key);
-	if (mesh_itr != m_meshMap.end()) {
-		return mesh_itr->second;
-	}
+	assert(mesh_itr != m_meshMap.end());
+	return mesh_itr->second;
 }
 
-GLuint& pn::ResourceManager::getVertexShader(const PString& filename) {
+GLuint pn::ResourceManager::getVertexShader(const PString& filename) {
 	return getVertexShader(filename.getHash());
 }
 
-GLuint& pn::ResourceManager::getVertexShader(const HashValue& key) {
+GLuint pn::ResourceManager::getVertexShader(const HashValue& key) {
 	auto shader_itr = m_vshaderMap.find(key);
-	if (shader_itr != m_vshaderMap.end()) {
-		return shader_itr->second;
-	}
+	assert(shader_itr != m_vshaderMap.end());
+	return shader_itr->second;
 }
 
-GLuint& pn::ResourceManager::getFragmentShader(const PString& filename) {
+GLuint pn::ResourceManager::getFragmentShader(const PString& filename) {
 	return getFragmentShader(filename.getHash());
 }
 
-GLuint& pn::ResourceManager::getFragmentShader(const HashValue& key) {
+GLuint pn::ResourceManager::getFragmentShader(const HashValue& key) {
 	auto shader_itr = m_fshaderMap.find(key);
-	if (shader_itr != m_fshaderMap.end()) {
-		return shader_itr->second;
-	}
+	assert(shader_itr != m_fshaderMap.end());
+	return shader_itr->second;
 }
 
 pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename) {
@@ -124,9 +121,8 @@ pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename
 
 pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const HashValue& key) {
 	auto shader_itr = m_shaderProgramMap.find(key);
-	if (shader_itr != m_shaderProgramMap.end()) {
-		return shader_itr->second;
-	}
+	assert(shader_itr != m_shaderProgramMap.end());
+	return shader_itr->second;
 }
 
 void pn::ResourceManager::remove(const PString& filename) {

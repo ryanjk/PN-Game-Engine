@@ -11,18 +11,18 @@ namespace pn {
 		void startUp(std::string configDataPath);
 		void shutdown(std::string configDataPath);
 
-		int getWindowHeight();
-		int getWindowWidth();
-		bool isWindowFullscreen();
+		unsigned int getWindowHeight() const;
+		unsigned int getWindowWidth() const;
+		bool isWindowFullscreen() const;
 
-		bool isVsync();
+		bool isVsync() const;
 
 
 	private:
 		SettingsManager();
 
-		int m_window_width;
-		int m_window_height;
+		unsigned int m_window_width;
+		unsigned int m_window_height;
 		bool m_fullscreen;
 
 		bool m_vsync;

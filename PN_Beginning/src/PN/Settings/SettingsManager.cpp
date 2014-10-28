@@ -75,18 +75,18 @@ void pn::SettingsManager::save_settings(std::string configDataPath) {
 
 }
 
-int pn::SettingsManager::getWindowWidth() {
+unsigned int pn::SettingsManager::getWindowWidth() const {
 	return m_window_width;
 }
 
-int pn::SettingsManager::getWindowHeight() {
+unsigned int pn::SettingsManager::getWindowHeight() const {
 	return m_window_height;
 }
 
-bool pn::SettingsManager::isWindowFullscreen() {
+bool pn::SettingsManager::isWindowFullscreen() const {
 	return m_fullscreen;
 }
 
-bool pn::SettingsManager::isVsync() {
+bool pn::SettingsManager::isVsync() const {
 	return m_vsync;
 }

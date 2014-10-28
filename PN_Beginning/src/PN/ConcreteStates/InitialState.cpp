@@ -16,64 +16,6 @@
 
 static auto& resources = pn::ResourceManager::g_resourceManager;
 
-static void setUpRenderable(pn::Renderable& m_r) {
-	m_r.mesh = pn::PString("monkey.obj").getHash();
-
-	m_r.SHADER_program = pn::ResourceManager::g_resourceManager.getShaderProgram("default.sp").getGLProgramObject();
-
-	glGenVertexArrays(1, &m_r.VAO);
-	glBindVertexArray(m_r.VAO);
-
-	glGenBuffers(1, &m_r.VBO_v);
-	glBindBuffer(GL_ARRAY_BUFFER, m_r.VBO_v);
-	glBufferData(GL_ARRAY_BUFFER, resources.getMesh(m_r.mesh).getVertices().size() * sizeof(GLfloat), &resources.getMesh(m_r.mesh).getVertices()[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	glGenBuffers(1, &m_r.VBO_vn);
-	glBindBuffer(GL_ARRAY_BUFFER, m_r.VBO_vn);
-	glBufferData(GL_ARRAY_BUFFER, resources.getMesh(m_r.mesh).getNormals().size() * sizeof(GLfloat), &resources.getMesh(m_r.mesh).getNormals()[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	/*
-	glGenBuffers(1, &m_ss_coord);
-	glBindBuffer(GL_ARRAY_BUFFER, m_ss_coord);
-	glBufferData(GL_ARRAY_BUFFER, m_ss_model.getTexes().size() * sizeof(GLfloat), &m_ss_model.getTexes()[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	glGenTextures(1, &m_tex_ss);
-	glBindTexture(GL_TEXTURE_2D, m_tex_ss);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, m_splashscreen.getWidth(), m_splashscreen.getHeight());
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_splashscreen.getWidth(), m_splashscreen.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, &m_splashscreen.getPixels()[0]);
-	*/
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-static void setUpFloor(pn::Renderable& m_r) {
-	m_r.mesh = pn::PString("floor.obj").getHash();
-
-//	m_r.SHADER_v = resources.getVertexShader("monkey.vglsl");
-//	m_r.SHADER_f = resources.getFragmentShader("monkey.fglsl");
-//	m_r.SHADER_program = pn::ShaderLoader::loadProgram(m_r.SHADER_v, m_r.SHADER_f);
-
-	glGenVertexArrays(1, &m_r.VAO);
-	glBindVertexArray(m_r.VAO);
-
-	glGenBuffers(1, &m_r.VBO_v);
-	glBindBuffer(GL_ARRAY_BUFFER, m_r.VBO_v);
-	glBufferData(GL_ARRAY_BUFFER, resources.getMesh(m_r.mesh).getVertices().size() * sizeof(GLfloat), &resources.getMesh(m_r.mesh).getVertices()[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	glGenBuffers(1, &m_r.VBO_vn);
-	glBindBuffer(GL_ARRAY_BUFFER, m_r.VBO_vn);
-	glBufferData(GL_ARRAY_BUFFER, resources.getMesh(m_r.mesh).getNormals().size() * sizeof(GLfloat), &resources.getMesh(m_r.mesh).getNormals()[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-}
-
 pn::InitialState::InitialState(pn::PString stateFilename) : pn::GameState(stateFilename), m_camera() {
 
 }
@@ -86,6 +28,8 @@ void pn::InitialState::update(double dt) {
 	auto& monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>((*monkeyItr)->getComponent(pn::ComponentType::TRANSFORM));
 	
 	monkey_transform->rotate({ 0.0f, glm::radians((float)glm::cos(time)), 0.0f });
+
+//	m_light_pos = vec3(0.0f, 3 * glm::sin(time), 3 * glm::cos(time));
 }
 
 void pn::InitialState::startUpAssist() {

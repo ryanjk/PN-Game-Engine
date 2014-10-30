@@ -100,10 +100,20 @@ int main()
 	double past_time = 0;
 	double accumulator = 0;
 
+	double FPS_counter = -current_time;
+	int frames_passed = 0;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		double frame_time = current_time - past_time;
 		past_time = glfwGetTime();
+
+		FPS_counter += frame_time;
+		if (frames_passed >= 120) {
+			std::cout << "FPS: " <<  frames_passed / FPS_counter << std::endl;
+			frames_passed = 0;
+			FPS_counter = 0;
+		}
 
 		accumulator += frame_time;
 
@@ -126,6 +136,8 @@ int main()
 		glfwSwapBuffers(window);
 
 		current_time = glfwGetTime();
+
+		frames_passed++;
 	}
 
 	pn::GameStateManager::g_gameStateManager.shutdown();

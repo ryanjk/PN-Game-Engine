@@ -1,8 +1,8 @@
 #include "PN/GameState/GameState.h"
 
 #include <iostream>
-#include <bitset>
 #include <cassert>
+#include <algorithm>
 
 static const pn::PString STATE_RESOURCE_FILEPATH = "resource/state/";
 
@@ -84,7 +84,7 @@ void pn::GameState::loadEntities() {
 	#ifdef _DEBUG
 	for (size_t i = 0; i < m_entities.size(); i++) {
 		for (size_t j = i + 1; j < m_entities.size(); j++) {
-			assert(m_entities[i]->getID() != m_entities[j]->getID());
+			assert(m_entities[i]->getID() != m_entities[j]->getID() && "Two entities share an ID\n");
 		}
 	}
 	#endif
@@ -96,6 +96,12 @@ void pn::GameState::releaseEntities() {
 
 Entities& pn::GameState::getEntities() {
 	return m_entities;
+}
+
+EntityPointer pn::GameState::getEntity(const pn::PString& entity_name) {
+	auto e_itr = std::find_if(m_entities.begin(), m_entities.end(), [&](EntityPointer e) -> bool {return e->getID() == entity_name.getHash(); });
+	assert((e_itr != m_entities.end()) && "No entity found\n");
+	return (*e_itr);
 }
 
 void pn::GameState::render() {}

@@ -25,6 +25,7 @@ namespace pn {
 		void shutdown();   // shutdown state
 
 		Entities& getEntities();
+		EntityPointer getEntity(const pn::PString& entity_name);
 
 	protected:
 		virtual void startUpAssist();

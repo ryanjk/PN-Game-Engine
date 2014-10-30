@@ -18,9 +18,15 @@ namespace pn {
 		vec3 getScale() const;
 		vec3 getRotation() const;
 
-		void translate(vec3 by);
+		void translateWorld(vec3 by);
+		void translateLocal(vec3 by);
+
 		void scale(vec3 by);
-		void rotate(vec3 angles);
+
+		void rotate(vec3 eulerAngles);
+		void rotatePitch(float pitch);
+		void rotateYaw(float yaw);
+		void rotateRoll(float roll);
 
 		void setTranslation(vec3 translation);
 		void setScale(vec3 scale);
@@ -38,7 +44,12 @@ namespace pn {
 
 		vec3 m_translation = { 0.0f, 0.0f, 0.0f };
 		vec3 m_scale = { 1.0f, 1.0f, 1.0f };
-		vec3 m_rotation = { 0.0f, 0.0f, 0.0f };
+		vec3 m_rotation = { 0.0f, 0.0f, 0.0f };  // pitch, yaw, roll
+
+		glm::fquat m_pitch;
+		glm::fquat m_yaw;
+		glm::fquat m_roll;
+
 	};
 }
 

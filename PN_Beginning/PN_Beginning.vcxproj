@@ -107,6 +107,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\PN\Render\ShaderProgram.cpp" />
     <ClCompile Include="src\PN\Util\FileType.cpp" />
+    <ClCompile Include="src\PN\Util\Math.cpp" />
     <ClCompile Include="src\PN\Util\PString.cpp" />
     <ClCompile Include="src\PN\Settings\SettingsManager.cpp" />
     <ClCompile Include="src\PN\Util\ResourceManager.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="include\PN\Input\InputEventListener.h" />
     <ClInclude Include="include\PN\Input\InputManager.h" />
     <ClInclude Include="include\PN\Physics\AABB.h" />
+    <ClInclude Include="include\PN\Physics\Transformer.h" />
     <ClInclude Include="include\PN\Render\Camera.h" />
     <ClInclude Include="include\PN\Render\Image.h" />
     <ClInclude Include="include\PN\Render\Mesh.h" />

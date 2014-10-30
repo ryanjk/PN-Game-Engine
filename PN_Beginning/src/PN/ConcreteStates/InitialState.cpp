@@ -11,12 +11,15 @@
 #include "PN/Util/ShaderLoader.h"
 #include "PN/Util/Math.h"
 
+#include "PN/Settings/SettingsManager.h"
+
 #include <iostream>
 #include <algorithm>
 
 static auto& resources = pn::ResourceManager::g_resourceManager;
+static auto& settings = pn::SettingsManager::g_SettingsManager;
 
-pn::InitialState::InitialState(pn::PString stateFilename) : pn::GameState(stateFilename), m_camera() {
+pn::InitialState::InitialState(pn::PString stateFilename) : pn::GameState(stateFilename), m_activeCamera() {
 
 }
 
@@ -24,16 +27,26 @@ void pn::InitialState::update(double dt) {
 	static double time = 0.0;
 	time += dt;
 	
-	auto monkeyItr = std::find_if(m_entities.begin(), m_entities.end(), [](decltype(m_entities[0]) e) -> bool {return e->getID() == pn::PString("monkey").getHash(); });
-	auto& monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>((*monkeyItr)->getComponent(pn::ComponentType::TRANSFORM));
+	auto monkey = getEntity("monkey");
+	auto& monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(monkey->getComponent(pn::ComponentType::TRANSFORM));
 	
-	monkey_transform->rotate({ 0.0f, glm::radians((float)glm::cos(time)), 0.0f });
+//	monkey_transform->rotateYaw(glm::radians((float)dt)*40);
+
+/*	auto dragon = getEntity("dragon2");
+	auto& dragon_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon->getComponent(pn::ComponentType::TRANSFORM));
+
+	dragon_transform->translateLocal({ 0.01f, 0.0f, 0.0f });
+
+	auto dragon2 = getEntity("dragon");
+	auto& dragon2_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon2->getComponent(pn::ComponentType::TRANSFORM));
+
+	dragon2_transform->translateWorld({ 0.01f, 0.0f, 0.0f }); */
 
 //	m_light_pos = vec3(0.0f, 3 * glm::sin(time), 3 * glm::cos(time));
 }
 
 void pn::InitialState::startUpAssist() {
-	static const HashValue defaultShaderProgram = pn::PString("default.sp").getHash();
+	const HashValue defaultShaderProgram = pn::PString("default.sp").getHash();
 
 	// set up renderable for each entity that needs one
 	for (auto& entity : m_entities) {
@@ -75,10 +88,18 @@ void pn::InitialState::startUpAssist() {
 
 			m_renderables.insert({ entity->getID(), entity_renderable });
 		}
+
 	}
 
+	auto player = getEntity("player");
+	m_activeCamera.setCamera(std::dynamic_pointer_cast<pn::CameraComponent>(player->getComponent(pn::ComponentType::CAMERA)));
+	auto playerBody = std::dynamic_pointer_cast<pn::TransformComponent>(player->getComponent(pn::ComponentType::TRANSFORM));
 	auto handler = pn::InputManager::g_inputManager.getInputHandler();
-	handler->addListener(std::make_shared<pn::FirstPersonListener>(&m_camera));
+
+	auto dragon2 = getEntity("monkey");
+	auto& dragon2_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon2->getComponent(pn::ComponentType::TRANSFORM));
+
+	handler->addListener(std::make_shared<pn::FirstPersonListener>(&m_activeCamera, playerBody));
 
 	m_light_pos = vec3(0.0f, 0.0f, 2.0f);
 	m_light2_pos = vec3(0.0f, 3.0f, 0.0f);
@@ -98,15 +119,20 @@ void pn::InitialState::render() {
 	program.setUniform("lightPosition", m_light_pos);
 	
 	// Camera position
-	auto camera_position = m_camera.getPosition();
+	auto camera_position = m_activeCamera.getPosition();
 	program.setUniform("cameraPosition", camera_position);
 
 	// Get view transform from camera
-	auto view_transform = m_camera.getView();
+//	auto view_transform = m_activeCamera.getView();
+	auto player = getEntity("player");
+	auto playerBody = std::dynamic_pointer_cast<pn::TransformComponent>(player->getComponent(pn::ComponentType::TRANSFORM));
+	auto view_transform = glm::inverse(playerBody->getTransformMatrix());
 	program.setUniform("view", view_transform);
 
 	// Get projection transform from screen settings
-	auto proj_transform = glm::perspective(glm::radians(50.0f), 800.0f / 600.f, 0.1f, 100.0f);
+	auto proj_transform = glm::perspective(glm::radians(50.0f), 
+		(float) settings.getWindowWidth() / (float )settings.getWindowHeight(), 
+		0.1f, 1000.0f);
 	program.setUniform("proj", proj_transform);
 
 	auto world_transform_index = glGetUniformLocation(program.getGLProgramObject(), "world");
@@ -114,7 +140,6 @@ void pn::InitialState::render() {
 	for (auto entity : m_entities) {
 		bool hasKey = (entity->getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
 		if (!hasKey) continue;
-
 
 		auto& transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(entity->getComponent(pn::ComponentType::TRANSFORM));
 		assert(transformComponent != nullptr);
@@ -132,7 +157,7 @@ void pn::InitialState::render() {
 		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(transformComponent->getTransformMatrix()));
 		glDrawArraysInstanced(GL_TRIANGLES, 0, resources.getMesh(entityRenderable.mesh).getVertices().size(), 1);
 	}
-
+	
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glBindVertexArray(0);

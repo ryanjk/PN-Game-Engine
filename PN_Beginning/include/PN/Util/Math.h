@@ -6,11 +6,17 @@
 #define GLM_SWIZZLE
 
 #include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 using vec3 = glm::vec3;
 using vec4 = glm::vec4;
 using mat4 = glm::mat4;
+
+void print_vec3(vec3 v);
+void print_mat4(mat4 m);
+
+glm::fquat make_quat(const vec3& axis, float angle);
 
 #endif

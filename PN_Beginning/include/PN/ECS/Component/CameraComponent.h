@@ -14,15 +14,27 @@ namespace pn {
 
 		CameraComponent();
 
-		vec3 getRotation() const;
-		void setRotation(vec3 rotation);
+		vec3 getAt() const;
+		void setAt(vec3 at);
 
-		vec3 getTranslation() const;
-		void setTranslation(vec3 translation);
+		vec3 getOrigin() const;
+		void setOrigin(vec3 origin);
+
+		double getPitch() const;
+		void setPitch(double pitch);
+
+		vec3 getUp() const;
+		void setUp(vec3 up);
+
+		double getYaw() const;
+		void setYaw(double yaw);
 
 	private:
-		vec3 m_rotation = { 0.0f, 0.0f, 0.0f };
-		vec3 m_translation = { 0.0f, 0.0f, 0.0f };
+		vec3 m_at = { 0.0f, 0.0f, -1.0f };
+		vec3 m_origin = { 0.0f, 0.0f, 0.0f };
+		double m_pitch = 0;
+		vec3 m_up = { 0.0f, 1.0f, 0.0f };
+		double m_yaw = 0;
 	};
 }
 

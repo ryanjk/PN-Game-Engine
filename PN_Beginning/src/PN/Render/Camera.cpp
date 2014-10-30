@@ -4,44 +4,52 @@
 
 pn::Camera::Camera() {}
 
-mat4 pn::Camera::getView() {
-	double cosP = glm::cos(m_pitch);
-	double sinP = glm::sin(m_pitch);
-	double cosY = glm::cos(m_yaw);
-	double sinY = glm::sin(m_yaw);
+void pn::Camera::setCamera(CameraComponentPointer cameraComponent) {
+	m_currentCamera = cameraComponent;
+}
 
-	m_at = vec3(cosP * sinY, -sinP, -cosY * cosP) + m_origin;
-	mat4 m = glm::lookAt(m_origin, m_at, m_up);
+mat4 pn::Camera::getView() {
+	double pitch = m_currentCamera->getPitch();
+	double yaw = m_currentCamera->getYaw();
+	
+	double cosP = glm::cos(pitch);
+	double sinP = glm::sin(pitch);
+	double cosY = glm::cos(yaw);
+	double sinY = glm::sin(yaw);
+
+	m_currentCamera->setAt(vec3(-cosP * sinY, sinP, -cosY * cosP) + m_currentCamera->getOrigin());
+
+	mat4 m = glm::lookAt(
+		m_currentCamera->getOrigin(), 
+		m_currentCamera->getAt(), 
+		m_currentCamera->getUp()
+		);
 	return m;
+
+	
 }
 
 vec3 pn::Camera::getPosition() {
-	return m_origin;
+	return m_currentCamera->getOrigin();
 }
 
 void pn::Camera::translate(vec3 amount) {
-	double cosP = glm::cos(m_pitch);
-	double sinP = glm::sin(m_pitch);
-	double cosY = glm::cos(m_yaw);
-	double sinY = glm::sin(m_yaw);
+	double pitch = m_currentCamera->getPitch();
+	double yaw = m_currentCamera->getYaw();
 
-	// Before translating, rotate the direction to translate so it is parallel to the camera's rotation
-	// Create the rotation matrices for pitch and yaw
-	auto rotateYaw = glm::mat3(vec3(cosY, 0, -sinY), vec3(0, 1, 0), vec3(sinY, 0, cosY));
-	auto rotatePitch = glm::mat3(vec3(1, 0, 0), vec3(0, cosP, sinP), vec3(0, -sinP, cosP));
+	auto p = make_quat({1.0f, 0.0f, 0.0f}, (float) pitch);
+	auto y = make_quat({ 0.0f, 1.0f, 0.0f }, (float) yaw);
 
-	// Apply the rotation and add this vector to the current position
-	amount = vec3(amount * rotatePitch * rotateYaw);
+	amount = p * y * amount;
 
-	m_origin += amount;
+	m_currentCamera->setOrigin(m_currentCamera->getOrigin() + amount);
 }
 
 void pn::Camera::applyPitch(double radians) {
-	m_pitch += radians;
+	m_currentCamera->setPitch(m_currentCamera->getPitch() + radians);
 	
 }
 
 void pn::Camera::applyYaw(double radians) {
-	m_yaw += radians;
-	
+	m_currentCamera->setYaw(m_currentCamera->getYaw() + radians);
 }

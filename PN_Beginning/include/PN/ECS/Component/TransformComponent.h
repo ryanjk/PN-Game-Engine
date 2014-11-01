@@ -5,6 +5,12 @@
 
 #include "PN/Util/Math.h"
 
+/*
+Transforms:
+	Translate{Space}
+	Rotate[Axis]{Space}
+*/
+
 namespace pn {
 	class TransformComponent : public pn::IComponent {
 	public:
@@ -14,23 +20,30 @@ namespace pn {
 		TransformComponent();
 
 		mat4 getTransformMatrix() const;
+		mat4 getWorldTransformMatrix() const;
+
 		vec3 getTranslation() const;
 		vec3 getScale() const;
 		vec3 getRotation() const;
 
-		void translateWorld(vec3 by);
-		void translateLocal(vec3 by);
+		void translateWorld(const vec3& by);
+		void translateLocal(const vec3& by);
 
-		void scale(vec3 by);
+		void scale(const vec3& by);
 
-		void rotate(vec3 eulerAngles);
-		void rotatePitch(float pitch);
-		void rotateYaw(float yaw);
-		void rotateRoll(float roll);
+		void rotateLocal(const vec3& eulerAngles);
+		void rotatePitchLocal(float pitch);
+		void rotateYawLocal(float yaw);
+		void rotateRollLocal(float roll);
 
-		void setTranslation(vec3 translation);
-		void setScale(vec3 scale);
-		void setRotation(vec3 rotation);
+		void rotateParent(const vec3& eulerAngles, const vec3& point = {0.0f, 0.0f, 0.0f});
+		void rotatePitchParent(float pitch, const vec3& point = { 0.0f, 0.0f, 0.0f });
+		void rotateYawParent(float yaw, const vec3& point = { 0.0f, 0.0f, 0.0f });
+		void rotateRollParent(float roll, const vec3& point = { 0.0f, 0.0f, 0.0f });
+
+		void setTranslation(const vec3& translation);
+		void setScale(const vec3& scale);
+		void setRotation(const vec3& rotation);
 
 	private:
 		void updateTransformMatrix();
@@ -45,10 +58,6 @@ namespace pn {
 		vec3 m_translation = { 0.0f, 0.0f, 0.0f };
 		vec3 m_scale = { 1.0f, 1.0f, 1.0f };
 		vec3 m_rotation = { 0.0f, 0.0f, 0.0f };  // pitch, yaw, roll
-
-		glm::fquat m_pitch;
-		glm::fquat m_yaw;
-		glm::fquat m_roll;
 
 	};
 }

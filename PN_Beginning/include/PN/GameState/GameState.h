@@ -25,7 +25,12 @@ namespace pn {
 		void shutdown();   // shutdown state
 
 		Entities& getEntities();
+
 		EntityPointer getEntity(const pn::PString& entity_name);
+		EntityPointer getEntity(EntityID entity_id);
+
+		mat4 getEntityWorldTransform(const pn::PString& entity_name);
+		mat4 getEntityWorldTransform(EntityID entity_id);
 
 	protected:
 		virtual void startUpAssist();
@@ -41,6 +46,8 @@ namespace pn {
 		void releaseResources();
 
 		void loadEntities();
+		void loadEntitiesRec(const Json::Value& entity_tree_root, EntityID parent, Entities& entity_group);
+
 		void releaseEntities();
 	};
 }

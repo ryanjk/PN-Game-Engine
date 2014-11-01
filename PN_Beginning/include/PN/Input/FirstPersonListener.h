@@ -5,21 +5,18 @@
 
 #include "PN/Input/InputEventListener.h"
 
-#include "PN/Render/Camera.h"
-
 #include "PN/Window/WindowManager.h"
 
 #include "PN/Settings/SettingsManager.h"
 
 #include <memory>
 
-using PlayerBody = std::shared_ptr < pn::TransformComponent > ;
-using PlayerView = std::shared_ptr < pn::CameraComponent > ;
+using ControlledBody = std::shared_ptr < pn::TransformComponent > ;
 
 namespace pn {
 	class FirstPersonListener : public pn::InputEventListener {
 	public:
-		FirstPersonListener(pn::Camera* camera, PlayerBody playerBody);
+		FirstPersonListener(ControlledBody controlledBody);
 
 		void onMouseMove(double from_x, double from_y, double to_x, double to_y) override;
 		
@@ -29,8 +26,8 @@ namespace pn {
 		void update(double dt) override;
 
 	private:
-		PlayerBody m_playerBody;
-		pn::Camera* m_camera;
+		ControlledBody m_controlledBody;
+
 		double m_scrollSpeed;
 		double m_moveSpeed;
 	};

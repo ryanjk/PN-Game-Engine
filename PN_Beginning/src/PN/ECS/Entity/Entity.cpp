@@ -1,9 +1,10 @@
 #include "PN/ECS/Entity/Entity.h"
+#include "PN/ECS/Component/TransformComponent.h"
 
 #include <iostream>
 #include <bitset>
 
-std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData, pn::PString name) {
+std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData, pn::PString name, EntityID parent) {
 	EntityID entity_id = name.getHash();
 
 	auto new_entity = std::make_shared<pn::Entity>(name);
@@ -13,6 +14,8 @@ std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData
 		auto new_component = pn::IComponent::make(entityData["components"][component], component);
 		new_entity->addComponent(new_component);
 	}
+
+	new_entity->m_parent = parent;
 
 	return new_entity;
 }
@@ -50,4 +53,8 @@ void pn::Entity::removeComponent(Component component) {
 		m_components.erase(component_pos);
 	}
 	m_key &= ~component->getType();
+}
+
+EntityID pn::Entity::getParent() const {
+	return m_parent;
 }

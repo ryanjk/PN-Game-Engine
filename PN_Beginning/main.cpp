@@ -109,14 +109,17 @@ int main()
 		past_time = glfwGetTime();
 
 		FPS_counter += frame_time;
-		if (frames_passed >= 120) {
+		if (frames_passed >= 1000) {
 			std::cout << "FPS: " <<  frames_passed / FPS_counter << std::endl;
 			frames_passed = 0;
 			FPS_counter = 0;
 		}
 
 		accumulator += frame_time;
-
+		
+		if (accumulator > dt * 10) {
+			accumulator = dt * 10;
+		}
 		while (accumulator >= dt) {
 
 			// Process input

@@ -132,9 +132,6 @@
     <ClCompile Include="src\PN\GameState\GameState.cpp">
       <Filter>Source Files\GameState</Filter>
     </ClCompile>
-    <ClCompile Include="src\PN\Render\Camera.cpp">
-      <Filter>Source Files\Render</Filter>
-    </ClCompile>
     <ClCompile Include="src\PN\Input\FirstPersonListener.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -142,9 +139,6 @@
       <Filter>Source Files\ECS\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\PN\ECS\Component\TransformComponent.cpp">
-      <Filter>Source Files\ECS\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PN\ECS\Component\CameraComponent.cpp">
       <Filter>Source Files\ECS\Component</Filter>
     </ClCompile>
     <ClCompile Include="src\PN\ECS\Component\RenderComponent.cpp">
@@ -212,9 +206,6 @@
     <ClInclude Include="include\PN\Render\Renderable.h">
       <Filter>Header Files\PN\Render</Filter>
     </ClInclude>
-    <ClInclude Include="include\PN\Render\Camera.h">
-      <Filter>Header Files\PN\Render</Filter>
-    </ClInclude>
     <ClInclude Include="include\PN\Util\Math.h">
       <Filter>Header Files\PN\Util</Filter>
     </ClInclude>
@@ -231,9 +222,6 @@
       <Filter>Header Files\PN\ECS\Component</Filter>
     </ClInclude>
     <ClInclude Include="include\PN\ECS\Component\TransformComponent.h">
-      <Filter>Header Files\PN\ECS\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PN\ECS\Component\CameraComponent.h">
       <Filter>Header Files\PN\ECS\Component</Filter>
     </ClInclude>
     <ClInclude Include="include\PN\ECS\Component\RenderComponent.h">

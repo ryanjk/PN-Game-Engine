@@ -13,6 +13,10 @@ pn::GameStateManager::GameStateManager() {
 
 }
 
+GameStatePointer pn::GameStateManager::getCurrentState() {
+	return m_currentState;
+}
+
 void pn::GameStateManager::startUp() {
 	m_loadingState = std::make_shared<pn::LoadingState>("loading.state");
 	auto t1 = glfwGetTime();

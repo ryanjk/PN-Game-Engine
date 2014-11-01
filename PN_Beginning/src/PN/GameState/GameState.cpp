@@ -1,5 +1,7 @@
 #include "PN/GameState/GameState.h"
 
+#include "PN/ECS/Component/TransformComponent.h"
+
 #include <iostream>
 #include <cassert>
 #include <algorithm>
@@ -76,10 +78,12 @@ void pn::GameState::loadEntities() {
 	auto num_entities = entityTree.size();
 	m_entities.reserve(num_entities);
 
-	for (auto& entity : entityTree.getMemberNames()) {
+/*	for (auto& entity : entityTree.getMemberNames()) {
 		auto new_entity = pn::Entity::makeEntity(entityTree[entity], entity);
 		m_entities.push_back(new_entity);
-	}
+	}*/
+
+	loadEntitiesRec(entityTree, pn::PString("root").getHash(), m_entities);
 
 	#ifdef _DEBUG
 	for (size_t i = 0; i < m_entities.size(); i++) {
@@ -88,6 +92,21 @@ void pn::GameState::loadEntities() {
 		}
 	}
 	#endif
+}
+
+void pn::GameState::loadEntitiesRec(const Json::Value& entity_tree_root, EntityID parent, Entities& entity_group) {
+	if (entity_tree_root.isNull()) {
+		return;
+	}
+
+	for (auto& entity : entity_tree_root.getMemberNames()) {
+		auto new_entity = pn::Entity::makeEntity(entity_tree_root[entity], entity, parent);
+
+		std::cout << "Added entity " << entity << " to list." << std::endl;
+		m_entities.push_back(new_entity);
+
+		loadEntitiesRec(entity_tree_root[entity]["children"], pn::PString(entity).getHash(), m_entities);
+	}
 }
 
 void pn::GameState::releaseEntities() {
@@ -99,10 +118,40 @@ Entities& pn::GameState::getEntities() {
 }
 
 EntityPointer pn::GameState::getEntity(const pn::PString& entity_name) {
-	auto e_itr = std::find_if(m_entities.begin(), m_entities.end(), [&](EntityPointer e) -> bool {return e->getID() == entity_name.getHash(); });
+	return getEntity(entity_name.getHash());
+}
+
+EntityPointer pn::GameState::getEntity(EntityID entity_id) {
+	auto e_itr = std::find_if(m_entities.begin(), m_entities.end(), [=](EntityPointer e) -> bool {return e->getID() == entity_id; });
 	assert((e_itr != m_entities.end()) && "No entity found\n");
 	return (*e_itr);
 }
+
+mat4 pn::GameState::getEntityWorldTransform(EntityID entity_id) {
+	static EntityID root = pn::PString("root").getHash();
+
+	auto entity = getEntity(entity_id);
+
+	auto transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(entity->getComponent(pn::ComponentType::TRANSFORM));
+	mat4 world_matrix = transformComponent->getTransformMatrix();
+
+	auto parentID = entity->getParent();
+	while (parentID != root) {
+		auto parent = getEntity(parentID);
+		auto parentTransform = std::dynamic_pointer_cast<pn::TransformComponent>(parent->getComponent(pn::ComponentType::TRANSFORM));
+		mat4 parent_world_matrix = parentTransform->getTransformMatrix();
+		world_matrix = parent_world_matrix * world_matrix;
+
+		parentID = parent->getParent();
+	}
+
+	return world_matrix;
+}
+
+mat4 pn::GameState::getEntityWorldTransform(const pn::PString& entity_name) {
+	return getEntityWorldTransform(entity_name.getHash());
+}
+
 
 void pn::GameState::render() {}
 

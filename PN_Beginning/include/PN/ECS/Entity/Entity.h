@@ -6,6 +6,7 @@
 #include "PN/ECS/Component/IComponent.h"
 
 #include "PN/Util/PString.h"
+#include "PN/Util/Math.h"
 
 #include <memory>
 
@@ -19,14 +20,17 @@ using Components = std::map < pn::ComponentType, Component >;
 namespace pn {
 	class Entity {
 	public:
-		static std::shared_ptr<Entity> makeEntity(const EntityData& entityData, pn::PString name);
+		static std::shared_ptr<Entity> makeEntity(const EntityData& entityData, pn::PString name, EntityID parent);
 
 		Entity(pn::PString name);
 
 		EntityID getID() const;
 		EntityKey getKey() const;
 
+		EntityID getParent() const;
+
 		Component getComponent(ComponentType componentType) const;
+
 		void addComponent(Component component);
 		void removeComponent(Component component);
 
@@ -34,6 +38,8 @@ namespace pn {
 
 	private:
 		EntityID m_ID;
+		EntityID m_parent;
+
 		pn::PString m_name;
 		EntityKey m_key;
 

@@ -17,13 +17,15 @@ out vec4 colour;
 
 void main() {
 
-	vec4 ambientLightStrength = vec4(1.0, 1.0, 1.0, 1.0);
-	vec4 diffuseLightStrength = vec4(1.0, 1.0, 1.0, 1.0);
-	vec4 specularLightStrength = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 ambientLightColour = vec4(1.0, 1.0, 1.0, 1.0);
+	float ambientLightIntensity = 1;
 	
-	vec4 ambientColour = ambientLightStrength * ambient;
-	vec4 diffuseColour = diffuseLightStrength * diffuse;
-	vec4 specularColour = specularLightStrength * specular;
+	vec4 lightColour = vec4(1.0, 1.0, 1.0, 1.0);
+	float lightIntensity = 10000;
+	
+	vec4 ambientColour = ambientLightColour * ambient;
+	vec4 diffuseColour = lightColour * diffuse;
+	vec4 specularColour = lightColour * specular;
 	
 	vec3 R = reflect(-1 * normalize(lightPosition - fs_in.position), normalize(fs_in.normal));
 	
@@ -39,5 +41,5 @@ void main() {
 		finalSpecular = vec4(0.0, 0.0, 0.0, 0.0);
 	}
 	
-	colour = finalAmbient + finalDiffuse + finalSpecular;
+	colour = finalAmbient * ambientLightIntensity + (finalDiffuse + finalSpecular) * lightIntensity;
 }

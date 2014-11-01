@@ -16,12 +16,12 @@
 				"transform": {
 					"translation": [0.0, 0.0, 0.0],
 					"scale": [1.0, 1.0, 1.0],
-					"rotation": [0.0, 0.0, 0.0]
+					"rotation": [0.0, 3.14, 0.0]
 				},
 				"render": {
-					"mesh":"monkey.obj",
+					"mesh":"monkey_hd.obj",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
-					"diffuse": [0.6, 0.0, 0.0, 1.0],
+					"diffuse": [1.0, 0.0, 0.0, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
 					"gloss":100
 				}
@@ -31,7 +31,7 @@
 			"components": {
 				"transform": {
 					"translation": [-2.0, 3.0, 0.0],
-					"scale": [2.0, 1.0, 2.0],
+					"scale": [2.0, 2.0, 2.0],
 					"rotation": [0.7, 0.2, 0.0]
 				},
 				"render": {
@@ -87,7 +87,7 @@
 					"ambient": [0.1, 0.1, 0.0, 1.0],
 					"diffuse": [1.0, 1.0, 0.0, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":0
+					"gloss":1
 				}
 			}
 		},
@@ -98,8 +98,53 @@
 					"scale": [1.0, 1.0, 1.0],
 					"rotation": [0.0, 0.0, 0.0]
 				},
-				"camera" : {
-					"origin" : [0.0, 0.0, 5.0]
+				"render": {
+					"mesh":"monkey_hd.obj",
+					"ambient": [0.1, 0.0, 0.1, 1.0],
+					"diffuse": [1.0, 0.0, 1.0, 1.0],
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":100
+				}
+			},
+			"children": {
+				"camera": {
+					"components": {
+						"transform": {
+							"translation": [0.0, 0.0, 5.0]
+						}
+					}
+				},
+				"child_monkey" : {
+					"components": {
+						"transform": {
+							"translation": [2.0, 0.0, 0.0],
+							"rotation":[0.0, 3.14, 0.0]
+						},
+					"render": {
+						"mesh":"monkey_hd.obj",
+						"ambient": [0.0, 0.1, 0.1, 1.0],
+						"diffuse": [0.0, 1.0, 1.0, 1.0],
+						"specular": [0.4, 0.4, 0.4, 1.0],
+						"gloss":1
+						}
+					},
+					"children" : {
+						"child_child_monkey" : {
+							"components": {
+								"transform": {
+									"translation": [0.0, 1.0, 0.0],
+									"scale":[0.5, 0.5, 0.5]
+								},	
+								"render": {
+									"mesh":"monkey.obj",
+									"ambient": [0.1, 0.3, 0.7, 1.0],
+									"diffuse": [0.1, 0.3, 0.7, 1.0],
+									"specular": [0.4, 0.4, 0.4, 1.0],
+									"gloss":10
+								}
+							}
+						}
+					}
 				}
 			}
 		}

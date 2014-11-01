@@ -13,6 +13,8 @@ namespace pn {
 	public:
 		static GameStateManager g_gameStateManager;
 
+		GameStatePointer getCurrentState();
+
 		void startUp();
 		void shutdown();
 

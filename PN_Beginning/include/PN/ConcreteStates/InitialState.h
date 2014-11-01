@@ -5,7 +5,6 @@
 
 #include "PN/GameState/GameState.h"
 
-#include "PN/Render/Camera.h"
 #include "PN/Render/Image.h"
 #include "PN/Render/Mesh.h"
 #include "PN/Render/Renderable.h"
@@ -28,7 +27,7 @@ namespace pn {
 	private:
 		std::map<EntityID, pn::Renderable> m_renderables;
 
-		pn::Camera m_activeCamera;
+		EntityPointer m_activeCamera;
 
 		vec3 m_light_pos;
 		vec3 m_light2_pos;

@@ -28,7 +28,7 @@ void pn::GameState::shutdown() {
 }
 
 /*
-Parse the *.state file and load resources via ResourceManager singleton 
+Parse the *.state file and load resources (typically ones not initially used by any state entities) via ResourceManager singleton 
 */
 void pn::GameState::loadResources() {
 	Json::Reader reader;
@@ -68,6 +68,7 @@ void pn::GameState::releaseResources() {
 	for (auto& resource : resourceTree) {
 		for (auto& resourceFilename : resource) {
 			pn::ResourceManager::g_resourceManager.remove(resourceFilename.asString());
+			std::cout << "Releasing " << resourceFilename.asString() << std::endl;
 		}
 	}
 }
@@ -77,11 +78,6 @@ void pn::GameState::loadEntities() {
 
 	auto num_entities = entityTree.size();
 	m_entities.reserve(num_entities);
-
-/*	for (auto& entity : entityTree.getMemberNames()) {
-		auto new_entity = pn::Entity::makeEntity(entityTree[entity], entity);
-		m_entities.push_back(new_entity);
-	}*/
 
 	loadEntitiesRec(entityTree, pn::PString("root").getHash(), m_entities);
 
@@ -102,7 +98,7 @@ void pn::GameState::loadEntitiesRec(const Json::Value& entity_tree_root, EntityI
 	for (auto& entity : entity_tree_root.getMemberNames()) {
 		auto new_entity = pn::Entity::makeEntity(entity_tree_root[entity], entity, parent);
 
-		std::cout << "Added entity " << entity << " to list." << std::endl;
+//		std::cout << "Added entity " << entity << " to list." << std::endl;
 		m_entities.push_back(new_entity);
 
 		loadEntitiesRec(entity_tree_root[entity]["children"], pn::PString(entity).getHash(), m_entities);

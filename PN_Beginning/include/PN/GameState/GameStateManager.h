@@ -24,7 +24,7 @@ namespace pn {
 		void renderState();
 	private:
 		GameStateManager();
-		void beginLoad();
+		void beginLoad();  // Called so the game begins switching between states
 
 		GameStatePointer m_currentState;
 		GameStatePointer m_loadingState;

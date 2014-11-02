@@ -32,10 +32,10 @@
 				"transform": {
 					"translation": [-2.0, 3.0, 0.0],
 					"scale": [2.0, 2.0, 2.0],
-					"rotation": [0.7, 0.2, 0.0]
+					"rotation": [0.7, 3.14, 0.0]
 				},
 				"render": {
-					"mesh":"monkey.obj",
+					"mesh":"monkey_hd.obj",
 					"ambient": [0.0, 0.1, 0.0, 1.0],
 					"diffuse": [0.0, 0.7, 0.0, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -55,7 +55,7 @@
 					"ambient": [0.1, 0.0, 0.1, 1.0],
 					"diffuse": [0.6, 0.0, 0.6, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":10
+					"gloss":1000
 				}
 			}
 		},
@@ -75,10 +75,26 @@
 				}
 			}
 		},
+		"dragon4": {
+			"components": {
+				"transform": {
+					"translation": [-4.0, 0.0, 3.0],
+					"scale": [2.0, 2.0, 2.0],
+					"rotation": [0.0, -3.14, 0.0]
+				},
+				"render": {
+					"mesh":"dragon_lr.obj",
+					"ambient": [0.03, 0.06, 0.1, 1.0],
+					"diffuse": [0.2, 0.4, 0.6, 1.0],
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":1000
+				}
+			}
+		},
 		"dragon3": {
 			"components": {
 				"transform": {
-					"translation": [0.0, 0.0, 50.0],
+					"translation": [0.0, 0.0, 30.0],
 					"scale": [20.0, 20.0, 20.0],
 					"rotation": [0.0, 3.14, 0.0]
 				},
@@ -87,7 +103,7 @@
 					"ambient": [0.1, 0.1, 0.0, 1.0],
 					"diffuse": [1.0, 1.0, 0.0, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":1
+					"gloss":1000
 				}
 			}
 		},
@@ -97,24 +113,17 @@
 					"translation": [0.0, 0.0, 5.0],
 					"scale": [1.0, 1.0, 1.0],
 					"rotation": [0.0, 0.0, 0.0]
-				},
-				"render": {
-					"mesh":"monkey_hd.obj",
-					"ambient": [0.1, 0.0, 0.1, 1.0],
-					"diffuse": [1.0, 0.0, 1.0, 1.0],
-					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":100
 				}
 			},
 			"children": {
 				"camera": {
 					"components": {
 						"transform": {
-							"translation": [0.0, 0.0, 5.0]
+							"translation": [0.0, 0.0, 0.0]
 						}
 					}
-				},
-				"child_monkey" : {
+				}//,
+				/*"child_monkey" : {
 					"components": {
 						"transform": {
 							"translation": [2.0, 0.0, 0.0],
@@ -145,7 +154,7 @@
 							}
 						}
 					}
-				}
+				} */
 			}
 		}
 	}

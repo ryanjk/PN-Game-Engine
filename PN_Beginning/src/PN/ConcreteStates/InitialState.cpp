@@ -57,7 +57,6 @@ void pn::InitialState::startUpAssist() {
 		if (!hasKey) continue;
 
 		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity->getComponent(pn::ComponentType::RENDER));
-	//	auto& renderComponent = entity->getComponent<pn::RenderComponent>(pn::ComponentType::RENDER);
 		auto shaderProgramName = renderComponent->getShaderProgram();
 		
 		if (shaderProgramName.getHash() == defaultShaderProgram) {
@@ -104,8 +103,8 @@ void pn::InitialState::startUpAssist() {
 	auto handler = pn::InputManager::g_inputManager.getInputHandler();
 
 	handler->addListener(std::make_shared<pn::FirstPersonListener>(playerBody));
-
-	m_light_pos = vec3(0.0f, 100.0f, 0.0f);
+	
+	m_light_pos = vec3(0.0f, 0.0f, 12.0f);
 	m_light2_pos = vec3(0.0f, 3.0f, 0.0f);
 }
 
@@ -121,10 +120,6 @@ void pn::InitialState::render() {
 
 	// Light position
 	program.setUniform("lightPosition", m_light_pos);
-	
-//	auto cameraParent = getEntity(m_activeCamera->getOwner());
-//	auto playerBody = std::dynamic_pointer_cast<pn::TransformComponent>(cameraParent->getComponent(pn::ComponentType::TRANSFORM));
-//	auto playerBody = cameraParent->getComponent<pn::TransformComponent>(pn::ComponentType::TRANSFORM);
 	
 	// Camera position
 	mat4 camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());

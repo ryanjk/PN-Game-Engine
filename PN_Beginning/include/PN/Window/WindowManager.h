@@ -2,6 +2,16 @@
 #define WINDOW_INIT_H
 
 #define GLEW_STATIC
+
+/*
+#define GL_VERSION_4_0
+#define GL_VERSION_4_1
+#define GL_VERSION_4_2
+#define GL_VERSION_4_3
+#define GL_VERSION_4_4
+#define GL_VERSION_4_5
+*/
+
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 

@@ -79,6 +79,9 @@
     <Filter Include="Source Files\ECS\Component">
       <UniqueIdentifier>{517f99e3-5242-42a3-b53c-e400e5b7c0b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\glew">
+      <UniqueIdentifier>{aad350f9-ed06-48c2-96f4-1ae874f39a03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -232,6 +235,15 @@
     </ClInclude>
     <ClInclude Include="include\PN\Physics\Transformer.h">
       <Filter>Header Files\PN\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\glew.h">
+      <Filter>Header Files\glew</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\wglew.h">
+      <Filter>Header Files\glew</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\glxew.h">
+      <Filter>Header Files\glew</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

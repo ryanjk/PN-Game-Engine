@@ -113,6 +113,9 @@
     <ClCompile Include="src\PN\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\GL\glew.h" />
+    <ClInclude Include="include\GL\glxew.h" />
+    <ClInclude Include="include\GL\wglew.h" />
     <ClInclude Include="include\PN\ECS\Component\IComponent.h" />
     <ClInclude Include="include\PN\ECS\Component\RenderComponent.h" />
     <ClInclude Include="include\PN\ECS\Component\TransformComponent.h" />

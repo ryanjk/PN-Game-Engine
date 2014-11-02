@@ -62,6 +62,9 @@ void pn::WindowManager::startUp(bool fullscreen, unsigned int width, unsigned in
 
 	glfwSetCursorPos(m_window, m_width / 2, m_height / 2);
 
+	std::cout << glGetString(GL_VERSION) << std::endl;
+	std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+
 }
 
 void pn::WindowManager::shutdown() {

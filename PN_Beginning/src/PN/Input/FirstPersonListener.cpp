@@ -47,8 +47,7 @@ void pn::FirstPersonListener::onKeyPress(int key) {
 	}
 
 	if (key == GLFW_KEY_Y) {
-		m_controlledBody->rotateYawLocal((float)m_scrollSpeed * 20);
-//		std::cout << "yaw: " << to_x - center_x << std::endl;
+		print_vec3(m_controlledBody->getWorldTransformMatrix()[3].xyz);
 	}
 }
 

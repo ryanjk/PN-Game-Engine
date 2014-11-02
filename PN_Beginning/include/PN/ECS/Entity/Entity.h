@@ -23,6 +23,7 @@ namespace pn {
 		static std::shared_ptr<Entity> makeEntity(const EntityData& entityData, pn::PString name, EntityID parent);
 
 		Entity(pn::PString name);
+		~Entity();
 
 		EntityID getID() const;
 		EntityKey getKey() const;

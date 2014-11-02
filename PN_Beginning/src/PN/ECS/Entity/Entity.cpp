@@ -23,6 +23,10 @@ std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData
 pn::Entity::Entity(pn::PString name) : m_ID(name.getHash()), m_name(name), m_key(0), alive(true)
 {}
 
+pn::Entity::~Entity() {
+	std::cout << "Entity " << m_name.getText() << " destroyed" << std::endl;
+}
+
 EntityID pn::Entity::getID() const {
 	return m_ID;
 }

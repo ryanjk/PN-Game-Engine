@@ -1,0 +1,29 @@
+{
+	"name":"Light",
+	"data":{
+		"LightType":{
+			"type":"int",
+			"default":"POINT_LIGHT"
+		},
+		"Colour":{
+			"type":"vec3",
+			"default":["0.0f", "0.0f", "1.0f"]
+		},
+		"Intensity":{
+			"type":"float",
+			"default":"1.0f"
+		},
+		"InnerRadians":{
+			"type":"float",
+			"default":"0.7f"
+		},
+		"OuterRadians":{
+			"type":"float",
+			"default":"1.57f"
+		},
+		"MaxRadius":{
+			"type":"float",
+			"default":"1.0f"
+		}
+	}
+}

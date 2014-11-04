@@ -1,6 +1,7 @@
 #ifndef PSTRING_H
 #define PSTRING_H
 
+#include <iostream>
 #include <string>
 
 using HashValue = unsigned int;
@@ -30,5 +31,7 @@ namespace pn {
 		HashValue hash(const char* string, unsigned int seed = 0) const;
 	};
 }
+
+std::ostream& operator<<(std::ostream& stream, const pn::PString& pstring);
 
 #endif

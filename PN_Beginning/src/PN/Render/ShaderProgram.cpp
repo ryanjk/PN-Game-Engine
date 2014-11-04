@@ -1,4 +1,5 @@
 #include "PN/Render/ShaderProgram.h"
+#include "PN/Render/Light.h"
 
 #include "PN/Util/Math.h"
 
@@ -24,43 +25,56 @@ void pn::ShaderProgram::addUniform(pn::PString uniform) {
 }
 
 template<>
-void pn::ShaderProgram::setUniform<int>(pn::PString uniform, int value) {
+void pn::ShaderProgram::setUniform<int>(std::string uniform, int value) {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform1i(uniform_location, value);
 }
 
 template<>
-void pn::ShaderProgram::setUniform<float>(pn::PString uniform, float value) {
+void pn::ShaderProgram::setUniform<float>(std::string uniform, float value) {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform1f(uniform_location, value);
 }
 
 template<>
-void pn::ShaderProgram::setUniform<float*>(pn::PString uniform, float* value) {
+void pn::ShaderProgram::setUniform<float*>(std::string uniform, float* value) {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform1fv(uniform_location, 1, value);
 }
 
 template<>
-void pn::ShaderProgram::setUniform<vec3>(pn::PString uniform, vec3 value) {
+void pn::ShaderProgram::setUniform<vec3>(std::string uniform, vec3 value) {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform3fv(uniform_location, 1, glm::value_ptr(value));
 }
 
 template<>
-void pn::ShaderProgram::setUniform<vec4>(pn::PString uniform, vec4 value) {
+void pn::ShaderProgram::setUniform<vec4>(std::string uniform, vec4 value) {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform4fv(uniform_location, 1, glm::value_ptr(value));
 }
 
 template<>
-void pn::ShaderProgram::setUniform<mat4>(pn::PString uniform, mat4 value) {
+void pn::ShaderProgram::setUniform<mat4>(std::string uniform, mat4 value) {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniformMatrix4fv(uniform_location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
-GLint pn::ShaderProgram::getUniformLocation(pn::PString uniform) {
-	GLint uniform_location = glGetUniformLocation(m_program, uniform.getText().c_str());
+template<>
+void pn::ShaderProgram::setUniform<pn::Light>(std::string uniform, pn::Light value) {
+	GLint uniform_location = getUniformLocation(uniform);
+	setUniform(uniform + ".position", value.position);
+	setUniform(uniform + ".direction", value.direction);
+	setUniform(uniform + ".type", value.type);
+	setUniform(uniform + ".colour", value.colour);
+	setUniform(uniform + ".intensity", value.intensity);
+	setUniform(uniform + ".innerRadians", value.innerRadians);
+	setUniform(uniform + ".outerRadians", value.outerRadians);
+	setUniform(uniform + ".maxRadius", value.maxRadius);
+}
+
+GLint pn::ShaderProgram::getUniformLocation(std::string uniform) {
+	GLint uniform_location = glGetUniformLocation(m_program, uniform.c_str());
 	if (uniform_location == -1) {
 	//	std::cout << "ERROR: Couldn't set uniform " << uniform.getText() << ": Not found in program" << std::endl;
 	}

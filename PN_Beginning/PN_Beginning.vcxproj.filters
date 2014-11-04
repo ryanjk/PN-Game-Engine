@@ -156,6 +156,9 @@
     <ClCompile Include="src\PN\Util\Math.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
+    <ClCompile Include="src\PN\ECS\Component\LightComponent.cpp">
+      <Filter>Source Files\ECS\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\PN\GameState\GameState.h">
@@ -244,6 +247,12 @@
     </ClInclude>
     <ClInclude Include="include\GL\glxew.h">
       <Filter>Header Files\glew</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ECS\Component\LightComponent.h">
+      <Filter>Header Files\PN\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\Light.h">
+      <Filter>Header Files\PN\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

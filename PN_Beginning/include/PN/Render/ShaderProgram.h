@@ -18,7 +18,7 @@ namespace pn {
 		pn::PString getFragmentShaderFilename() const;
 
 		template<typename T>
-		void setUniform(pn::PString uniform, T value);
+		void setUniform(std::string uniform, T value);
 
 		void addUniform(pn::PString uniform);
 
@@ -30,7 +30,7 @@ namespace pn {
 
 		std::vector<HashValue> m_uniforms;
 
-		GLint getUniformLocation(pn::PString uniform);
+		GLint getUniformLocation(std::string uniform);
 	};
 }
 

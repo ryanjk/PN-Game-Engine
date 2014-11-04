@@ -24,8 +24,6 @@ namespace pn {
 		void startUp();  // set up the state (load resources, set rendering state, etc)
 		void shutdown();   // shutdown state
 
-		Entities& getEntities();
-
 		EntityPointer getEntity(const pn::PString& entity_name);
 		EntityPointer getEntity(EntityID entity_id);
 
@@ -46,7 +44,7 @@ namespace pn {
 		void releaseResources();
 
 		void loadEntities();
-		void loadEntitiesRec(const Json::Value& entity_tree_root, EntityID parent, Entities& entity_group);
+		void loadEntitiesRec(const Json::Value& entity_tree_root, EntityID parent);
 		void releaseEntities();
 
 	};

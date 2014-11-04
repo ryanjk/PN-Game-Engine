@@ -16,21 +16,24 @@ uniform vec3 cameraPosition;
 
 out vec4 colour;
 
-struct Light {
-	vec3 posOrDir;
-	bool isDirectional;
-	vec3 colour;
-	float intensity;
-};
+const int POINT_LIGHT = 0;
+const int DIRECTIONAL_LIGHT = 1;
+const int SPOTLIGHT = 2;
 
-struct SpotLight {
+struct Light {
 	vec3 position;
 	vec3 direction;
+	int type;
 	vec3 colour;
-	float innerAngle;
-	float outerAngle;
 	float intensity;
+	float innerRadians;
+	float outerRadians;
+	float maxRadius;
 };
+
+const int MAX_LIGHTS = 8;
+uniform int num_lights;
+uniform Light lightUni[MAX_LIGHTS];
 
 // used for spotlight to shade when point is between the inner and outer angle boundaries
 float interpolate(float x, float a, float b) {
@@ -46,9 +49,10 @@ vec4 shadePoint(vec3 position, vec3 normal, Light light) {
 	// Unit normal at surface
 	vec3 unit_normal = normalize(normal);
 	
-	if (light.isDirectional) {
+	// if light is a directional light
+	if (light.type == DIRECTIONAL_LIGHT) {
 
-		vec3 lightToSurface = normalize(light.posOrDir);
+		vec3 lightToSurface = normalize(light.direction);
 		
 		// Reflection vector for specular scaling
 		vec3 R = reflect(-1 * lightToSurface, unit_normal);
@@ -64,20 +68,21 @@ vec4 shadePoint(vec3 position, vec3 normal, Light light) {
 		return shadedColour;
 	}
 	
-	else {
+	// if light is a point light
+	else if (light.type == POINT_LIGHT) {
 		
 		// Unit vector that points from the light to the surface
-		vec3 lightToSurface = normalize(light.posOrDir - position);
+		vec3 surfaceToLight = normalize(light.position - position);
 		
 		// Reflection vector for specular scaling
-		vec3 R = reflect(-1 * lightToSurface, unit_normal);
+		vec3 R = reflect(-1 * surfaceToLight, unit_normal);
 		
 		// Reduction from distance from light source
-		float fallOff = (1 / pow(length(light.posOrDir - position), 2));
+		float fallOff = (1 / pow(length(light.position - position), 2));
 		
 		vec4 shadedColour = vec4(0.0, 0.0, 0.0, 1.0);
 		
-		shadedColour += diffuseColour * (max(0, dot(unit_normal, lightToSurface))) * fallOff * light.intensity;
+		shadedColour += diffuseColour * (max(0, dot(unit_normal, surfaceToLight))) * fallOff * light.intensity;
 		
 		if (gloss > 0) {
 			shadedColour += specularColour * pow(max(0, dot(R, normalize(cameraPosition - position))), gloss) * fallOff * light.intensity;
@@ -85,61 +90,89 @@ vec4 shadePoint(vec3 position, vec3 normal, Light light) {
 		
 		return shadedColour;
 	}
+	
+	// if light is a spot light
+	else if (light.type == SPOTLIGHT) {
+		
+		float min = cos(light.outerRadians / 2);
+		
+		vec3 lightToSurface = normalize(position - light.position);
+		vec3 lightDirection = normalize(light.direction);
+		
+		float cosAngle = dot(lightToSurface, lightDirection);
+		
+		// if surface is outside the range of the spotlight's outer angle, do not perform any shading
+		if (cosAngle < min) {
+			return vec4(0.0, 0.0, 0.0, 1.0);
+		}
+
+		float innerBoundary = cos(light.innerRadians / 2);
+		
+		// if surface is within the inner angle, treat it like a point light shade
+		if (cosAngle >= innerBoundary) {
+			// Unit vector that points from the light to the surface
+			vec3 surfaceToLight = normalize(light.position - position);
+			
+			// Reflection vector for specular scaling
+			vec3 R = reflect(-1 * surfaceToLight, unit_normal);
+			
+			// Reduction from distance from light source
+			float fallOff = (1 / pow(length(light.position - position), 2));
+			
+			vec4 shadedColour = vec4(0.0, 0.0, 0.0, 1.0);
+			
+			shadedColour += diffuseColour * (max(0, dot(unit_normal, surfaceToLight))) * fallOff * light.intensity;
+			
+			if (gloss > 0) {
+				shadedColour += specularColour * pow(max(0, dot(R, normalize(cameraPosition - position))), gloss) * fallOff * light.intensity;
+			}
+			
+			return shadedColour;
+		}
+		
+		// treat like a point light but with diminished intensity
+		else {
+			
+			float diminishedIntensity = light.intensity * interpolate(cosAngle, min, innerBoundary);
+		
+			// Unit vector that points from the light to the surface
+			vec3 surfaceToLight = normalize(light.position - position);
+			
+			// Reflection vector for specular scaling
+			vec3 R = reflect(-1 * surfaceToLight, unit_normal);
+			
+			// Reduction from distance from light source
+			float fallOff = (1 / pow(length(light.position - position), 2));
+			
+			vec4 shadedColour = vec4(0.0, 0.0, 0.0, 1.0);
+			
+			shadedColour += diffuseColour * (max(0, dot(unit_normal, surfaceToLight))) * fallOff * diminishedIntensity;
+			
+			if (gloss > 0) {
+				shadedColour += specularColour * pow(max(0, dot(R, normalize(cameraPosition - position))), gloss) * fallOff * diminishedIntensity;
+			}
+			
+			return shadedColour;
+
+		}
+
+	}
 
 }
 
-vec4 shadePoint(vec3 position, vec3 normal, SpotLight spotLight) {
-	float min = cos(spotLight.outerAngle / 2);
-	
-	vec3 lightToSurface = normalize(position - spotLight.position);
-	vec3 lightDirection = normalize(spotLight.direction);
-	
-	float cosAngle = dot(lightToSurface, lightDirection);
-	
-	// if surface is outside the range of the spotlight's outer angle, do not perform any shading
-	if (cosAngle < min) {
-		return vec4(0.0, 0.0, 0.0, 1.0);
-	}
 
-	float innerBoundary = cos(spotLight.innerAngle / 2);
-	
-	// if surface is within the inner angle, treat it like a point light shade
-	if (cosAngle >= innerBoundary) {
-		return shadePoint(position, normal, Light(spotLight.position, false, spotLight.colour, spotLight.intensity));
-	//	return vec4(0.0, 0.0, 0.0, 1.0);
-	}
-	
-	// treat like a point light but with diminished intensity
-	else {
-		return shadePoint(position, normal, Light(spotLight.position, false, spotLight.colour, spotLight.intensity * interpolate(cosAngle, min, innerBoundary) ));
-	}
-
-}
 
 void main() {
 
 	vec4 ambientLightColour = vec4(1.0, 1.0, 1.0, 1.0);
-	
 	vec4 ambientColour = ambientLightColour * ambient;
-	
-	vec4 finalAmbient = ambientColour;
 
 	vec4 finalColour = vec4(0.0, 0.0, 0.0, 1.0);
 	
-	Light light = Light(vec3(0.0, 0.0, 12.0), false, vec3(1.0, 1.0, 1.0), 20.0);
-	Light dirLight = Light(vec3(0.0, -1.0, 0.0), true, vec3(0.5, 0.5, 0.5), 1.0);
-	
-	Light lights[2] = Light[2](light, dirLight);
-	
-	SpotLight spot = SpotLight(vec3(20.0, -13.0, 1.0), vec3(0.0, 0.5, 0.9), vec3(1.0, 1.0, 1.0), radians(30.0), radians(80.0), 500.0);
-	SpotLight spot2 = SpotLight(vec3(-20.0, -13.0, 1.0), vec3(0.0, 0.3, 0.9), vec3(1.0, 1.0, 1.0), radians(30.0), radians(80.0), 500.0);
-	
-	for (int i = 0; i < lights.length(); i++) {
-//		finalColour += shadePoint(fs_in.position, fs_in.normal, lights[i]);
+	for (int i = 0; i < num_lights; i++) {
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[i]);
 	}
-
-	finalColour += shadePoint(fs_in.position, fs_in.normal, spot);
-	finalColour += shadePoint(fs_in.position, fs_in.normal, spot2);
 	
+	vec4 finalAmbient = ambientColour;
 	colour = finalAmbient + finalColour;
 }

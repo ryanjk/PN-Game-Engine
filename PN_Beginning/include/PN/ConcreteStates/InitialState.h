@@ -27,6 +27,8 @@ namespace pn {
 	private:
 		std::map<EntityID, pn::Renderable> m_renderables;
 
+		std::vector<EntityID> m_lights;
+
 		EntityPointer m_activeCamera;
 
 		vec3 m_light_pos;

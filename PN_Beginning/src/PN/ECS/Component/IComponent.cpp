@@ -1,6 +1,7 @@
 #include "PN/ECS/Component/IComponent.h"
 #include "PN/ECS/Component/TransformComponent.h"
 #include "PN/ECS/Component/RenderComponent.h"
+#include "PN/ECS/Component/LightComponent.h"
 
 #include <iostream>
 
@@ -11,6 +12,10 @@ pn::ComponentType pn::IComponent::textToType(std::string type) {
 
 	else if (type == "render" || type == "Render") {
 		return pn::ComponentType::RENDER;
+	}
+
+	else if (type == "light" || type == "Light") {
+		return pn::ComponentType::LIGHT;
 	}
 
 	else {
@@ -24,6 +29,8 @@ std::shared_ptr<pn::IComponent> pn::IComponent::make(const ComponentData& compon
 		return pn::TransformComponent::make(componentData);
 	case pn::ComponentType::RENDER:
 		return pn::RenderComponent::make(componentData);
+	case pn::ComponentType::LIGHT:
+		return pn::LightComponent::make(componentData);
 	default:
 		std::cout << "Could not create component " + componentName + " -- couldn't recognize type (check name in entity definition)" << std::endl;
 		return nullptr;

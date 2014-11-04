@@ -2,11 +2,13 @@
 
 #include "PN/ECS/Component/RenderComponent.h"
 #include "PN/ECS/Component/TransformComponent.h"
+#include "PN/ECS/Component/LightComponent.h"
 
 #include "PN/Input/InputManager.h"
 #include "PN/Input/FirstPersonListener.h"
 
 #include "PN/Render/RenderFactory.h"
+#include "PN/Render/Light.h"
 
 #include "PN/Util/ShaderLoader.h"
 #include "PN/Util/Math.h"
@@ -119,12 +121,24 @@ void pn::InitialState::render() {
 	glUseProgram(program.getGLProgramObject());
 
 	// Light position
-	program.setUniform("lightPosition", m_light_pos);
+	pn::Light light = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light1 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+//	pn::Light light2 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+//	pn::Light light3 = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+//	pn::Light light4 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+//	pn::Light light5 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	program.setUniform("lightUni[0]", light);
+	program.setUniform("lightUni[1]", light1);
+/*	program.setUniform("lightUni[2]", light2);
+	program.setUniform("lightUni[3]", light3);
+	program.setUniform("lightUni[4]", light4);
+	program.setUniform("lightUni[5]", light5);*/
+	program.setUniform("num_lights", 2);
 	
 	// Camera position
-	mat4 camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());
+	const mat4& camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());
 
-	vec3 camera_position = camera_world_transform[3].xyz;
+	const vec3& camera_position = camera_world_transform[3].xyz;
 	program.setUniform("cameraPosition", camera_position);
 
 	// Get view transform from camera

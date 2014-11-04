@@ -59,7 +59,6 @@ void pn::GameState::loadResources() {
 			pn::ResourceManager::g_resourceManager.load(resourceFilename.asString());
 		}
 	}
-
 }
 
 void pn::GameState::releaseResources() {
@@ -73,13 +72,28 @@ void pn::GameState::releaseResources() {
 	}
 }
 
+static void dfs(std::shared_ptr<pn::Entity> entity, pn::GameState* state) {
+	std::cout << entity->getName() << std::endl;
+	for (auto e : entity->getChildren()) {
+		std::cout << "Child of " << entity->getName() << ": ";
+		dfs(state->getEntity(e), state);
+	}
+}
+
 void pn::GameState::loadEntities() {
 	auto& entityTree = m_root["entities"];
+	if (entityTree.isNull()) return; // Leave if there are no entities in this state
 
+	// This is only an estimate for the amount of entities -- doesn't include children
 	auto num_entities = entityTree.size();
-	m_entities.reserve(num_entities);
+	m_entities.reserve(num_entities + 1);
 
-	loadEntitiesRec(entityTree, pn::PString("root").getHash(), m_entities);
+	// Create a root entity who will contain all entities in the state as children
+	auto root = std::make_shared<pn::Entity>(this->m_stateFilename);
+
+	m_entities.push_back(root);
+
+	loadEntitiesRec(entityTree, root->getID());
 
 	#ifdef _DEBUG
 	for (size_t i = 0; i < m_entities.size(); i++) {
@@ -88,29 +102,41 @@ void pn::GameState::loadEntities() {
 		}
 	}
 	#endif
+
+	dfs(root, this);
 }
 
-void pn::GameState::loadEntitiesRec(const Json::Value& entity_tree_root, EntityID parent, Entities& entity_group) {
-	if (entity_tree_root.isNull()) {
+void pn::GameState::loadEntitiesRec(const Json::Value& current_entity_tree_root, EntityID parentID) {
+	if (current_entity_tree_root.isNull()) {
 		return;
 	}
+	
+	// Get actual entity (not ID) of parent of the entities about to be loaded
+	auto& parent_entity = getEntity(parentID);
 
-	for (auto& entity : entity_tree_root.getMemberNames()) {
-		auto new_entity = pn::Entity::makeEntity(entity_tree_root[entity], entity, parent);
+	// Add children entities to the entity group
+	for (auto& entity : current_entity_tree_root.getMemberNames()) {
 
-//		std::cout << "Added entity " << entity << " to list." << std::endl;
+		auto new_entity = std::make_shared<pn::Entity>(entity);
+		new_entity->setParent(parentID);
+
+		EntityID new_entity_id = new_entity->getID();
+		parent_entity->addChild(new_entity_id);
+
+		auto components = current_entity_tree_root[entity]["components"];
+		for (auto& component : components.getMemberNames()) {
+			auto new_component = pn::IComponent::make(current_entity_tree_root[entity]["components"][component], component);
+			new_entity->addComponent(new_component);
+		}
+
 		m_entities.push_back(new_entity);
 
-		loadEntitiesRec(entity_tree_root[entity]["children"], pn::PString(entity).getHash(), m_entities);
+		loadEntitiesRec(current_entity_tree_root[entity]["children"], new_entity_id);
 	}
 }
 
 void pn::GameState::releaseEntities() {
-
-}
-
-Entities& pn::GameState::getEntities() {
-	return m_entities;
+	m_entities.clear();
 }
 
 EntityPointer pn::GameState::getEntity(const pn::PString& entity_name) {
@@ -124,7 +150,7 @@ EntityPointer pn::GameState::getEntity(EntityID entity_id) {
 }
 
 mat4 pn::GameState::getEntityWorldTransform(EntityID entity_id) {
-	static EntityID root = pn::PString("root").getHash();
+	static EntityID root = this->m_stateFilename.getHash();
 
 	auto entity = getEntity(entity_id);
 

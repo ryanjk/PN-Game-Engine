@@ -25,21 +25,30 @@ namespace pn {
 		Entity(pn::PString name);
 		~Entity();
 
+		pn::PString getName() const;
 		EntityID getID() const;
 		EntityKey getKey() const;
 
+		void setParent(EntityID parentID);
 		EntityID getParent() const;
+
+		std::vector<EntityID> getChildren();
 
 		Component getComponent(ComponentType componentType) const;
 
 		void addComponent(Component component);
 		void removeComponent(Component component);
 
+		void addChild(EntityID child);
+		void removeChild(EntityID child);
+
 		bool alive;
 
 	private:
 		EntityID m_ID;
+
 		EntityID m_parent;
+		std::vector<EntityID> m_children;
 
 		pn::PString m_name;
 		EntityKey m_key;

@@ -12,7 +12,8 @@ namespace pn {
 	enum ComponentType {
 		NONE = 0,
 		TRANSFORM = 1,
-		RENDER = 2
+		RENDER = 2,
+		LIGHT = 4
 	};
 
 	class IComponent {

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <bitset>
+#include <algorithm>
 
 std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData, pn::PString name, EntityID parent) {
 	EntityID entity_id = name.getHash();
@@ -20,11 +21,15 @@ std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData
 	return new_entity;
 }
 
-pn::Entity::Entity(pn::PString name) : m_ID(name.getHash()), m_name(name), m_key(0), alive(true)
+pn::Entity::Entity(pn::PString name) : m_ID(name.getHash()), m_name(name), m_key(0), alive(true), m_children(), m_components()
 {}
 
 pn::Entity::~Entity() {
 	std::cout << "Entity " << m_name.getText() << " destroyed" << std::endl;
+}
+
+pn::PString pn::Entity::getName() const {
+	return m_name;
 }
 
 EntityID pn::Entity::getID() const {
@@ -59,6 +64,22 @@ void pn::Entity::removeComponent(Component component) {
 	m_key &= ~component->getType();
 }
 
+void pn::Entity::setParent(EntityID parentID) {
+	m_parent = parentID;
+}
+
 EntityID pn::Entity::getParent() const {
 	return m_parent;
+}
+
+std::vector<EntityID> pn::Entity::getChildren() {
+	return m_children;
+}
+
+void pn::Entity::addChild(EntityID child) {
+	m_children.push_back(child);
+}
+
+void pn::Entity::removeChild(EntityID child) {
+	std::remove_if(m_children.begin(), m_children.end(), [=](EntityID e) -> bool {return e == child; });
 }

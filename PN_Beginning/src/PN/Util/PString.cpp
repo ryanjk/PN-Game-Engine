@@ -51,6 +51,10 @@ pn::PString pn::PString::operator+(const pn::PString& pstring) const {
 	return result;
 }
 
+std::ostream& operator<<(std::ostream& stream, const pn::PString& pstring) {
+	return stream << pstring.getText();
+}
+
 HashValue pn::PString::hash(const char* string, unsigned int seed) const  {
 	/*
 	from George V. Reilly at:

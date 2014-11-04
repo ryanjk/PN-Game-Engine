@@ -93,7 +93,7 @@ int main()
 	std::cout << "Time to initialize engine: " << current_time << std::endl;
 	
 	pn::GameStateManager::g_gameStateManager.startUp();
-//	auto initState = std::make_shared<pn::InitialState>("initial.state");
+
 	pn::GameStateManager::g_gameStateManager.setState(std::make_shared<pn::InitialState>("initial.state"));
 
 	const double dt = 0.01667;
@@ -120,6 +120,7 @@ int main()
 		if (accumulator > dt * 10) {
 			accumulator = dt * 10;
 		}
+
 		while (accumulator >= dt) {
 
 			// Process input

@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-std::shared_ptr<pn::TransformComponent> pn::TransformComponent::make(const ComponentData& data) {
+std::shared_ptr<pn::TransformComponent> pn::TransformComponent::make(const ComponentData& data, pn::ResourceManager& resources) {
 
 	auto component = std::make_shared<TransformComponent>();
 

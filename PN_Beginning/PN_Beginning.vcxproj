@@ -110,7 +110,6 @@
     <ClCompile Include="src\PN\Util\PString.cpp" />
     <ClCompile Include="src\PN\Settings\SettingsManager.cpp" />
     <ClCompile Include="src\PN\Util\ResourceManager.cpp" />
-    <ClCompile Include="src\PN\Util\ShaderLoader.cpp" />
     <ClCompile Include="src\PN\Window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -144,7 +143,6 @@
     <ClInclude Include="include\PN\Util\PString.h" />
     <ClInclude Include="include\PN\Util\ResourceManager.h" />
     <ClInclude Include="include\PN\Window\WindowManager.h" />
-    <ClInclude Include="include\PN\Util\ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config\config.ini" />

@@ -14,7 +14,7 @@ Transforms:
 namespace pn {
 	class TransformComponent : public pn::IComponent {
 	public:
-		static std::shared_ptr<TransformComponent> make(const ComponentData& data);
+		static std::shared_ptr<TransformComponent> make(const ComponentData& data, pn::ResourceManager& resources);
 		ComponentType getType() const override;
 
 		TransformComponent();

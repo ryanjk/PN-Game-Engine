@@ -1,10 +1,13 @@
 #include "PN/Util/ResourceManager.h"
 #include "PN/Util/FileType.h"
-#include "PN/Util/ShaderLoader.h"
+#include "PN/Util/PString.h"
 
 #include "PN/Render/RenderFactory.h"
 
+#include "json/json.h"
+
 #include <iostream>
+#include <fstream>
 #include <mutex>
 #include <cassert>
 
@@ -16,8 +19,6 @@ static const pn::PString MESH_FOLDER_PATH = "resource/mesh/";
 static const pn::PString SHADER_FOLDER_PATH = "resource/shader/";
 static const pn::PString SHADER_PROGRAM_FOLDER_PATH = "resource/shaderProgram/";
 
-pn::ResourceManager pn::ResourceManager::g_resourceManager;
-
 pn::ResourceManager::ResourceManager() {}
 
 void pn::ResourceManager::startUp() {}
@@ -28,43 +29,160 @@ void pn::ResourceManager::shutdown() {}
 For each resource to load, only load if not already in the map
 */
 void pn::ResourceManager::load(const PString& filename) {
+
 	auto filetype = pn::FileType::toFileTypeEnum(filename);
 
 	switch (filetype) {
 	case pn::FileTypeEnum::PNG: {
 		if (m_imageMap.find(filename.getHash()) == m_imageMap.end()) {
 			Image image = pn::RenderFactory::makeFromPNG((IMAGE_FOLDER_PATH + filename).c_str());
-	//		std::lock_guard<std::mutex> imageLock(imageMutex);
 			m_imageMap.insert({ filename.getHash(), std::move(image) });
+			m_used_resource_filenames.insert(filename.getText());
 		}
 	}
 		break;
 	case pn::FileTypeEnum::OBJ: {
 		if (m_meshMap.find(filename.getHash()) == m_meshMap.end()) {
 			Mesh mesh = pn::RenderFactory::loadMeshFromObj((MESH_FOLDER_PATH + filename).c_str());
-	//		std::lock_guard<std::mutex> meshLock(meshMutex);
 			m_meshMap.insert({ filename.getHash(), std::move(mesh) });
+			m_used_resource_filenames.insert(filename.getText());
 		}
 	}
 		break;
 	case pn::FileTypeEnum::VERTEX_SHADER: {
 		if (m_vshaderMap.find(filename.getHash()) == m_vshaderMap.end()) {
-			GLuint shader = pn::ShaderLoader::loadShader((SHADER_FOLDER_PATH + filename).c_str(), GL_VERTEX_SHADER);
+			GLuint shader = glCreateShader(GL_VERTEX_SHADER);
+
+			std::string shaderText = readShaderFile((SHADER_FOLDER_PATH + filename).c_str());
+			const char* shader_cStr = shaderText.c_str();
+
+			GLint result = GL_FALSE;
+			int logLength;
+
+			glShaderSource(shader, 1, &shader_cStr, NULL);
+			glCompileShader(shader);
+
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+			bool isError = logLength > 1;
+			if (isError) {
+				std::vector<char> vertShaderError(logLength);
+				glGetShaderInfoLog(shader, logLength, NULL, &vertShaderError[0]);
+				std::cout << &vertShaderError[0] << std::endl;
+			}
 			m_vshaderMap.insert({ filename.getHash(), shader });
 		}
 	}
 		break;
 	case pn::FileTypeEnum::FRAGMENT_SHADER: {
 		if (m_fshaderMap.find(filename.getHash()) == m_fshaderMap.end()) {
-			GLuint shader = pn::ShaderLoader::loadShader((SHADER_FOLDER_PATH + filename).c_str(), GL_FRAGMENT_SHADER);
+			GLuint shader = glCreateShader(GL_FRAGMENT_SHADER);
+
+			std::string shaderText = readShaderFile((SHADER_FOLDER_PATH + filename).c_str());
+			const char* shader_cStr = shaderText.c_str();
+
+			GLint result = GL_FALSE;
+			int logLength;
+
+			glShaderSource(shader, 1, &shader_cStr, NULL);
+			glCompileShader(shader);
+
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+			bool isError = logLength > 1;
+			if (isError) {
+				std::vector<char> vertShaderError(logLength);
+				glGetShaderInfoLog(shader, logLength, NULL, &vertShaderError[0]);
+				std::cout << &vertShaderError[0] << std::endl;
+			}
 			m_fshaderMap.insert({ filename.getHash(), shader });
 		}
 	}
 		break;
 	case pn::FileTypeEnum::SHADER_PROGRAM: {
 		if (m_shaderProgramMap.find(filename.getHash()) == m_shaderProgramMap.end()) {
-			pn::ShaderProgram shader = pn::ShaderLoader::loadProgram((SHADER_PROGRAM_FOLDER_PATH + filename).c_str());
-			m_shaderProgramMap.insert({ filename.getHash(), shader });
+			m_used_resource_filenames.insert(filename.getText());
+
+			Json::Reader reader;
+			Json::Value root;
+
+			std::ifstream program_file;
+			program_file.open((SHADER_PROGRAM_FOLDER_PATH + filename).c_str());
+
+			if (!program_file.is_open()) {
+				std::cout << "ShaderLoader: Could not locate shader program file: " << filename << std::endl;
+				getchar();
+				exit(-1);
+			}
+
+			bool success = reader.parse(program_file, root);
+			if (!success) {
+				std::cout << "ShaderLoader: Could not parse shader program file: " << reader.getFormattedErrorMessages() << std::endl;
+				getchar();
+				exit(-1);
+			}
+
+			program_file.close();
+
+			auto vertex_shader = root["vertex"];
+			if (vertex_shader.isNull()) {
+				std::cout << "ShaderLoader: Could not find vertex shader" << std::endl;
+				getchar();
+				exit(-1);
+			}
+			load(vertex_shader.asString());
+
+			auto fragment_shader = root["fragment"];
+			if (fragment_shader.isNull()) {
+				std::cout << "ShaderLoader: Could not find fragment shader" << std::endl;
+				getchar();
+				exit(-1);
+			}
+			load(fragment_shader.asString());
+
+			// get shader gl objects to link into program
+			GLuint vertex_shader_object = getVertexShader(vertex_shader.asString());
+			GLuint fragment_shader_object = getFragmentShader(fragment_shader.asString());
+
+			// create gl program object
+			GLuint program = glCreateProgram();
+			glAttachShader(program, vertex_shader_object);
+			glAttachShader(program, fragment_shader_object);
+			glLinkProgram(program);
+
+			GLint result = GL_FALSE;
+			int logLength;
+
+			glGetProgramiv(program, GL_LINK_STATUS, &result);
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+			bool isError = logLength > 1;
+			if (isError) {
+				std::vector<char> programError(logLength);
+				glGetProgramInfoLog(program, logLength, NULL, &programError[0]);
+				std::cout << &programError[0] << std::endl;
+			}
+
+			// create game shader program object
+			pn::ShaderProgram shader_program(program, vertex_shader.asString(), fragment_shader.asString());
+
+			GLint num_active_uniforms;
+			glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &num_active_uniforms);
+
+			std::vector<GLchar> nameData(256);
+			std::vector<GLenum> properties = { GL_NAME_LENGTH };
+			std::vector<GLint> values(properties.size());
+			for (int uniform = 0; uniform < num_active_uniforms; uniform++) {
+				glGetProgramResourceiv(program, GL_UNIFORM, uniform, properties.size(), &properties[0], values.size(), NULL, &values[0]);
+
+				nameData.resize(values[0]);
+
+				glGetProgramResourceName(program, GL_UNIFORM, uniform, nameData.size(), NULL, &nameData[0]);
+
+				std::string name((char*)&nameData[0], nameData.size() - 1);
+				shader_program.addUniform(name);
+			}
+
+			m_shaderProgramMap.insert({ filename.getHash(), shader_program });
 		}
 	}
 		break;
@@ -100,9 +218,9 @@ GLuint pn::ResourceManager::getVertexShader(const PString& filename) {
 }
 
 GLuint pn::ResourceManager::getVertexShader(const HashValue& key) {
-	auto shader_itr = m_vshaderMap.find(key);
-	assert(shader_itr != m_vshaderMap.end());
-	return shader_itr->second;
+	auto vshader_itr = m_vshaderMap.find(key);
+	assert(vshader_itr != m_vshaderMap.end());
+	return vshader_itr->second;
 }
 
 GLuint pn::ResourceManager::getFragmentShader(const PString& filename) {
@@ -110,9 +228,9 @@ GLuint pn::ResourceManager::getFragmentShader(const PString& filename) {
 }
 
 GLuint pn::ResourceManager::getFragmentShader(const HashValue& key) {
-	auto shader_itr = m_fshaderMap.find(key);
-	assert(shader_itr != m_fshaderMap.end());
-	return shader_itr->second;
+	auto fshader_itr = m_fshaderMap.find(key);
+	assert(fshader_itr != m_fshaderMap.end());
+	return fshader_itr->second;
 }
 
 pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename) {
@@ -120,9 +238,9 @@ pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename
 }
 
 pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const HashValue& key) {
-	auto shader_itr = m_shaderProgramMap.find(key);
-	assert(shader_itr != m_shaderProgramMap.end());
-	return shader_itr->second;
+	auto shader_program_itr = m_shaderProgramMap.find(key);
+	assert(shader_program_itr != m_shaderProgramMap.end());
+	return shader_program_itr->second;
 }
 
 void pn::ResourceManager::remove(const PString& filename) {
@@ -149,8 +267,8 @@ void pn::ResourceManager::remove(const PString& filename) {
 		break;
 	case pn::FileTypeEnum::SHADER_PROGRAM: {
 		pn::ShaderProgram shaderProgram = getShaderProgram(filename);
-		g_resourceManager.remove(shaderProgram.getVertexShaderFilename());
-		g_resourceManager.remove(shaderProgram.getFragmentShaderFilename());
+		remove(shaderProgram.getVertexShaderFilename());
+		remove(shaderProgram.getFragmentShaderFilename());
 		glDeleteProgram(shaderProgram.getGLProgramObject());
 		m_shaderProgramMap.erase(filename.getHash());
 	}
@@ -158,5 +276,34 @@ void pn::ResourceManager::remove(const PString& filename) {
 	default:
 		break;
 	}
+}
 
+void pn::ResourceManager::removeAll() {
+	for (auto& file : m_used_resource_filenames) {
+		remove(file);
+	}
+}
+
+std::string pn::ResourceManager::readShaderFile(const char* filename) {
+	/*
+	From Nex at:
+	http://www.nexcius.net/2012/11/20/how-to-load-a-glsl-shader-in-opengl-using-c/
+	*/
+
+	std::string content;
+	std::ifstream fileStream(filename, std::ios::in);
+
+	if (!fileStream.is_open()) {
+		std::cerr << "ShaderLoader: Could not read file " << filename << ". File does not exist." << std::endl;
+		return "";
+	}
+
+	std::string line = "";
+	while (!fileStream.eof()) {
+		std::getline(fileStream, line);
+		content.append(line + "\n");
+	}
+
+	fileStream.close();
+	return content;
 }

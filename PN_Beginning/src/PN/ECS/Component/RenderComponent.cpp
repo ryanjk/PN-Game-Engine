@@ -2,7 +2,7 @@
 
 #include "PN/Util/ResourceManager.h"
 
-std::shared_ptr<pn::RenderComponent> pn::RenderComponent::make(const ComponentData& data) {
+std::shared_ptr<pn::RenderComponent> pn::RenderComponent::make(const ComponentData& data, pn::ResourceManager& resources) {
 	std::shared_ptr<RenderComponent> component = std::make_shared<RenderComponent>();
 
 	auto ambientData = data["ambient"];
@@ -22,7 +22,7 @@ std::shared_ptr<pn::RenderComponent> pn::RenderComponent::make(const ComponentDa
 
 	auto meshData = data["mesh"];
 	if (!meshData.isNull()) {
-		pn::ResourceManager::g_resourceManager.load(meshData.asString());
+		resources.load(meshData.asString());
 		component->m_mesh = meshData.asString();
 	}
 	else {
@@ -31,11 +31,11 @@ std::shared_ptr<pn::RenderComponent> pn::RenderComponent::make(const ComponentDa
 
 	auto shaderProgramData = data["shaderProgram"];
 	if (!shaderProgramData.isNull()) {
-		pn::ResourceManager::g_resourceManager.load(shaderProgramData.asString());
+		resources.load(shaderProgramData.asString());
 		component->m_shaderProgram = shaderProgramData.asString();
 	}
 	else {
-		pn::ResourceManager::g_resourceManager.load("default.sp");
+		resources.load("default.sp");
 	}
 
 	auto specularData = data["specular"];

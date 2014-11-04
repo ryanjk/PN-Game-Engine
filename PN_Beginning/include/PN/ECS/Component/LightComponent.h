@@ -16,7 +16,7 @@ namespace pn {
 	
 	class LightComponent : public pn::IComponent {
 	public:
-		static std::shared_ptr<LightComponent> make(const ComponentData& data);
+		static std::shared_ptr<LightComponent> make(const ComponentData& data, pn::ResourceManager& resources);
 		ComponentType getType() const override;
 
 		LightComponent();

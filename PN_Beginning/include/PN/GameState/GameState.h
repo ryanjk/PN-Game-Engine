@@ -35,6 +35,7 @@ namespace pn {
 		virtual void shutdownAssist();
 
 		Entities m_entities;
+		pn::ResourceManager m_resources;
 
 	private:
 		pn::PString m_stateFilename;

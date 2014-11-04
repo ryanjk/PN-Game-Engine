@@ -56,20 +56,24 @@ void pn::GameState::loadResources() {
 
 	for (auto& resource : resourceTree) {
 		for (auto& resourceFilename : resource) {
-			pn::ResourceManager::g_resourceManager.load(resourceFilename.asString());
+//			pn::ResourceManager::g_resourceManager.load(resourceFilename.asString());
+			m_resources.load(resourceFilename.asString());
 		}
 	}
 }
 
 void pn::GameState::releaseResources() {
-	auto& resourceTree = m_root["resource"];
+/*	auto& resourceTree = m_root["resource"];
 
 	for (auto& resource : resourceTree) {
 		for (auto& resourceFilename : resource) {
-			pn::ResourceManager::g_resourceManager.remove(resourceFilename.asString());
+	//		pn::ResourceManager::g_resourceManager.remove(resourceFilename.asString());
+			m_resources.remove(resourceFilename.asString());
 			std::cout << "Releasing " << resourceFilename.asString() << std::endl;
 		}
-	}
+	} */
+
+	m_resources.removeAll();
 }
 
 static void dfs(std::shared_ptr<pn::Entity> entity, pn::GameState* state) {
@@ -103,7 +107,7 @@ void pn::GameState::loadEntities() {
 	}
 	#endif
 
-	dfs(root, this);
+//	dfs(root, this);
 }
 
 void pn::GameState::loadEntitiesRec(const Json::Value& current_entity_tree_root, EntityID parentID) {
@@ -125,7 +129,7 @@ void pn::GameState::loadEntitiesRec(const Json::Value& current_entity_tree_root,
 
 		auto components = current_entity_tree_root[entity]["components"];
 		for (auto& component : components.getMemberNames()) {
-			auto new_component = pn::IComponent::make(current_entity_tree_root[entity]["components"][component], component);
+			auto new_component = pn::IComponent::make(current_entity_tree_root[entity]["components"][component], component, m_resources);
 			new_entity->addComponent(new_component);
 		}
 

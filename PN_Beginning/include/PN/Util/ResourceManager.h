@@ -10,6 +10,7 @@
 #include "PN/Render/ShaderProgram.h"
 
 #include <map>
+#include <set>
 
 using ImageMap = std::map < HashValue, pn::Image > ;
 using MeshMap = std::map < HashValue, pn::Mesh > ;
@@ -19,7 +20,7 @@ using ShaderProgramMap = std::map < HashValue, pn::ShaderProgram > ;
 namespace pn {
 	class ResourceManager {
 	public:
-		static ResourceManager g_resourceManager;
+		ResourceManager();
 
 		void startUp();
 		void shutdown();
@@ -41,16 +42,19 @@ namespace pn {
 		pn::ShaderProgram& getShaderProgram(const PString& filename);
 		pn::ShaderProgram& getShaderProgram(const HashValue& key);
 
+		void removeAll();
 		void remove(const PString& filename);
 
 	private:
-		ResourceManager();
-
 		ImageMap m_imageMap;
 		MeshMap m_meshMap;
 		ShaderMap m_vshaderMap;
 		ShaderMap m_fshaderMap;
 		ShaderProgramMap m_shaderProgramMap;
+
+		std::set<std::string> m_used_resource_filenames;
+
+		std::string readShaderFile(const char* filename);
 	};
 }
 

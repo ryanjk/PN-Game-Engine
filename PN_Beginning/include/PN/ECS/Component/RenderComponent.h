@@ -9,7 +9,7 @@
 namespace pn {
 	class RenderComponent : public pn::IComponent {
 	public:
-		static std::shared_ptr<RenderComponent> make(const ComponentData& data);
+		static std::shared_ptr<RenderComponent> make(const ComponentData& data, pn::ResourceManager& resources);
 		ComponentType getType() const override;
 
 		RenderComponent();

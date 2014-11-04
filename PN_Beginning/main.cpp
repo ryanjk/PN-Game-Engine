@@ -87,8 +87,6 @@ int main()
 //	handler->addListener(loudListener);
 	handler->addListener(exitListener);
 
-	pn::ResourceManager::g_resourceManager.startUp();
-
 	double current_time = glfwGetTime();
 	std::cout << "Time to initialize engine: " << current_time << std::endl;
 	
@@ -97,6 +95,7 @@ int main()
 	pn::GameStateManager::g_gameStateManager.setState(std::make_shared<pn::InitialState>("initial.state"));
 
 	const double dt = 0.01667;
+	const double MAX_DT = dt * 10;
 	double past_time = 0;
 	double accumulator = 0;
 
@@ -115,17 +114,18 @@ int main()
 			FPS_counter = 0;
 		}
 
+
+		// Process input
+		glfwPollEvents();
+		pn::InputManager::g_inputManager.update(frame_time);
+
 		accumulator += frame_time;
 		
-		if (accumulator > dt * 10) {
-			accumulator = dt * 10;
+		if (accumulator > MAX_DT) {
+			accumulator = MAX_DT;
 		}
 
 		while (accumulator >= dt) {
-
-			// Process input
-			glfwPollEvents();
-			pn::InputManager::g_inputManager.update(dt);
 
 			// Update game data
 			pn::GameStateManager::g_gameStateManager.notifyState(dt);
@@ -145,7 +145,6 @@ int main()
 	}
 
 	pn::GameStateManager::g_gameStateManager.shutdown();
-	pn::ResourceManager::g_resourceManager.shutdown();
 	pn::InputManager::g_inputManager.shutdown();
 	pn::WindowManager::g_windowManager.shutdown();
 

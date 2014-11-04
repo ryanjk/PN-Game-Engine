@@ -102,9 +102,6 @@
     <ClCompile Include="src\PN\Util\PString.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="src\PN\Util\ShaderLoader.cpp">
-      <Filter>Source Files\Util</Filter>
-    </ClCompile>
     <ClCompile Include="src\PN\Window\WindowManager.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
@@ -187,9 +184,6 @@
     </ClInclude>
     <ClInclude Include="include\PN\Render\Image.h">
       <Filter>Header Files\PN\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PN\Util\ShaderLoader.h">
-      <Filter>Header Files\PN\Util</Filter>
     </ClInclude>
     <ClInclude Include="include\PN\Render\RenderFactory.h">
       <Filter>Header Files\PN\Render</Filter>

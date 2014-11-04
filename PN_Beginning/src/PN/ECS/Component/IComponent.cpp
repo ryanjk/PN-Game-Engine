@@ -23,14 +23,14 @@ pn::ComponentType pn::IComponent::textToType(std::string type) {
 	}
 }
 
-std::shared_ptr<pn::IComponent> pn::IComponent::make(const ComponentData& componentData, std::string componentName) {
+std::shared_ptr<pn::IComponent> pn::IComponent::make(const ComponentData& componentData, std::string componentName, pn::ResourceManager& resources) {
 	switch (textToType(componentName)) {
 	case pn::ComponentType::TRANSFORM:
-		return pn::TransformComponent::make(componentData);
+		return pn::TransformComponent::make(componentData, resources);
 	case pn::ComponentType::RENDER:
-		return pn::RenderComponent::make(componentData);
+		return pn::RenderComponent::make(componentData, resources);
 	case pn::ComponentType::LIGHT:
-		return pn::LightComponent::make(componentData);
+		return pn::LightComponent::make(componentData, resources);
 	default:
 		std::cout << "Could not create component " + componentName + " -- couldn't recognize type (check name in entity definition)" << std::endl;
 		return nullptr;

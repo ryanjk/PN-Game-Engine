@@ -6,7 +6,7 @@
 #include <algorithm>
 
 std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData, pn::PString name, EntityID parent) {
-	EntityID entity_id = name.getHash();
+/*	EntityID entity_id = name.getHash();
 
 	auto new_entity = std::make_shared<pn::Entity>(name);
 	auto components = entityData["components"];
@@ -18,14 +18,16 @@ std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData
 
 	new_entity->m_parent = parent;
 
-	return new_entity;
+	return new_entity; */
+
+	return nullptr;
 }
 
 pn::Entity::Entity(pn::PString name) : m_ID(name.getHash()), m_name(name), m_key(0), alive(true), m_children(), m_components()
 {}
 
 pn::Entity::~Entity() {
-	std::cout << "Entity " << m_name.getText() << " destroyed" << std::endl;
+//	std::cout << "Entity " << m_name.getText() << " destroyed" << std::endl;
 }
 
 pn::PString pn::Entity::getName() const {

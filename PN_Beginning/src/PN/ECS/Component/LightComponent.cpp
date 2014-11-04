@@ -1,6 +1,6 @@
 #include "PN/ECS/Component/LightComponent.h"
 
-std::shared_ptr<pn::LightComponent> pn::LightComponent::make(const ComponentData& data) {
+std::shared_ptr<pn::LightComponent> pn::LightComponent::make(const ComponentData& data, pn::ResourceManager& resources) {
 	std::shared_ptr<LightComponent> component = std::make_shared<LightComponent>();
 
 	auto colourData = data["colour"];

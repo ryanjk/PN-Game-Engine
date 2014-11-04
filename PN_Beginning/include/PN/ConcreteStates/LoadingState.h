@@ -21,7 +21,7 @@ namespace pn {
 		void startUpAssist() override;
 
 	private:
-		pn::Renderable m_ls_r;
+		pn::Renderable r;
 
 	};
 }

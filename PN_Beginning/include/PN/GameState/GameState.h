@@ -11,7 +11,8 @@
 #include <fstream>
 
 using EntityPointer = std::shared_ptr < pn::Entity > ;
-using Entities = std::vector < std::shared_ptr<pn::Entity> >;
+//using Entities = std::vector < std::shared_ptr<pn::Entity> >;
+using Entities = std::vector < pn::Entity >;
 
 namespace pn {
 	class GameState {
@@ -24,8 +25,8 @@ namespace pn {
 		void startUp();  // set up the state (load resources, set rendering state, etc)
 		void shutdown();   // shutdown state
 
-		EntityPointer getEntity(const pn::PString& entity_name);
-		EntityPointer getEntity(EntityID entity_id);
+		pn::Entity& getEntity(const pn::PString& entity_name);
+		pn::Entity& getEntity(EntityID entity_id);
 
 		mat4 getEntityWorldTransform(const pn::PString& entity_name);
 		mat4 getEntityWorldTransform(EntityID entity_id);

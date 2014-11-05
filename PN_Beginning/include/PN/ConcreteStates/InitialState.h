@@ -16,7 +16,7 @@
 namespace pn {
 	class InitialState : public pn::GameState {
 	public:
-		InitialState(pn::PString stateFilename);
+		InitialState(const pn::PString& stateFilename);
 
 		void update(double dt) override;
 		void render() override;
@@ -29,7 +29,7 @@ namespace pn {
 
 		std::vector<EntityID> m_lights;
 
-		EntityPointer m_activeCamera;
+		pn::Entity* m_activeCamera;
 
 		vec3 m_light_pos;
 		vec3 m_light2_pos;

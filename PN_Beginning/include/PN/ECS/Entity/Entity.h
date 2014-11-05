@@ -20,10 +20,13 @@ using Components = std::map < pn::ComponentType, Component >;
 namespace pn {
 	class Entity {
 	public:
-		static std::shared_ptr<Entity> makeEntity(const EntityData& entityData, pn::PString name, EntityID parent);
+//		static std::shared_ptr<Entity> makeEntity(const EntityData& entityData, pn::PString name, EntityID parent);
 
-		Entity(pn::PString name);
+		Entity();
+		Entity(const pn::PString& name);
 		~Entity();
+
+		Entity& operator=(const Entity& entity) = delete;
 
 		pn::PString getName() const;
 		EntityID getID() const;
@@ -32,7 +35,7 @@ namespace pn {
 		void setParent(EntityID parentID);
 		EntityID getParent() const;
 
-		std::vector<EntityID> getChildren();
+		const std::vector<EntityID>& getChildren() const;
 
 		Component getComponent(ComponentType componentType) const;
 
@@ -46,15 +49,13 @@ namespace pn {
 
 	private:
 		EntityID m_ID;
+		pn::PString m_name;
 
 		EntityID m_parent;
 		std::vector<EntityID> m_children;
 
-		pn::PString m_name;
-		EntityKey m_key;
-
 		Components m_components;
-
+		EntityKey m_key;
 	};
 }
 

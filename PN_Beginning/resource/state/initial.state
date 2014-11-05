@@ -11,22 +11,6 @@
         ]
     },
 	"entities": {
-		"monkey": {
-			"components": {
-				"transform": {
-					"translation": [0.0, 0.0, 0.0],
-					"scale": [1.0, 1.0, 1.0],
-					"rotation": [0.0, 3.14, 0.0]
-				},
-				"render": {
-					"mesh":"monkey_hd.obj",
-					"ambient": [0.1, 0.0, 0.0, 1.0],
-					"diffuse": [1.0, 0.0, 0.0, 1.0],
-					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":100
-				}
-			}
-		},
 		"monkey2": {
 			"components": {
 				"transform": {
@@ -72,6 +56,24 @@
 					"diffuse": [0.0, 0.0, 0.6, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
 					"gloss":1000
+				}
+			},
+			"children": {
+				"monkey": {
+					"components": {
+						"transform": {
+							"translation": [-1.0, 0.0, -1.5.0],
+							"scale": [0.5, 0.5, 0.5],
+							"rotation": [0.0, 0, 0.0]
+						},
+						"render": {
+							"mesh":"monkey_hd.obj",
+							"ambient": [0.1, 0.0, 0.0, 1.0],
+							"diffuse": [1.0, 0.0, 0.0, 1.0],
+							"specular": [0.4, 0.4, 0.4, 1.0],
+							"gloss":100
+						}
+					}
 				}
 			}
 		},

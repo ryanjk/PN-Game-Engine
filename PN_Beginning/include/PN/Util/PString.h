@@ -9,6 +9,7 @@ using HashValue = unsigned int;
 namespace pn {
 	class PString {
 	public:
+		PString();
 		PString(const std::string& string);
 		PString(const PString& pstring);
 		PString(const char* string);
@@ -17,10 +18,6 @@ namespace pn {
 		const char* c_str() const;
 
 		HashValue getHash() const;
-
-		bool equals(const std::string& string) const;
-		bool equals(const PString& pstring) const;
-		bool equals(const char* string) const;
 
 		PString operator+(const PString& pstring) const;
 

@@ -23,7 +23,7 @@ namespace pn {
 		virtual ComponentType getType() const = 0;
 
 		~IComponent() {
-			std::cout << "Destroyed component" << std::endl;
+		//	std::cout << "Destroyed component" << std::endl;
 		}
 		
 		static ComponentType textToType(std::string type);

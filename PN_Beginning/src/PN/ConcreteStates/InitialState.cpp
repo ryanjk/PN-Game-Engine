@@ -17,10 +17,9 @@
 #include <iostream>
 #include <algorithm>
 
-//static auto& resources = pn::ResourceManager::g_resourceManager;
 static auto& settings = pn::SettingsManager::g_SettingsManager;
 
-pn::InitialState::InitialState(pn::PString stateFilename) : pn::GameState(stateFilename), m_activeCamera() {
+pn::InitialState::InitialState(const pn::PString& stateFilename) : pn::GameState(stateFilename), m_activeCamera() {
 
 }
 
@@ -36,10 +35,12 @@ void pn::InitialState::update(double dt) {
 //	auto& child_child_monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(child_child_monkey->getComponent(pn::ComponentType::TRANSFORM));
 
 
-	auto dragon = getEntity("dragon2");
-	auto& dragon_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon->getComponent(pn::ComponentType::TRANSFORM));
+//	auto& dragon = getEntity("dragon2");
+//	auto& dragon_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon.getComponent(pn::ComponentType::TRANSFORM));
 
-	dragon_transform->translateLocal({ 0.01f, 0.0f, 0.0f });
+//	float s = (float)(cos(2 * time) * 2 + 3);
+//	dragon_transform->setScale({ s, s, s });
+	
 	/*
 	auto dragon2 = getEntity("dragon");
 	auto& dragon2_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon2->getComponent(pn::ComponentType::TRANSFORM));
@@ -54,10 +55,10 @@ void pn::InitialState::startUpAssist() {
 
 	// set up renderable for each entity that needs one
 	for (auto& entity : m_entities) {
-		bool hasKey = (entity->getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
+		bool hasKey = (entity.getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
 		if (!hasKey) continue;
 
-		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity->getComponent(pn::ComponentType::RENDER));
+		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
 		auto shaderProgramName = renderComponent->getShaderProgram();
 		
 		if (shaderProgramName.getHash() == defaultShaderProgram) {
@@ -90,16 +91,16 @@ void pn::InitialState::startUpAssist() {
 			glBindVertexArray(0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			m_renderables.insert({ entity->getID(), entity_renderable });
+			m_renderables.insert({ entity.getID(), entity_renderable });
 		}
 
 	}
 
-	auto camera = getEntity("camera");
-	m_activeCamera = camera;
+	auto& camera = getEntity("camera");
+	m_activeCamera = &camera;
 
-	auto player = getEntity("player");
-	auto playerBody = std::dynamic_pointer_cast<pn::TransformComponent>(player->getComponent(pn::ComponentType::TRANSFORM));
+	auto& player = getEntity("player");
+	auto playerBody = std::dynamic_pointer_cast<pn::TransformComponent>(player.getComponent(pn::ComponentType::TRANSFORM));
 
 	auto handler = pn::InputManager::g_inputManager.getInputHandler();
 
@@ -120,19 +121,19 @@ void pn::InitialState::render() {
 	glUseProgram(program.getGLProgramObject());
 
 	// Light position
-	pn::Light light = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light1 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+//	pn::Light light = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+//	pn::Light light1 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
 //	pn::Light light2 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
 //	pn::Light light3 = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
 //	pn::Light light4 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
 //	pn::Light light5 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	program.setUniform("lightUni[0]", light);
-	program.setUniform("lightUni[1]", light1);
+//	program.setUniform("lightUni[0]", light);
+//	program.setUniform("lightUni[1]", light1);
 /*	program.setUniform("lightUni[2]", light2);
 	program.setUniform("lightUni[3]", light3);
 	program.setUniform("lightUni[4]", light4);
 	program.setUniform("lightUni[5]", light5);*/
-	program.setUniform("num_lights", 2);
+	program.setUniform("num_lights", 0);
 	
 	// Camera position
 	const mat4& camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());
@@ -152,24 +153,24 @@ void pn::InitialState::render() {
 
 	auto world_transform_index = glGetUniformLocation(program.getGLProgramObject(), "world");
 	
-	for (auto entity : m_entities) {
-		bool hasKey = (entity->getKey() & (pn::ComponentType::RENDER | pn::ComponentType::TRANSFORM)) == 
+	for (const auto& entity : m_entities) {
+		bool hasKey = (entity.getKey() & (pn::ComponentType::RENDER | pn::ComponentType::TRANSFORM)) == 
 			(pn::ComponentType::RENDER | pn::ComponentType::TRANSFORM);
 		if (!hasKey) continue;
 
-		auto& transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(entity->getComponent(pn::ComponentType::TRANSFORM));
-		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity->getComponent(pn::ComponentType::RENDER));
+		auto& transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(entity.getComponent(pn::ComponentType::TRANSFORM));
+		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
 
 		program.setUniform("ambient", renderComponent->getAmbient());
 		program.setUniform("diffuse", renderComponent->getDiffuse());
 		program.setUniform("specular", renderComponent->getSpecular());
 		program.setUniform("gloss", renderComponent->getGloss());
 
-		auto& entityRenderable = m_renderables[entity->getID()];
+		auto& entityRenderable = m_renderables[entity.getID()];
 		glBindVertexArray(entityRenderable.VAO);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
-		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(getEntityWorldTransform(entity->getID())));
+		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(getEntityWorldTransform(entity.getID())));
 		glDrawArraysInstanced(GL_TRIANGLES, 0, m_resources.getMesh(entityRenderable.mesh).getVertices().size(), 1);
 	}
 	

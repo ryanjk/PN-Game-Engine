@@ -121,19 +121,19 @@ void pn::InitialState::render() {
 	glUseProgram(program.getGLProgramObject());
 
 	// Light position
-//	pn::Light light = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-//	pn::Light light1 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-//	pn::Light light2 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-//	pn::Light light3 = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-//	pn::Light light4 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-//	pn::Light light5 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-//	program.setUniform("lightUni[0]", light);
-//	program.setUniform("lightUni[1]", light1);
-/*	program.setUniform("lightUni[2]", light2);
+	pn::Light light = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light1 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light2 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light3 = { vec3(2.0f, -1.0f, 1.0f), vec3(2.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(0.0f, 1.0f, 1.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light4 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, -0.5f, 0.9f), pn::LightType::DIRECTIONAL_LIGHT, vec3(1.0f, 1.0f, 0.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light5 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::DIRECTIONAL_LIGHT, vec3(1.0f, 1.0f, 1.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	program.setUniform("lightUni[0]", light);
+	program.setUniform("lightUni[1]", light1);
+	program.setUniform("lightUni[2]", light2);
 	program.setUniform("lightUni[3]", light3);
 	program.setUniform("lightUni[4]", light4);
-	program.setUniform("lightUni[5]", light5);*/
-	program.setUniform("num_lights", 0);
+	program.setUniform("lightUni[5]", light5);
+	program.setUniform("num_lights", 6);
 	
 	// Camera position
 	const mat4& camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());
@@ -151,31 +151,53 @@ void pn::InitialState::render() {
 		0.1f, 1000.0f);
 	program.setUniform("proj", proj_transform);
 
-	auto world_transform_index = glGetUniformLocation(program.getGLProgramObject(), "world");
-	
-	for (const auto& entity : m_entities) {
-		bool hasKey = (entity.getKey() & (pn::ComponentType::RENDER | pn::ComponentType::TRANSFORM)) == 
-			(pn::ComponentType::RENDER | pn::ComponentType::TRANSFORM);
-		if (!hasKey) continue;
+	pn::MatrixStack matrixStack;
 
-		auto& transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(entity.getComponent(pn::ComponentType::TRANSFORM));
-		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
+	for (auto root_children : getRootEntity().getChildrenID()) {
+		renderSceneGraph(root_children, matrixStack);
+	}
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
+void pn::InitialState::renderSceneGraph(EntityID start, pn::MatrixStack& matrixStack) {
+	auto& current_entity = getEntity(start);
+
+	bool hasTransform = (current_entity.getKey() & (pn::ComponentType::TRANSFORM)) == (pn::ComponentType::TRANSFORM);
+	if (!hasTransform) {
+		return;
+	}
+
+	auto& transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(current_entity.getComponent(pn::ComponentType::TRANSFORM));
+	matrixStack.push(transformComponent->getTransformMatrix());
+
+	bool hasRender = (current_entity.getKey() & (pn::ComponentType::RENDER)) == (pn::ComponentType::RENDER);
+	if (hasRender) {
+		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(current_entity.getComponent(pn::ComponentType::RENDER));
+		auto& program = m_resources.getShaderProgram(renderComponent->getShaderProgram());
 
 		program.setUniform("ambient", renderComponent->getAmbient());
 		program.setUniform("diffuse", renderComponent->getDiffuse());
 		program.setUniform("specular", renderComponent->getSpecular());
 		program.setUniform("gloss", renderComponent->getGloss());
 
-		auto& entityRenderable = m_renderables[entity.getID()];
+		auto world_transform_index = glGetUniformLocation(program.getGLProgramObject(), "world");
+
+		auto& entityRenderable = m_renderables[start];
 		glBindVertexArray(entityRenderable.VAO);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
-		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(getEntityWorldTransform(entity.getID())));
+		mat4 worldTransform = matrixStack.multiply();
+		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(worldTransform));
 		glDrawArraysInstanced(GL_TRIANGLES, 0, m_resources.getMesh(entityRenderable.mesh).getVertices().size(), 1);
 	}
-	
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glBindVertexArray(0);
-	glUseProgram(0);
+
+	for (auto childID : current_entity.getChildrenID()) {
+		renderSceneGraph(childID, matrixStack);
+	}
+
+	matrixStack.pop();
 }

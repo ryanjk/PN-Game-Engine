@@ -3,7 +3,9 @@
 #include <iostream>
 
 pn::FirstPersonListener::FirstPersonListener(ControlledBody controlledBody) 
-	: m_controlledBody(controlledBody), m_scrollSpeed(0.0015f), m_moveSpeed(5.0f) {}
+	: m_controlledBody(controlledBody), m_scrollSpeed(0.0015f), m_moveSpeed(5.0f),
+	m_moveForward(false), m_moveBack(false), m_moveRight(false), m_moveLeft(false)
+{}
 
 void pn::FirstPersonListener::onMouseMove(double from_x, double from_y, double to_x, double to_y) {
 	static const int center_x = pn::SettingsManager::g_SettingsManager.getWindowWidth() / 2;
@@ -19,22 +21,22 @@ void pn::FirstPersonListener::update(double dt) {
 	static double time = 0;
 	time += dt;
 
-	if (glfwGetKey(pn::WindowManager::g_windowManager.getWindow(), GLFW_KEY_W) == GLFW_PRESS) {
+	if (m_moveForward) {
 		vec3 movement = vec3(0.0f, 0.0f, -m_moveSpeed);
 		m_controlledBody->translateLocal((float)dt * movement);
 	}
 
-	if (glfwGetKey(pn::WindowManager::g_windowManager.getWindow(), GLFW_KEY_S) == GLFW_PRESS) {
+	if (m_moveBack) {
 		vec3 movement = vec3(0.0f, 0.0f, m_moveSpeed);
 		m_controlledBody->translateLocal((float)dt * movement);
 	}
 
-	if (glfwGetKey(pn::WindowManager::g_windowManager.getWindow(), GLFW_KEY_A) == GLFW_PRESS) {
+	if (m_moveLeft) {
 		vec3 movement = vec3(-m_moveSpeed, 0.0f, 0.0f);
 		m_controlledBody->translateLocal((float)dt * movement);
 	}
 
-	if (glfwGetKey(pn::WindowManager::g_windowManager.getWindow(), GLFW_KEY_D) == GLFW_PRESS) {
+	if (m_moveRight) {
 		vec3 movement = vec3(m_moveSpeed, 0.0f, 0.0f);
 		m_controlledBody->translateLocal((float)dt * movement);
 	}
@@ -46,13 +48,41 @@ void pn::FirstPersonListener::onKeyPress(int key) {
 		m_moveSpeed *= 2;
 	}
 
-	if (key == GLFW_KEY_Y) {
-		print_vec3(m_controlledBody->getWorldTransformMatrix()[3].xyz);
+	else if (key == GLFW_KEY_W) {
+		m_moveForward = true;
+	}
+
+	else if (key == GLFW_KEY_S) {
+		m_moveBack = true;
+	}
+
+	else if (key == GLFW_KEY_D) {
+		m_moveRight = true;
+	}
+
+	else if (key == GLFW_KEY_A) {
+		m_moveLeft = true;
 	}
 }
 
 void pn::FirstPersonListener::onKeyRelease(int key) {
 	if (key == GLFW_KEY_LEFT_SHIFT) {
 		m_moveSpeed /= 2;
+	}
+
+	else if (key == GLFW_KEY_W) {
+		m_moveForward = false;
+	}
+
+	else if (key == GLFW_KEY_S) {
+		m_moveBack = false;
+	}
+
+	else if (key == GLFW_KEY_D) {
+		m_moveRight = false;
+	}
+
+	else if (key == GLFW_KEY_A) {
+		m_moveLeft = false;
 	}
 }

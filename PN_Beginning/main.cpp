@@ -115,9 +115,6 @@ int main()
 		}
 
 
-		// Process input
-		glfwPollEvents();
-		pn::InputManager::g_inputManager.update(frame_time);
 
 		accumulator += frame_time;
 		
@@ -126,6 +123,10 @@ int main()
 		}
 
 		while (accumulator >= dt) {
+
+			// Process input
+			glfwPollEvents();
+			pn::InputManager::g_inputManager.update(dt);
 
 			// Update game data
 			pn::GameStateManager::g_gameStateManager.notifyState(dt);

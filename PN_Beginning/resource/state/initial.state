@@ -35,7 +35,7 @@
 					"rotation": [0.0, 0.0, 0.0]
 				},
 				"render": {
-					"mesh":"dragon_lr.obj",
+					"mesh":"dragon.obj",
 					"ambient": [0.1, 0.0, 0.1, 1.0],
 					"diffuse": [0.6, 0.0, 0.6, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -51,7 +51,7 @@
 					"rotation": [0.0, -1.57, 0.0]
 				},
 				"render": {
-					"mesh":"dragon_lr.obj",
+					"mesh":"dragon.obj",
 					"ambient": [0.0, 0.0, 0.1, 1.0],
 					"diffuse": [0.0, 0.0, 0.6, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -85,11 +85,11 @@
 					"rotation": [0.0, -3.14, 0.0]
 				},
 				"render": {
-					"mesh":"dragon_lr.obj",
+					"mesh":"dragon.obj",
 					"ambient": [0.03, 0.06, 0.1, 1.0],
 					"diffuse": [0.2, 0.4, 0.6, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":1000
+					"gloss":10
 				}
 			}
 		},

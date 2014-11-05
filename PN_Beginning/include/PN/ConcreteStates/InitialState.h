@@ -11,6 +11,8 @@
 
 #include "LodePNG/lodepng.h"
 
+#include "PN/Util/MatrixStack.h"
+
 #include <map>
 
 namespace pn {
@@ -34,7 +36,7 @@ namespace pn {
 		vec3 m_light_pos;
 		vec3 m_light2_pos;
 
-		
+		void renderSceneGraph(EntityID start, pn::MatrixStack& matrixStack);
 	};
 }
 

@@ -107,6 +107,7 @@
     <ClCompile Include="src\PN\Render\ShaderProgram.cpp" />
     <ClCompile Include="src\PN\Util\FileType.cpp" />
     <ClCompile Include="src\PN\Util\Math.cpp" />
+    <ClCompile Include="src\PN\Util\MatrixStack.cpp" />
     <ClCompile Include="src\PN\Util\PString.cpp" />
     <ClCompile Include="src\PN\Settings\SettingsManager.cpp" />
     <ClCompile Include="src\PN\Util\ResourceManager.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="include\PN\ConcreteStates\LoadingState.h" />
     <ClInclude Include="include\PN\Util\FileType.h" />
     <ClInclude Include="include\PN\Util\Math.h" />
+    <ClInclude Include="include\PN\Util\MatrixStack.h" />
     <ClInclude Include="include\PN\Util\PString.h" />
     <ClInclude Include="include\PN\Util\ResourceManager.h" />
     <ClInclude Include="include\PN\Window\WindowManager.h" />

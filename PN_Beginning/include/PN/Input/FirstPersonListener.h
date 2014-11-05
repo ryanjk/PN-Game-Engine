@@ -30,6 +30,11 @@ namespace pn {
 
 		double m_scrollSpeed;
 		double m_moveSpeed;
+
+		bool m_moveForward;
+		bool m_moveBack;
+		bool m_moveRight;
+		bool m_moveLeft;
 	};
 }
 

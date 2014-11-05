@@ -63,22 +63,12 @@ void pn::GameState::loadResources() {
 }
 
 void pn::GameState::releaseResources() {
-/*	auto& resourceTree = m_root["resource"];
-
-	for (auto& resource : resourceTree) {
-		for (auto& resourceFilename : resource) {
-	//		pn::ResourceManager::g_resourceManager.remove(resourceFilename.asString());
-			m_resources.remove(resourceFilename.asString());
-			std::cout << "Releasing " << resourceFilename.asString() << std::endl;
-		}
-	} */
-
 	m_resources.removeAll();
 }
 
 static void dfs(pn::Entity& entity, pn::GameState* state) {
 	std::cout << entity.getName() << std::endl;
-	for (auto& e : entity.getChildren()) {
+	for (auto& e : entity.getChildrenID()) {
 		std::cout << "Child of " << entity.getName() << ": ";
 		dfs(state->getEntity(e), state);
 	}
@@ -141,6 +131,10 @@ void pn::GameState::loadEntitiesRec(const Json::Value& current_entity_tree_root,
 
 void pn::GameState::releaseEntities() {
 	m_entities.clear();
+}
+
+pn::Entity& pn::GameState::getRootEntity() {
+	return getEntity(this->m_stateFilename.getHash());
 }
 
 pn::Entity& pn::GameState::getEntity(const pn::PString& entity_name) {

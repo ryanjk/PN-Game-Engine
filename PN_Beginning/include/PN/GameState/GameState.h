@@ -11,7 +11,6 @@
 #include <fstream>
 
 using EntityPointer = std::shared_ptr < pn::Entity > ;
-//using Entities = std::vector < std::shared_ptr<pn::Entity> >;
 using Entities = std::vector < pn::Entity >;
 
 namespace pn {
@@ -24,6 +23,8 @@ namespace pn {
 
 		void startUp();  // set up the state (load resources, set rendering state, etc)
 		void shutdown();   // shutdown state
+
+		pn::Entity& getRootEntity();
 
 		pn::Entity& getEntity(const pn::PString& entity_name);
 		pn::Entity& getEntity(EntityID entity_id);

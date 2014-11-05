@@ -5,33 +5,14 @@
 #include <bitset>
 #include <algorithm>
 
-/*std::shared_ptr<pn::Entity>  pn::Entity::makeEntity(const EntityData& entityData, pn::PString name, EntityID parent) {
-	EntityID entity_id = name.getHash();
-
-	auto new_entity = std::make_shared<pn::Entity>(name);
-	auto components = entityData["components"];
-	
-	for (auto& component : components.getMemberNames()) {
-		auto new_component = pn::IComponent::make(entityData["components"][component], component);
-		new_entity->addComponent(new_component);
-	}
-
-	new_entity->m_parent = parent;
-
-	return new_entity; 
-
-	return nullptr;
-} */
-
 pn::Entity::Entity() : m_ID(), m_name(), m_children(), m_components(), m_key(), m_parent(), alive(false)
 {}
 
 pn::Entity::Entity(const pn::PString& name) : m_ID(name.getHash()), m_name(name), m_key(0), alive(true), m_children(), m_components(), m_parent()
 {}
 
-pn::Entity::~Entity() {
-//	std::cout << "Entity " << m_name.getText() << " destroyed" << std::endl;
-}
+pn::Entity::~Entity() 
+{}
 
 pn::PString pn::Entity::getName() const {
 	return m_name;
@@ -77,7 +58,7 @@ EntityID pn::Entity::getParent() const {
 	return m_parent;
 }
 
-const std::vector<EntityID>& pn::Entity::getChildren() const {
+const std::vector<EntityID>& pn::Entity::getChildrenID() const {
 	return m_children;
 }
 

@@ -114,8 +114,6 @@ int main()
 			FPS_counter = 0;
 		}
 
-
-
 		accumulator += frame_time;
 		
 		if (accumulator > MAX_DT) {

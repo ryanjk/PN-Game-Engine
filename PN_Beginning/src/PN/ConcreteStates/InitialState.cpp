@@ -27,9 +27,9 @@ void pn::InitialState::update(double dt) {
 	static double time = 0.0;
 	time += dt;
 	
-//	auto monkey = getEntity("child_monkey");
-//	auto& monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(monkey->getComponent(pn::ComponentType::TRANSFORM));
-//	monkey_transform->rotateParent(glm::radians(vec3(0.0f, 5.0f, 0.0f)));
+	auto monkey = getEntity("monkey");
+	auto& monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(monkey.getComponent(pn::ComponentType::TRANSFORM));
+	monkey_transform->rotateParent(glm::radians(vec3(0.0f, 0.5f, 0.0f)));
 
 //	auto child_child_monkey = getEntity("child_child_monkey");
 //	auto& child_child_monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(child_child_monkey->getComponent(pn::ComponentType::TRANSFORM));
@@ -127,13 +127,18 @@ void pn::InitialState::render() {
 	pn::Light light3 = { vec3(2.0f, -1.0f, 1.0f), vec3(2.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(0.0f, 1.0f, 1.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
 	pn::Light light4 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, -0.5f, 0.9f), pn::LightType::DIRECTIONAL_LIGHT, vec3(1.0f, 1.0f, 0.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
 	pn::Light light5 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::DIRECTIONAL_LIGHT, vec3(1.0f, 1.0f, 1.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light6 = { vec3(-7.0f, 7.0f, 4.0f), vec3(0.0f, -0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(0.0f, 0.0f, 0.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	pn::Light light7 = { vec3(0.0f, 20.0f, 0.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 0.0f, 0.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+
 	program.setUniform("lightUni[0]", light);
 	program.setUniform("lightUni[1]", light1);
 	program.setUniform("lightUni[2]", light2);
 	program.setUniform("lightUni[3]", light3);
 	program.setUniform("lightUni[4]", light4);
 	program.setUniform("lightUni[5]", light5);
-	program.setUniform("num_lights", 6);
+	program.setUniform("lightUni[6]", light6);
+	program.setUniform("lightUni[7]", light7);
+	program.setUniform("num_lights", 8);
 	
 	// Camera position
 	const mat4& camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());

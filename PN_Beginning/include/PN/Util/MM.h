@@ -18,6 +18,7 @@ namespace pn {
 		void destroyWindow(Window* window);
 
 		void setVsync(bool on);
+
 		void swapBuffers(Window* window);
 
 		void setWindowSize(Window* window, int x, int y);

@@ -29,25 +29,8 @@ void pn::InitialState::update(double dt) {
 	
 	auto monkey = getEntity("monkey");
 	auto& monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(monkey.getComponent(pn::ComponentType::TRANSFORM));
-	monkey_transform->rotateParent(glm::radians(vec3(0.0f, 0.5f, 0.0f)));
+	monkey_transform->rotateParent(glm::radians(vec3(0.0f, 5.5f * dt, 0.0f)));
 
-//	auto child_child_monkey = getEntity("child_child_monkey");
-//	auto& child_child_monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(child_child_monkey->getComponent(pn::ComponentType::TRANSFORM));
-
-
-//	auto& dragon = getEntity("dragon2");
-//	auto& dragon_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon.getComponent(pn::ComponentType::TRANSFORM));
-
-//	float s = (float)(cos(2 * time) * 2 + 3);
-//	dragon_transform->setScale({ s, s, s });
-	
-	/*
-	auto dragon2 = getEntity("dragon");
-	auto& dragon2_transform = std::dynamic_pointer_cast<pn::TransformComponent>(dragon2->getComponent(pn::ComponentType::TRANSFORM));
-
-	dragon2_transform->translateWorld({ 0.01f, 0.0f, 0.0f }); */
-
-//	m_light_pos = vec3(0.0f, 3 * glm::sin(time), 3 * glm::cos(time));
 }
 
 void pn::InitialState::startUpAssist() {
@@ -55,45 +38,49 @@ void pn::InitialState::startUpAssist() {
 
 	// set up renderable for each entity that needs one
 	for (auto& entity : m_entities) {
-		bool hasKey = (entity.getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
-		if (!hasKey) continue;
-
-		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
-		auto shaderProgramName = renderComponent->getShaderProgram();
+		bool hasRenderComponent = (entity.getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
+		if (hasRenderComponent) {
+			auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
+			auto shaderProgramName = renderComponent->getShaderProgram();
 		
-		if (shaderProgramName.getHash() == defaultShaderProgram) {
-			Renderable entity_renderable;
+			if (shaderProgramName.getHash() == defaultShaderProgram) {
+				Renderable entity_renderable;
 
-			// shader program sets up renderable its own way
+				// shader program sets up renderable its own way
 
-			entity_renderable.mesh = renderComponent->getMesh().getHash();
-			entity_renderable.SHADER_program = m_resources.getShaderProgram(renderComponent->getShaderProgram()).getGLProgramObject();
+				entity_renderable.mesh = renderComponent->getMesh().getHash();
+				entity_renderable.SHADER_program = m_resources.getShaderProgram(renderComponent->getShaderProgram()).getGLProgramObject();
 
-			glGenVertexArrays(1, &entity_renderable.VAO);
-			glBindVertexArray(entity_renderable.VAO);
+				glGenVertexArrays(1, &entity_renderable.VAO);
+				glBindVertexArray(entity_renderable.VAO);
 
-			glGenBuffers(1, &entity_renderable.VBO_v);
-			glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_v);
-			glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
-				entity_renderable.mesh).getVertices().size() * sizeof(GLfloat), 
-				&m_resources.getMesh(entity_renderable.mesh).getVertices()[0], 
-				GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+				glGenBuffers(1, &entity_renderable.VBO_v);
+				glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_v);
+				glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
+					entity_renderable.mesh).getVertices().size() * sizeof(GLfloat), 
+					&m_resources.getMesh(entity_renderable.mesh).getVertices()[0], 
+					GL_STATIC_DRAW);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-			glGenBuffers(1, &entity_renderable.VBO_vn);
-			glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_vn);
-			glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
-				entity_renderable.mesh).getNormals().size() * sizeof(GLfloat), 
-				&m_resources.getMesh(entity_renderable.mesh).getNormals()[0], 
-				GL_STATIC_DRAW);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+				glGenBuffers(1, &entity_renderable.VBO_vn);
+				glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_vn);
+				glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
+					entity_renderable.mesh).getNormals().size() * sizeof(GLfloat), 
+					&m_resources.getMesh(entity_renderable.mesh).getNormals()[0], 
+					GL_STATIC_DRAW);
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-			glBindVertexArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glBindVertexArray(0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			m_renderables.insert({ entity.getID(), entity_renderable });
+				m_renderables.insert({ entity.getID(), entity_renderable });
+			}	
 		}
 
+		bool hasLightComponent = (entity.getKey() & pn::ComponentType::LIGHT) == pn::ComponentType::LIGHT;
+		if (hasLightComponent) {
+			m_lights.push_back(entity.getID());
+		}
 	}
 
 	auto& camera = getEntity("camera");
@@ -106,8 +93,6 @@ void pn::InitialState::startUpAssist() {
 
 	handler->addListener(std::make_shared<pn::FirstPersonListener>(playerBody));
 	
-	m_light_pos = vec3(0.0f, 0.0f, 12.0f);
-	m_light2_pos = vec3(0.0f, 3.0f, 0.0f);
 }
 
 void pn::InitialState::render() {
@@ -120,25 +105,28 @@ void pn::InitialState::render() {
 
 	glUseProgram(program.getGLProgramObject());
 
-	// Light position
-	pn::Light light = { vec3(20.0f, -13.0f, 1.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(1.0f, 1.0f, 1.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light1 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 5.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light2 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 1.0f, 1.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light3 = { vec3(2.0f, -1.0f, 1.0f), vec3(2.0f, 0.5f, 0.9f), pn::LightType::SPOTLIGHT, vec3(0.0f, 1.0f, 1.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light4 = { vec3(0.0f, 0.0f, 4.0f), vec3(0.0f, -0.5f, 0.9f), pn::LightType::DIRECTIONAL_LIGHT, vec3(1.0f, 1.0f, 0.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light5 = { vec3(0.0f, 0.0f, 15.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::DIRECTIONAL_LIGHT, vec3(1.0f, 1.0f, 1.0f), 1.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light6 = { vec3(-7.0f, 7.0f, 4.0f), vec3(0.0f, -0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(0.0f, 0.0f, 0.0f), 50.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
-	pn::Light light7 = { vec3(0.0f, 20.0f, 0.0f), vec3(0.0f, 0.5f, 0.9f), pn::LightType::POINT_LIGHT, vec3(1.0f, 0.0f, 0.0f), 500.0f, glm::radians(30.0f), glm::radians(40.0f), 0.0f };
+	int num_lights_set = 0;
+	for (auto entityID : m_lights) {
+		auto& entity = getEntity(entityID);
+		auto& light_component = std::dynamic_pointer_cast<pn::LightComponent>(entity.getComponent(pn::ComponentType::LIGHT));
 
-	program.setUniform("lightUni[0]", light);
-	program.setUniform("lightUni[1]", light1);
-	program.setUniform("lightUni[2]", light2);
-	program.setUniform("lightUni[3]", light3);
-	program.setUniform("lightUni[4]", light4);
-	program.setUniform("lightUni[5]", light5);
-	program.setUniform("lightUni[6]", light6);
-	program.setUniform("lightUni[7]", light7);
-	program.setUniform("num_lights", 8);
+		mat4 transform = getEntityWorldTransform(entityID);
+
+		Light entity_light;
+		entity_light.position = transform[3].xyz;
+		entity_light.direction = -vec3(transform[2].xyz);
+		entity_light.colour = light_component->getColour();
+		entity_light.innerRadians = light_component->getInnerRadians();
+		entity_light.outerRadians = light_component->getOuterRadians();
+		entity_light.intensity = light_component->getIntensity();
+		entity_light.maxRadius = light_component->getMaxRadius();
+		entity_light.type = light_component->getLightType();
+
+		program.setUniform("lightUni[" + std::to_string(num_lights_set) + "]", entity_light);
+		num_lights_set++;
+	}
+
+	program.setUniform("num_lights", num_lights_set);
 	
 	// Camera position
 	const mat4& camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());

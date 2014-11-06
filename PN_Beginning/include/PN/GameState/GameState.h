@@ -47,7 +47,7 @@ namespace pn {
 		void releaseResources();
 
 		void loadEntities();
-		void loadEntitiesRec(const Json::Value& entity_tree_root, EntityID parent);
+		void loadEntitiesRec(const Json::Value& entity_tree_root, pn::Entity& parent);
 		void releaseEntities();
 
 	};

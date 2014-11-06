@@ -27,6 +27,19 @@
 				}
 			}
 		},
+		"directional_light": {
+			"components": {
+				"transform": {
+					"translation":[0.0, 0.0, 0.0],
+					"rotation": [-0.2, 1.57, 0.0]
+				},
+				"light": {
+					"lightType":1,
+					"intensity":1.0,
+					"colour":[1.0, 1.0, 1.0]
+				}
+			}
+		},
 		"dragon": {
 			"components": {
 				"transform": {
@@ -122,39 +135,21 @@
 							"translation": [0.0, 0.0, 0.0]
 						}
 					}
-				}//,
-				/*"child_monkey" : {
-					"components": {
-						"transform": {
-							"translation": [2.0, 0.0, 0.0],
-							"rotation":[0.0, 3.14, 0.0]
+				},
+				"flashlight":{
+					"components":{
+						"transform":{
+							"translation":[0.0, -1.0, -1.0]
 						},
-					"render": {
-						"mesh":"monkey_hd.obj",
-						"ambient": [0.0, 0.1, 0.1, 1.0],
-						"diffuse": [0.0, 1.0, 1.0, 1.0],
-						"specular": [0.4, 0.4, 0.4, 1.0],
-						"gloss":1
-						}
-					},
-					"children" : {
-						"child_child_monkey" : {
-							"components": {
-								"transform": {
-									"translation": [0.0, 1.0, 0.0],
-									"scale":[0.5, 0.5, 0.5]
-								},	
-								"render": {
-									"mesh":"monkey.obj",
-									"ambient": [0.1, 0.3, 0.7, 1.0],
-									"diffuse": [0.1, 0.3, 0.7, 1.0],
-									"specular": [0.4, 0.4, 0.4, 1.0],
-									"gloss":10
-								}
-							}
+						"light":{
+							"intensity":50.0,
+							"colour":[1.0, 0.0, 0.0],
+							"innerRadians":0.2,
+							"outerRadians":0.6,
+							"lightType":2
 						}
 					}
-				} */
+				}
 			}
 		}
 	}

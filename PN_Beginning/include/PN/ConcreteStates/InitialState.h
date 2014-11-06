@@ -33,9 +33,6 @@ namespace pn {
 
 		pn::Entity* m_activeCamera;
 
-		vec3 m_light_pos;
-		vec3 m_light2_pos;
-
 		void renderSceneGraph(EntityID start, pn::MatrixStack& matrixStack);
 	};
 }

@@ -85,9 +85,8 @@ void pn::GameState::loadEntities() {
 	// Create a root entity who will contain all entities in the state as children
 	pn::Entity root(this->m_stateFilename);
 
+	loadEntitiesRec(entityTree, root);
 	m_entities.push_back(root);
-
-	loadEntitiesRec(entityTree, root.getID());
 
 	#ifdef _DEBUG
 	for (size_t i = 0; i < m_entities.size(); i++) {
@@ -100,32 +99,32 @@ void pn::GameState::loadEntities() {
 //	dfs(root, this);
 }
 
-void pn::GameState::loadEntitiesRec(const Json::Value& current_entity_tree_root, EntityID parentID) {
+void pn::GameState::loadEntitiesRec(const Json::Value& current_entity_tree_root, pn::Entity& parent) {
 	if (current_entity_tree_root.isNull()) {
 		return;
 	}
-	
-	// Get actual entity (not ID) of parent of the entities about to be loaded
-	auto& parent_entity = getEntity(parentID);
 
 	// Add children entities to the entity group
-	for (auto& entity : current_entity_tree_root.getMemberNames()) {
+	for (std::string& entity : current_entity_tree_root.getMemberNames()) {
 
 		pn::Entity new_entity(entity);
-		new_entity.setParent(parentID);
+		new_entity.setParent(parent.getID());
 
 		EntityID new_entity_id = new_entity.getID();
-		parent_entity.addChild(new_entity_id);
 
-		auto components = current_entity_tree_root[entity]["components"];
-		for (auto& component : components.getMemberNames()) {
-			auto new_component = pn::IComponent::make(current_entity_tree_root[entity]["components"][component], component, m_resources);
+		parent.addChild(new_entity_id);
+
+		auto& components = current_entity_tree_root[entity]["components"];
+		for (std::string& component : components.getMemberNames()) {
+			auto new_component = pn::IComponent::make(components[component], component, m_resources);
 			new_entity.addComponent(new_component);
 		}
 
-		m_entities.push_back(new_entity);
+		if (!current_entity_tree_root[entity]["children"].isNull()) {
+			loadEntitiesRec(current_entity_tree_root[entity]["children"], new_entity);
+		}
 
-		loadEntitiesRec(current_entity_tree_root[entity]["children"], new_entity_id);
+		m_entities.push_back(new_entity);
 	}
 }
 

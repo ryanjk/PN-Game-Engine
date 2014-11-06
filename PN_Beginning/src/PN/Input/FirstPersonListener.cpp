@@ -14,7 +14,7 @@ void pn::FirstPersonListener::onMouseMove(double from_x, double from_y, double t
 	m_controlledBody->rotatePitchLocal((float)m_scrollSpeed * -(float)(to_y - center_y));
 	m_controlledBody->rotateYawLocal((float)m_scrollSpeed * -(float)(to_x - center_x));
 
-	glfwSetCursorPos(pn::WindowManager::g_windowManager.getWindow(), center_x, center_y);
+	pn::mm::moveCursorToPos(pn::WindowManager::g_windowManager.getWindow(), center_x, center_y);
 }
 
 void pn::FirstPersonListener::update(double dt) {
@@ -44,45 +44,45 @@ void pn::FirstPersonListener::update(double dt) {
 }
 
 void pn::FirstPersonListener::onKeyPress(int key) {
-	if (key == GLFW_KEY_LEFT_SHIFT) {
+	if (key == mm::KEY_LEFT_SHIFT) {
 		m_moveSpeed *= 2;
 	}
 
-	else if (key == GLFW_KEY_W) {
+	else if (key == mm::KEY_W) {
 		m_moveForward = true;
 	}
 
-	else if (key == GLFW_KEY_S) {
+	else if (key == mm::KEY_S) {
 		m_moveBack = true;
 	}
 
-	else if (key == GLFW_KEY_D) {
+	else if (key == mm::KEY_D) {
 		m_moveRight = true;
 	}
 
-	else if (key == GLFW_KEY_A) {
+	else if (key == mm::KEY_A) {
 		m_moveLeft = true;
 	}
 }
 
 void pn::FirstPersonListener::onKeyRelease(int key) {
-	if (key == GLFW_KEY_LEFT_SHIFT) {
+	if (key == mm::KEY_LEFT_SHIFT) {
 		m_moveSpeed /= 2;
 	}
 
-	else if (key == GLFW_KEY_W) {
+	else if (key == mm::KEY_W) {
 		m_moveForward = false;
 	}
 
-	else if (key == GLFW_KEY_S) {
+	else if (key == mm::KEY_S) {
 		m_moveBack = false;
 	}
 
-	else if (key == GLFW_KEY_D) {
+	else if (key == mm::KEY_D) {
 		m_moveRight = false;
 	}
 
-	else if (key == GLFW_KEY_A) {
+	else if (key == mm::KEY_A) {
 		m_moveLeft = false;
 	}
 }

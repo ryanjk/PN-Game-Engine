@@ -14,38 +14,22 @@ void pn::WindowManager::startUp(bool fullscreen, unsigned int width, unsigned in
 
 	m_started = true;
 	
-	auto err = glfwInit();
-	if (err == GL_FALSE) {
-		exit(EXIT_FAILURE);
-	}
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
-	Window* window;
-
-	if (!fullscreen) {
-		window = glfwCreateWindow(width, height, "PN Beginning", nullptr, NULL);
-	}
-	else {
-		window = glfwCreateWindow(width, height, "PN Beginning", glfwGetPrimaryMonitor(), NULL);
-	}
-
-	glfwMakeContextCurrent(window);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	mm::initMultimediaLibrary();
+	
+	mm::Window* window;
+	window = mm::createWindow(fullscreen, width, height);
 	
 	// Disable vsync
 	if (!pn::SettingsManager::g_SettingsManager.isVsync()) {
-		glfwSwapInterval(0);
+		mm::setVsync(false);
 	}
 
 	glewExperimental = GL_TRUE;
-	glewInit();
+	GLenum glewError = glewInit();
+	if (glewError != GLEW_OK) {
+		std::cout << "Could not initialize GLEW: " << glewGetErrorString(glewError) << std::endl;
+		exit(-1);
+	}
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -55,12 +39,13 @@ void pn::WindowManager::startUp(bool fullscreen, unsigned int width, unsigned in
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glfwSwapBuffers(window);
+
+	pn::mm::swapBuffers(window);
 
 	m_window = window;
 	updateSize(fullscreen, width, height);
 
-	glfwSetCursorPos(m_window, m_width / 2, m_height / 2);
+	pn::mm::moveCursorToPos(m_window, m_width / 2, m_height / 2);
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
@@ -68,12 +53,12 @@ void pn::WindowManager::startUp(bool fullscreen, unsigned int width, unsigned in
 }
 
 void pn::WindowManager::shutdown() {
-	glfwDestroyWindow(m_window);
-	glfwTerminate();
+	mm::destroyWindow(m_window);
+	mm::shutdownMultimediaLibrary();
 }
 
 void pn::WindowManager::resize(bool fullscreen, unsigned width, unsigned height) {
-	glfwSetWindowSize(m_window, width, height);
+	mm::setWindowSize(m_window, width, height);
 	updateSize(fullscreen, width, height);
 }
 
@@ -83,12 +68,8 @@ void pn::WindowManager::updateSize(bool fullscreen, unsigned width, unsigned hei
 	m_height = height;
 }
 
-Window* pn::WindowManager::getWindow() {
+pn::mm::Window* pn::WindowManager::getWindow() {
 	return m_window;
-}
-
-Window* pn::WindowManager::getLoaderWindow() {
-	return m_loader_window;
 }
 
 bool pn::WindowManager::isFullscreen() const {

@@ -21,7 +21,7 @@ void error_callback(int error, const char * description) {
 	std::cerr << "GLFW: " << description << std::endl;
 }
 
-int main()
+int main(int argc, char* args[])
 {
 	// Initialize settings (load them into the manager from config file)
 	pn::SettingsManager::g_SettingsManager.startUp("config/config.ini");
@@ -30,16 +30,16 @@ int main()
 	auto width = pn::SettingsManager::g_SettingsManager.getWindowWidth();
 	auto height = pn::SettingsManager::g_SettingsManager.getWindowHeight();
 
-	// Initialize GLFW and GLEW
-	glfwSetErrorCallback(error_callback);
+	// Initialize SDL and GLEW
+//	SDL_SetMainReady();
 	pn::WindowManager::g_windowManager.startUp(fullscreen, width, height);
 
-	Window* window = pn::WindowManager::g_windowManager.getWindow();
+	pn::mm::Window* window = pn::WindowManager::g_windowManager.getWindow();
 
 	// Initialize input handling
 	// Sets callbacks for, e.g., mouse click, cursor move, etc which forward to the InputHandler
 	auto handler = std::make_shared<pn::InputEventHandler>();
-	pn::InputManager::g_inputManager.startUp(window, handler);
+	pn::InputManager::g_inputManager.startUp(handler);
 
 	class loud_listener : public pn::InputEventListener {
 		void onLeftMousePress(double x, double y) { std::cout << "Left Press: " << x << " " << y << std::endl; }
@@ -62,22 +62,23 @@ int main()
 	};
 	class exit_listener : public pn::InputEventListener {
 	public:
-		exit_listener(Window* window) : m_window(window){};
+		exit_listener(pn::mm::Window* window) : m_window(window){ e.type = pn::mm::QUIT_EVENT; };
 		void onKeyPress(Key key) { 
-			if (key == GLFW_KEY_ESCAPE) glfwSetWindowShouldClose(pn::WindowManager::g_windowManager.getWindow(), GL_TRUE);
-			else if (key == GLFW_KEY_SPACE) {
+			if (key == pn::mm::KEY_ESC) SDL_PushEvent(&e);
+			else if (key == pn::mm::KEY_SPACEBAR) {
 				if (cursor) {
-					glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+					pn::mm::setCursorOff(false);
 					cursor = false;
 				}
 				else {
-					glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+					pn::mm::setCursorOff(true);
 					cursor = true;
 				}
 			}
 		}
 	private:
-		Window* m_window;
+		SDL_Event e;
+		pn::mm::Window* m_window;
 		bool cursor = true;
 	};
 
@@ -87,7 +88,7 @@ int main()
 //	handler->addListener(loudListener);
 	handler->addListener(exitListener);
 
-	double current_time = glfwGetTime();
+	double current_time = pn::mm::getTime();
 	std::cout << "Time to initialize engine: " << current_time << std::endl;
 	
 	pn::GameStateManager::g_gameStateManager.startUp();
@@ -102,10 +103,12 @@ int main()
 	double FPS_counter = -current_time;
 	int frames_passed = 0;
 
-	while (!glfwWindowShouldClose(window))
+	pn::mm::InputEvent e;
+	bool shouldClose = false;
+	while (!shouldClose)
 	{
 		double frame_time = current_time - past_time;
-		past_time = glfwGetTime();
+		past_time = pn::mm::getTime();
 
 		FPS_counter += frame_time;
 		if (frames_passed >= 1000) {
@@ -123,7 +126,13 @@ int main()
 		while (accumulator >= dt) {
 
 			// Process input
-			glfwPollEvents();
+			while (pn::mm::pollEvent(&e)) {
+				if (e.type == pn::mm::QUIT_EVENT) {
+					shouldClose = true;
+				}
+				pn::InputManager::g_inputManager.sendEvent(e);
+			}
+
 			pn::InputManager::g_inputManager.update(dt);
 
 			// Update game data
@@ -136,9 +145,9 @@ int main()
 		pn::GameStateManager::g_gameStateManager.renderState();
 
 		// Swap buffers
-		glfwSwapBuffers(window);
+		pn::mm::swapBuffers(window);
 
-		current_time = glfwGetTime();
+		current_time = pn::mm::getTime();
 
 		frames_passed++;
 	}

@@ -13,9 +13,10 @@ namespace pn {
 	public:
 		static InputManager g_inputManager;
 
-		void startUp(Window* window, HandlerPointer handler);
+		void startUp(HandlerPointer handler);
 		void shutdown();
 
+		void sendEvent(mm::InputEvent inputEvent);
 		void update(double dt);
 
 		void setInputEventHandler(HandlerPointer handler);
@@ -25,10 +26,10 @@ namespace pn {
 		InputManager();
 		HandlerPointer m_handler;
 
-		static void mouse_move_callback(Window* window, double x, double y);
-		static void curson_enter_callback(Window* window, int enter);
-		static void mouse_button_callback(Window* window, int button, int action, int mods);
-		static void keyboard_key_callback(Window* window, int key, int scancode, int action, int mods);
+		static void mouse_move_callback(double x, double y);
+		static void cursor_enter_callback(int enter);
+		static void mouse_button_callback(int button, int action);
+		static void keyboard_key_callback(int key, int action);
 	};
 }
 

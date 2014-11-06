@@ -13,9 +13,7 @@
 */
 
 #include "GL/glew.h"
-#include "GLFW/glfw3.h"
-
-using Window = GLFWwindow;
+#include "PN/Util/MM.h"
 
 namespace pn {
 	class WindowManager {
@@ -27,8 +25,7 @@ namespace pn {
 
 		void resize(bool fullscreen, unsigned width, unsigned height);
 
-		Window* getWindow();
-		Window* getLoaderWindow();
+		mm::Window* getWindow();
 
 		bool isFullscreen() const;
 		unsigned int getWidth() const;
@@ -38,8 +35,7 @@ namespace pn {
 		WindowManager();
 		void updateSize(bool fullscreen, unsigned width, unsigned height);
 		
-		Window* m_window;
-		Window* m_loader_window;
+		mm::Window* m_window;
 
 		bool m_fullscreen;
 		unsigned int m_width;

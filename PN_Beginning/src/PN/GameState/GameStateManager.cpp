@@ -23,9 +23,9 @@ void pn::GameStateManager::startUp() {
 	m_loadingState = std::make_shared<pn::LoadingState>("loading.state");
 
 	// time the loading of the loading screen resources
-	auto t1 = glfwGetTime();
+	auto t1 = mm::getTime();
 	m_loadingState->startUp();
-	std::cout << "Time to initialize loading state: " << glfwGetTime() - t1 << std::endl;
+	std::cout << "Time to initialize loading state: " << mm::getTime() - t1 << std::endl;
 
 	// set the state to the loading screen as well
 	m_currentState = m_loadingState;
@@ -58,7 +58,7 @@ void pn::GameStateManager::renderState() {
 void pn::GameStateManager::setState(GameStatePointer state) {
 	assert(state);
 	
-	auto t1 = glfwGetTime();
+	auto t1 = mm::getTime();
 
 	// Go into "loading state": display loading screen and load incoming state's resources
 	beginLoad();
@@ -67,5 +67,5 @@ void pn::GameStateManager::setState(GameStatePointer state) {
 	// once new state is loaded, set it to current state so it renders and receives updates
 	m_currentState = state;
 
-	std::cout << "Time to initialize state: " << glfwGetTime() - t1 << std::endl;
+	std::cout << "Time to initialize state: " << mm::getTime() - t1 << std::endl;
 }

@@ -14,27 +14,27 @@ namespace pn {
 
 		RenderComponent();
 
-		vec4 getAmbient() const;
-		void setAmbient(vec4 ambient);
+		const vec4& getAmbient() const;
+		void setAmbient(const vec4& ambient);
 
-		vec4 getDiffuse() const;
-		void setDiffuse(vec4 diffuse);
+		const pn::PString& getDiffuse() const;
+		void setDiffuse(const pn::PString& diffuse);
 
 		float getGloss() const;
 		void setGloss(float gloss);
 
-		pn::PString getMesh() const;
-		void setMesh(pn::PString mesh);
+		const pn::PString& getMesh() const;
+		void setMesh(const pn::PString& mesh);
 
-		pn::PString getShaderProgram() const;
-		void setShaderProgram(pn::PString shaderProgram);
+		const pn::PString& getShaderProgram() const;
+		void setShaderProgram(const pn::PString& shaderProgram);
 
-		vec4 getSpecular() const;
-		void setSpecular(vec4 specular);
+		const vec4& getSpecular() const;
+		void setSpecular(const vec4& specular);
 
 	private:
 		vec4 m_ambient = { 0.0f, 0.0f, 0.0f, 1.0f };
-		vec4 m_diffuse = { 0.0f, 0.0f, 0.0f, 1.0f };
+		pn::PString m_diffuse = "red.png";
 		float m_gloss = 1;
 		pn::PString m_mesh = "default.obj";
 		pn::PString m_shaderProgram = "default.sp";

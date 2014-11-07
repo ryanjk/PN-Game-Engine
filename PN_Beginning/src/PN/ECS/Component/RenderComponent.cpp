@@ -12,7 +12,8 @@ std::shared_ptr<pn::RenderComponent> pn::RenderComponent::make(const ComponentDa
 
 	auto diffuseData = data["diffuse"];
 	if (!diffuseData.isNull()) {
-		component->m_diffuse = vec4(diffuseData[0].asFloat(), diffuseData[1].asFloat(), diffuseData[2].asFloat(), diffuseData[3].asFloat());
+		resources.load(diffuseData.asString());
+		component->m_diffuse = diffuseData.asString();
 	}
 
 	auto glossData = data["gloss"];
@@ -52,19 +53,19 @@ pn::ComponentType pn::RenderComponent::getType() const {
 	return pn::ComponentType::RENDER;
 }
 
-vec4 pn::RenderComponent::getAmbient() const {
+const vec4& pn::RenderComponent::getAmbient() const {
 	return m_ambient;
 }
 
-void pn::RenderComponent::setAmbient(vec4 ambient) {
+void pn::RenderComponent::setAmbient(const vec4& ambient) {
 	m_ambient = ambient;
 }
 
-vec4 pn::RenderComponent::getDiffuse() const {
+const pn::PString& pn::RenderComponent::getDiffuse() const {
 	return m_diffuse;
 }
 
-void pn::RenderComponent::setDiffuse(vec4 diffuse) {
+void pn::RenderComponent::setDiffuse(const pn::PString& diffuse) {
 	m_diffuse = diffuse;
 }
 
@@ -76,27 +77,27 @@ void pn::RenderComponent::setGloss(float gloss) {
 	m_gloss = gloss;
 }
 
-pn::PString pn::RenderComponent::getMesh() const {
+const pn::PString& pn::RenderComponent::getMesh() const {
 	return m_mesh;
 }
 
-void pn::RenderComponent::setMesh(pn::PString mesh) {
+void pn::RenderComponent::setMesh(const pn::PString& mesh) {
 	m_mesh = mesh;
 }
 
-pn::PString pn::RenderComponent::getShaderProgram() const {
+const pn::PString& pn::RenderComponent::getShaderProgram() const {
 	return m_shaderProgram;
 }
 
-void pn::RenderComponent::setShaderProgram(pn::PString shaderProgram) {
+void pn::RenderComponent::setShaderProgram(const pn::PString& shaderProgram) {
 	m_shaderProgram = shaderProgram;
 }
 
-vec4 pn::RenderComponent::getSpecular() const {
+const vec4& pn::RenderComponent::getSpecular() const {
 	return m_specular;
 }
 
-void pn::RenderComponent::setSpecular(vec4 specular) {
+void pn::RenderComponent::setSpecular(const vec4& specular) {
 	m_specular = specular;
 }
 

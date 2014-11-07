@@ -13,16 +13,16 @@ namespace pn {
 		GLuint VBO_vn;
 		GLuint VBO_vt;
 
-		GLuint TBO;
-
-		GLuint sampler;
+		GLuint TBO_diffuse;
+		GLuint sampler_diffuse;
+		HashValue image_diffuse;
 
 		GLuint SHADER_v;
 		GLuint SHADER_f;
 		GLuint SHADER_program;
 
 		HashValue mesh;
-		HashValue image;
+		
 	};
 }
 

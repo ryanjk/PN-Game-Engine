@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 tc;
 
 uniform mat4 world;
 uniform mat4 view;
@@ -10,6 +11,7 @@ uniform mat4 proj;
 out VS_OUT {
 	vec3 position;
 	vec3 normal;
+	vec2 tc;
 } vs_out;
 
 void main() {
@@ -18,5 +20,6 @@ void main() {
 	
 	vs_out.normal = ((world) * vec4(normal, 0.0)).xyz;
 	vs_out.position = n_pos.xyz;
+	vs_out.tc = tc;
 	
 }

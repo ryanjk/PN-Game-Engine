@@ -3,12 +3,14 @@
 in VS_OUT {
 	vec3 position;
 	vec3 normal;
+	vec2 tc;
 } fs_in;
 
 uniform vec4 ambient;
-uniform vec4 diffuse;
 uniform vec4 specular;
 uniform float gloss;
+
+layout (binding = 0) uniform sampler2D diffuseMap;
 
 uniform vec3 cameraPosition;
 
@@ -42,7 +44,7 @@ float interpolate(float x, float a, float b) {
 vec4 shadePoint(vec3 position, vec3 normal, Light light) {
 	
 	// Calculate maximum colour for diffuse and specular
-	vec4 diffuseColour = vec4(light.colour, 1.0) * diffuse;
+	vec4 diffuseColour = vec4(light.colour, 1.0) * texture(diffuseMap, fs_in.tc);
 	vec4 specularColour = vec4(light.colour, 1.0) * specular;
 	
 	// Unit normal at surface

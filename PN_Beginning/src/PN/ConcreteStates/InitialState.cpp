@@ -49,6 +49,7 @@ void pn::InitialState::startUpAssist() {
 				// shader program sets up renderable its own way
 
 				entity_renderable.mesh = renderComponent->getMesh().getHash();
+				entity_renderable.image_diffuse = renderComponent->getDiffuse().getHash();
 				entity_renderable.SHADER_program = m_resources.getShaderProgram(renderComponent->getShaderProgram()).getGLProgramObject();
 
 				glGenVertexArrays(1, &entity_renderable.VAO);
@@ -70,10 +71,31 @@ void pn::InitialState::startUpAssist() {
 					GL_STATIC_DRAW);
 				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+				glGenBuffers(1, &entity_renderable.VBO_vt);
+				glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_vt);
+				glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
+					entity_renderable.mesh).getTexes().size() * sizeof(GLfloat),
+					&m_resources.getMesh(entity_renderable.mesh).getTexes()[0],
+					GL_STATIC_DRAW);
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
 				glBindVertexArray(0);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+				glGenTextures(1, &entity_renderable.TBO_diffuse);
+				glBindTexture(GL_TEXTURE_2D, entity_renderable.TBO_diffuse);
+					pn::Image& img = m_resources.getImage(entity_renderable.image_diffuse);
+					glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, img.getWidth(), img.getHeight());
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.getWidth(), img.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, &img.getPixels()[0]);
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				glGenSamplers(1, &entity_renderable.sampler_diffuse);
+				glSamplerParameteri(entity_renderable.sampler_diffuse, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glSamplerParameteri(entity_renderable.sampler_diffuse, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glSamplerParameteri(entity_renderable.sampler_diffuse, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
 				m_renderables.insert({ entity.getID(), entity_renderable });
+
 			}	
 		}
 
@@ -152,6 +174,7 @@ void pn::InitialState::render() {
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
@@ -173,7 +196,6 @@ void pn::InitialState::renderSceneGraph(EntityID start, pn::MatrixStack& matrixS
 		auto& program = m_resources.getShaderProgram(renderComponent->getShaderProgram());
 
 		program.setUniform("ambient", renderComponent->getAmbient());
-		program.setUniform("diffuse", renderComponent->getDiffuse());
 		program.setUniform("specular", renderComponent->getSpecular());
 		program.setUniform("gloss", renderComponent->getGloss());
 
@@ -181,10 +203,18 @@ void pn::InitialState::renderSceneGraph(EntityID start, pn::MatrixStack& matrixS
 
 		auto& entityRenderable = m_renderables[start];
 		glBindVertexArray(entityRenderable.VAO);
+
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+
 		mat4 worldTransform = matrixStack.multiply();
 		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(worldTransform));
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, entityRenderable.TBO_diffuse);
+		glBindSampler(0, entityRenderable.sampler_diffuse);
+
 		glDrawArraysInstanced(GL_TRIANGLES, 0, m_resources.getMesh(entityRenderable.mesh).getVertices().size(), 1);
 	}
 

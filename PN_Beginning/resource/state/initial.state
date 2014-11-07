@@ -76,7 +76,7 @@
 			"components": {
 				"transform": {
 					"translation": [0.0, 0.0, 0.0],
-					"scale":[150.0, 150.0, 150.0],
+					"scale":[1.0, 1.0, 1.0],
 					"rotation":[0.0, 3.14, 0.0]
 				},
 				"render": {
@@ -84,7 +84,7 @@
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": [1.0, 0.0, 0.0, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":100
+					"gloss":1000
 				}
 			}
 		},
@@ -101,6 +101,18 @@
 					"diffuse": [0.2, 0.4, 0.6, 1.0],
 					"specular": [0.4, 0.4, 0.4, 1.0],
 					"gloss":10
+				}
+			}
+		},
+		"point_light":{
+			"components":{
+				"transform":{
+					"translation":[0.0, 0.0, 10.0]
+				},
+				"light":{
+					"intensity":100.0,
+					"colour":[0.0, 1.0, 1.0],
+					"maxRadius":10.0
 				}
 			}
 		},
@@ -143,10 +155,11 @@
 						},
 						"light":{
 							"intensity":50.0,
-							"colour":[1.0, 0.0, 0.0],
+							"colour":[1.0, 1.0, 1.0],
 							"innerRadians":0.2,
 							"outerRadians":0.6,
-							"lightType":2
+							"lightType":2,
+							"maxRadius":5.0
 						}
 					}
 				}

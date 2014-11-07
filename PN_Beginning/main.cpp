@@ -17,10 +17,6 @@
 #include <iostream>
 #include <memory>
 
-void error_callback(int error, const char * description) {
-	std::cerr << "GLFW: " << description << std::endl;
-}
-
 int main(int argc, char* args[])
 {
 	// Initialize settings (load them into the manager from config file)
@@ -31,7 +27,6 @@ int main(int argc, char* args[])
 	auto height = pn::SettingsManager::g_SettingsManager.getWindowHeight();
 
 	// Initialize SDL and GLEW
-//	SDL_SetMainReady();
 	pn::WindowManager::g_windowManager.startUp(fullscreen, width, height);
 
 	pn::mm::Window* window = pn::WindowManager::g_windowManager.getWindow();

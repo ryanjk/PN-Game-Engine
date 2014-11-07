@@ -32,7 +32,7 @@ pn::mm::Window* pn::mm::createWindow(bool fullscreen, unsigned width, unsigned h
 		window_flags = window_flags | SDL_WINDOW_FULLSCREEN;
 	}
 
-	window = SDL_CreateWindow("PN_Beginning", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, window_flags);
+	window = SDL_CreateWindow("PN_Beginning", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
 
 	if (window == NULL) {
 		std::cout << "SDL Could not create window: " << std::endl;

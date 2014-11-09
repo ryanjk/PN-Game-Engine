@@ -21,8 +21,8 @@ namespace pn {
 
 		LightComponent();
 
-		vec3 getColour() const;
-		void setColour(vec3 colour);
+		const vec3& getColour() const;
+		void setColour(const vec3& colour);
 
 		float getInnerRadians() const;
 		void setInnerRadians(float innerRadians);

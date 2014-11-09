@@ -10,27 +10,33 @@
 namespace pn {
 	class ShaderProgram {
 	public:
-		ShaderProgram(GLuint program, pn::PString vertex_shader, pn::PString fragment_shader);
+		ShaderProgram(GLuint program, pn::PString shader_program_filename, pn::PString vertex_shader, 
+			pn::PString fragment_shader, int materialID);
 
 		GLuint getGLProgramObject() const;
+		int getMaterialID() const;
 
-		pn::PString getVertexShaderFilename() const;
-		pn::PString getFragmentShaderFilename() const;
+		const pn::PString& getVertexShaderFilename() const;
+		const pn::PString& getFragmentShaderFilename() const;
+		const pn::PString& getShaderProgramFilename() const;
 
 		template<typename T>
-		void setUniform(std::string uniform, T value);
+		void setUniform(const std::string& uniform, T value) const;
 
-		void addUniform(pn::PString uniform);
+		void addUniform(const pn::PString& uniform);
 
 	private:
 		GLuint m_program;
 
+		int m_materialID;
+
 		pn::PString m_vertex_shader_filename;
 		pn::PString m_fragment_shader_filename;
+		pn::PString m_shader_program_filename;
 
 		std::vector<HashValue> m_uniforms;
 
-		GLint getUniformLocation(std::string uniform);
+		GLint getUniformLocation(const std::string& uniform) const;
 	};
 }
 

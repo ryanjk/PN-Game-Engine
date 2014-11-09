@@ -7,7 +7,7 @@ namespace pn {
 	class MatrixStack {
 	public:
 		MatrixStack();
-		void push(mat4 matrix);
+		void push(const mat4& matrix);
 		void pop();
 
 		bool isEmpty() const;

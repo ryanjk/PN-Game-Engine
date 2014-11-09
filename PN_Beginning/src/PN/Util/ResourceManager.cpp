@@ -140,6 +140,14 @@ void pn::ResourceManager::load(const PString& filename) {
 			}
 			load(fragment_shader.asString());
 
+			auto material_id = root["material_id"];
+			if (material_id.isNull()) {
+				std::cout << "ShaderLoader: Material does not have ID" << std::endl;
+				getchar();
+				exit(-1);
+			}
+			int id_number = material_id.asInt();
+
 			// get shader gl objects to link into program
 			GLuint vertex_shader_object = getVertexShader(vertex_shader.asString());
 			GLuint fragment_shader_object = getFragmentShader(fragment_shader.asString());
@@ -163,7 +171,7 @@ void pn::ResourceManager::load(const PString& filename) {
 			}
 
 			// create game shader program object
-			pn::ShaderProgram shader_program(program, vertex_shader.asString(), fragment_shader.asString());
+			pn::ShaderProgram shader_program(program, filename, vertex_shader.asString(), fragment_shader.asString(), id_number);
 
 			GLint num_active_uniforms;
 			glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &num_active_uniforms);
@@ -181,7 +189,7 @@ void pn::ResourceManager::load(const PString& filename) {
 				std::string name((char*)&nameData[0], nameData.size() - 1);
 				shader_program.addUniform(name);
 			}
-
+			std::cout << "inserting shaderprogram " << filename << " with gluint " << shader_program.getGLProgramObject() << std::endl;
 			m_shaderProgramMap.insert({ filename.getHash(), shader_program });
 		}
 	}
@@ -193,21 +201,21 @@ void pn::ResourceManager::load(const PString& filename) {
 
 }
 
-pn::Image& pn::ResourceManager::getImage(const PString& filename) {
+const pn::Image& pn::ResourceManager::getImage(const PString& filename) {
 	return getImage(filename.getHash());
 }
 
-pn::Image& pn::ResourceManager::getImage(const HashValue& key) {
+const pn::Image& pn::ResourceManager::getImage(const HashValue& key) {
 	auto image_itr = m_imageMap.find(key);
 	assert(image_itr != m_imageMap.end());
 	return image_itr->second;
 }
 
-pn::Mesh& pn::ResourceManager::getMesh(const PString& filename) {
+const pn::Mesh& pn::ResourceManager::getMesh(const PString& filename) {
 	return getMesh(filename.getHash());
 }
 
-pn::Mesh& pn::ResourceManager::getMesh(const HashValue& key) {
+const pn::Mesh& pn::ResourceManager::getMesh(const HashValue& key) {
 	auto mesh_itr = m_meshMap.find(key);
 	assert(mesh_itr != m_meshMap.end());
 	return mesh_itr->second;
@@ -233,11 +241,11 @@ GLuint pn::ResourceManager::getFragmentShader(const HashValue& key) {
 	return fshader_itr->second;
 }
 
-pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename) {
+const pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename) {
 	return getShaderProgram(filename.getHash());
 }
 
-pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const HashValue& key) {
+const pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const HashValue& key) {
 	auto shader_program_itr = m_shaderProgramMap.find(key);
 	assert(shader_program_itr != m_shaderProgramMap.end());
 	return shader_program_itr->second;

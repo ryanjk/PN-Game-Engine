@@ -7,7 +7,7 @@
 			"floor.obj"
         ],
         "shaderProgram": [
-            
+            "default.sp"
         ]
     },
 	"entities": {
@@ -20,6 +20,7 @@
 				},
 				"render": {
 					"mesh":"monkey_hd.obj",
+					"shaderProgram":"static_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "monkey_diffuse.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -62,6 +63,7 @@
 				},
 				"render": {
 					"mesh":"dragon_lr.obj",
+					"shaderProgram":"static_light.sp",
 					"diffuse": "red.png",
 					"gloss":0
 				}
@@ -76,6 +78,7 @@
 				},
 				"render": {
 					"mesh":"dragon_lr.obj",
+					"shaderProgram":"static_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "red.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -92,10 +95,11 @@
 				},
 				"render": {
 					"mesh":"cube.obj",
-					"ambient": [0.0, 0.0, 0.0, 1.0],
-					"diffuse": "cube_diffuse.png",
-					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":1000
+					"shaderProgram":"static_light.sp",
+		//			"ambient": [0.0, 0.0, 0.0, 1.0],
+					"diffuse": "cube_diffuse.png"
+		//			"specular": [0.4, 0.4, 0.4, 1.0],
+		//			"gloss":1000
 				}
 			}
 		},
@@ -108,6 +112,7 @@
 				},
 				"render": {
 					"mesh":"dragon_lr.obj",
+					"shaderProgram":"static_light.sp",
 					"ambient": [0.1, 0.1, 0.1, 1.0],
 					"diffuse": "white.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -123,7 +128,7 @@
 				"light":{
 					"intensity":100.0,
 					"colour":[1.0, 1.0, 1.0],
-					"maxRadius":10.0
+					"maxRadius":5.0
 				}
 			}
 		},
@@ -137,6 +142,7 @@
 				"render": {
 					"mesh":"dragon_lr.obj",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
+					"shaderProgram":"static_light.sp",
 					"diffuse": "red.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
 					"gloss":1000

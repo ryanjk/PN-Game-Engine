@@ -27,11 +27,11 @@ namespace pn {
 
 		void load(const PString& filename);
 
-		Image& getImage(const PString& filename);
-		Image& getImage(const HashValue& key);
+		const Image& getImage(const PString& filename);
+		const Image& getImage(const HashValue& key);
 
-		Mesh& getMesh(const PString& filename);
-		Mesh& getMesh(const HashValue& key);
+		const Mesh& getMesh(const PString& filename);
+		const Mesh& getMesh(const HashValue& key);
 
 		GLuint getVertexShader(const PString& filename);
 		GLuint getVertexShader(const HashValue& key);
@@ -39,8 +39,8 @@ namespace pn {
 		GLuint getFragmentShader(const PString& filename);
 		GLuint getFragmentShader(const HashValue& key);
 
-		pn::ShaderProgram& getShaderProgram(const PString& filename);
-		pn::ShaderProgram& getShaderProgram(const HashValue& key);
+		const pn::ShaderProgram& getShaderProgram(const PString& filename);
+		const pn::ShaderProgram& getShaderProgram(const HashValue& key);
 
 		void removeAll();
 		void remove(const PString& filename);

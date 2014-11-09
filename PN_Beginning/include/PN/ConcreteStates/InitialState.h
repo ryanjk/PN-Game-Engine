@@ -3,6 +3,8 @@
 
 #include "PN/Window/WindowManager.h"
 
+#include "PN/ECS/Component/LightComponent.h"
+
 #include "PN/GameState/GameState.h"
 
 #include "PN/Render/Image.h"
@@ -16,6 +18,10 @@
 #include <map>
 
 namespace pn {
+
+	struct DrawCall;
+	using DrawCallContainer = std::multimap < int, DrawCall > ;
+
 	class InitialState : public pn::GameState {
 	public:
 		InitialState(const pn::PString& stateFilename);
@@ -33,7 +39,8 @@ namespace pn {
 
 		pn::Entity* m_activeCamera;
 
-		void renderSceneGraph(EntityID start, pn::MatrixStack& matrixStack);
+		void buildDrawCalls(EntityID start, pn::MatrixStack& matrixStack, DrawCallContainer& m_drawCalls);
+		void renderDrawCalls(DrawCallContainer& drawCalls);
 	};
 }
 

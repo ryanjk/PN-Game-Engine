@@ -56,7 +56,6 @@ void pn::GameState::loadResources() {
 
 	for (auto& resource : resourceTree) {
 		for (auto& resourceFilename : resource) {
-//			pn::ResourceManager::g_resourceManager.load(resourceFilename.asString());
 			m_resources.load(resourceFilename.asString());
 		}
 	}

@@ -97,6 +97,9 @@ int main(int argc, char* args[])
 	double FPS_counter = -current_time;
 	int frames_passed = 0;
 
+	double sum_of_fps_samples = 0;
+	int num_fps_samples = 0;
+
 	pn::mm::InputEvent e;
 	bool shouldClose = false;
 	while (!shouldClose)
@@ -106,7 +109,10 @@ int main(int argc, char* args[])
 
 		FPS_counter += frame_time;
 		if (frames_passed >= 1000) {
-			std::cout << "FPS: " <<  frames_passed / FPS_counter << std::endl;
+			double fps_sample = frames_passed / FPS_counter;
+			sum_of_fps_samples += fps_sample;
+			num_fps_samples++;
+			std::cout << "FPS: " << sum_of_fps_samples / num_fps_samples << "\n(" << fps_sample << ")" << std::endl;
 			frames_passed = 0;
 			FPS_counter = 0;
 		}

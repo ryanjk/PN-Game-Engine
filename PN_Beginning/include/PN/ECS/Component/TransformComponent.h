@@ -19,12 +19,12 @@ namespace pn {
 
 		TransformComponent();
 
-		mat4 getTransformMatrix() const;
-		mat4 getWorldTransformMatrix() const;
+		const mat4& getTransformMatrix() const;
+		const mat4& getWorldTransformMatrix() const;
 
-		vec3 getTranslation() const;
-		vec3 getScale() const;
-		vec3 getRotation() const;
+		const vec3& getTranslation() const;
+		const vec3& getScale() const;
+		const vec3& getRotation() const;
 
 		void translateWorld(const vec3& by);
 		void translateLocal(const vec3& by);

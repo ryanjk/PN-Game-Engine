@@ -31,14 +31,15 @@ struct Light {
 	float maxRadius;
 };
 
-const int MAX_LIGHTS = 8;
+const int MAX_LIGHTS = 4;
 
 uniform int num_lights;
 uniform Light lightUni[MAX_LIGHTS];
 
 // used for spotlight to shade when point is between the inner and outer angle boundaries
 float interpolate(float x, float a, float b) {
-	return (x * (1/(b - a))) - (a / (b - a));
+//	return (x * (1/(b - a))) - (a / (b - a));
+	return smoothstep(a, b, x);
 }
 
 vec4 shadePoint(vec3 position, vec3 normal, Light light) {
@@ -165,9 +166,26 @@ void main() {
 	vec4 ambientColour = ambientLightColour * ambient;
 
 	vec4 finalColour = vec4(0.0, 0.0, 0.0, 1.0);
+
+	if (num_lights == 4) {
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[0]);
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[1]);
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[2]);
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[3]);
+	}
+
+	else if (num_lights == 1) {
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[0]);
+	}
 	
-	for (int i = 0; i < num_lights; i++) {
-		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[i]);
+	else if (num_lights == 2) {
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[0]);
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[1]);
+	}
+	else if (num_lights == 3) {
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[0]);
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[1]);
+		finalColour += shadePoint(fs_in.position, fs_in.normal, lightUni[2]);
 	}
 	
 	vec4 finalAmbient = ambientColour;

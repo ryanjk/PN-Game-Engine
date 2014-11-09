@@ -38,11 +38,11 @@ pn::ComponentType pn::TransformComponent::getType() const {
 	return pn::ComponentType::TRANSFORM;
 }
 
-mat4 pn::TransformComponent::getTransformMatrix() const {
+const mat4& pn::TransformComponent::getTransformMatrix() const {
 	return m_transformMatrix;
 }
 
-mat4 pn::TransformComponent::getWorldTransformMatrix() const {
+const mat4& pn::TransformComponent::getWorldTransformMatrix() const {
 	return pn::GameStateManager::g_gameStateManager.getCurrentState()->getEntityWorldTransform(getOwner());
 }
 
@@ -53,15 +53,15 @@ void pn::TransformComponent::updateTransformMatrix() {
 		glm::scale(mat4(), m_scale);
 }
 
-vec3 pn::TransformComponent::getTranslation() const {
+const vec3& pn::TransformComponent::getTranslation() const {
 	return m_translation;
 }
 
-vec3 pn::TransformComponent::getScale() const {
+const vec3& pn::TransformComponent::getScale() const {
 	return m_scale;
 }
 
-vec3 pn::TransformComponent::getRotation() const {
+const vec3& pn::TransformComponent::getRotation() const {
 	return m_rotation;
 }
 

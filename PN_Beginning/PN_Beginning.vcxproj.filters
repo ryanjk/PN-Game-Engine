@@ -260,6 +260,9 @@
     <ClInclude Include="include\PN\Util\MM.h">
       <Filter>Header Files\PN\Util</Filter>
     </ClInclude>
+    <ClInclude Include="include\PN\Render\DrawCall.h">
+      <Filter>Header Files\PN\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config\config.ini">

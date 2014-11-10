@@ -6,7 +6,8 @@ in VS_OUT {
 	vec2 tc;
 } fs_in;
 
-layout (binding = 0) uniform sampler2D diffuseMap;
+//layout (binding = 0) 
+uniform sampler2D diffuseMap;
 
 out vec4 colour;
 

@@ -26,8 +26,8 @@ namespace pn {
 		const pn::PString& getMesh() const;
 		void setMesh(const pn::PString& mesh);
 
-		const pn::PString& getShaderProgram() const;
-		void setShaderProgram(const pn::PString& shaderProgram);
+		const pn::PString& getMaterial() const;
+		void setMaterial(const pn::PString& material);
 
 		const vec4& getSpecular() const;
 		void setSpecular(const vec4& specular);
@@ -36,8 +36,8 @@ namespace pn {
 		vec4 m_ambient = { 0.0f, 0.0f, 0.0f, 1.0f };
 		pn::PString m_diffuse = "red.png";
 		float m_gloss = 1;
-		pn::PString m_mesh = "default.obj";
-		pn::PString m_shaderProgram = "default.sp";
+		pn::PString m_mesh = "cube.obj";
+		pn::PString m_material = "static_light.sp";
 		vec4 m_specular = { 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 }

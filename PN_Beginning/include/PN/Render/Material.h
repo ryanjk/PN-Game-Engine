@@ -8,9 +8,9 @@
 #include <vector>
 
 namespace pn {
-	class ShaderProgram {
+	class Material {
 	public:
-		ShaderProgram(GLuint program, pn::PString shader_program_filename, pn::PString vertex_shader, 
+		Material(GLuint program, pn::PString shader_program_filename, pn::PString vertex_shader, 
 			pn::PString fragment_shader, int materialID);
 
 		GLuint getGLProgramObject() const;
@@ -18,12 +18,10 @@ namespace pn {
 
 		const pn::PString& getVertexShaderFilename() const;
 		const pn::PString& getFragmentShaderFilename() const;
-		const pn::PString& getShaderProgramFilename() const;
+		const pn::PString& getMaterialFilename() const;
 
 		template<typename T>
-		void setUniform(const std::string& uniform, T value) const;
-
-		void addUniform(const pn::PString& uniform);
+		inline void setUniform(const std::string& uniform, T value) const;
 
 	private:
 		GLuint m_program;
@@ -36,7 +34,7 @@ namespace pn {
 
 		std::vector<HashValue> m_uniforms;
 
-		GLint getUniformLocation(const std::string& uniform) const;
+		inline GLint getUniformLocation(const std::string& uniform) const;
 	};
 }
 

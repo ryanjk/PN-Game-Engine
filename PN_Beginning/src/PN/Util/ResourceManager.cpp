@@ -17,7 +17,7 @@ std::mutex meshMutex;
 static const pn::PString IMAGE_FOLDER_PATH = "resource/image/";
 static const pn::PString MESH_FOLDER_PATH = "resource/mesh/";
 static const pn::PString SHADER_FOLDER_PATH = "resource/shader/";
-static const pn::PString SHADER_PROGRAM_FOLDER_PATH = "resource/shaderProgram/";
+static const pn::PString SHADER_PROGRAM_FOLDER_PATH = "resource/material/";
 
 pn::ResourceManager::ResourceManager() {}
 
@@ -99,8 +99,8 @@ void pn::ResourceManager::load(const PString& filename) {
 		}
 	}
 		break;
-	case pn::FileTypeEnum::SHADER_PROGRAM: {
-		if (m_shaderProgramMap.find(filename.getHash()) == m_shaderProgramMap.end()) {
+	case pn::FileTypeEnum::MATERIAL: {
+		if (m_materialMap.find(filename.getHash()) == m_materialMap.end()) {
 			m_used_resource_filenames.insert(filename.getText());
 
 			Json::Reader reader;
@@ -170,27 +170,8 @@ void pn::ResourceManager::load(const PString& filename) {
 				std::cout << &programError[0] << std::endl;
 			}
 
-			// create game shader program object
-			pn::ShaderProgram shader_program(program, filename, vertex_shader.asString(), fragment_shader.asString(), id_number);
-
-			GLint num_active_uniforms;
-			glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &num_active_uniforms);
-
-			std::vector<GLchar> nameData(256);
-			std::vector<GLenum> properties = { GL_NAME_LENGTH };
-			std::vector<GLint> values(properties.size());
-			for (int uniform = 0; uniform < num_active_uniforms; uniform++) {
-				glGetProgramResourceiv(program, GL_UNIFORM, uniform, properties.size(), &properties[0], values.size(), NULL, &values[0]);
-
-				nameData.resize(values[0]);
-
-				glGetProgramResourceName(program, GL_UNIFORM, uniform, nameData.size(), NULL, &nameData[0]);
-
-				std::string name((char*)&nameData[0], nameData.size() - 1);
-				shader_program.addUniform(name);
-			}
-			std::cout << "inserting shaderprogram " << filename << " with gluint " << shader_program.getGLProgramObject() << std::endl;
-			m_shaderProgramMap.insert({ filename.getHash(), shader_program });
+			pn::Material material(program, filename, vertex_shader.asString(), fragment_shader.asString(), id_number);
+			m_materialMap.insert({ filename.getHash(), material });
 		}
 	}
 		break;
@@ -241,13 +222,13 @@ GLuint pn::ResourceManager::getFragmentShader(const HashValue& key) {
 	return fshader_itr->second;
 }
 
-const pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const PString& filename) {
-	return getShaderProgram(filename.getHash());
+const pn::Material& pn::ResourceManager::getMaterial(const PString& filename) {
+	return getMaterial(filename.getHash());
 }
 
-const pn::ShaderProgram& pn::ResourceManager::getShaderProgram(const HashValue& key) {
-	auto shader_program_itr = m_shaderProgramMap.find(key);
-	assert(shader_program_itr != m_shaderProgramMap.end());
+const pn::Material& pn::ResourceManager::getMaterial(const HashValue& key) {
+	auto shader_program_itr = m_materialMap.find(key);
+	assert(shader_program_itr != m_materialMap.end());
 	return shader_program_itr->second;
 }
 
@@ -273,12 +254,12 @@ void pn::ResourceManager::remove(const PString& filename) {
 		m_fshaderMap.erase(filename.getHash());
 	}
 		break;
-	case pn::FileTypeEnum::SHADER_PROGRAM: {
-		pn::ShaderProgram shaderProgram = getShaderProgram(filename);
-		remove(shaderProgram.getVertexShaderFilename());
-		remove(shaderProgram.getFragmentShaderFilename());
-		glDeleteProgram(shaderProgram.getGLProgramObject());
-		m_shaderProgramMap.erase(filename.getHash());
+	case pn::FileTypeEnum::MATERIAL: {
+		const pn::Material& material = getMaterial(filename);
+		remove(material.getVertexShaderFilename());
+		remove(material.getFragmentShaderFilename());
+		glDeleteProgram(material.getGLProgramObject());
+		m_materialMap.erase(filename.getHash());
 	}
 		break;
 	default:

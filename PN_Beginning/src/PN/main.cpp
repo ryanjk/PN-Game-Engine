@@ -62,11 +62,11 @@ int main(int argc, char* args[])
 			if (key == pn::mm::KEY_ESC) SDL_PushEvent(&e);
 			else if (key == pn::mm::KEY_SPACEBAR) {
 				if (cursor) {
-					pn::mm::setCursorOff(false);
+					pn::mm::setCursor(false);
 					cursor = false;
 				}
 				else {
-					pn::mm::setCursorOff(true);
+					pn::mm::setCursor(true);
 					cursor = true;
 				}
 			}

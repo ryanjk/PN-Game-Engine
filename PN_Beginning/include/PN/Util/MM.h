@@ -23,7 +23,7 @@ namespace pn {
 
 		void setWindowSize(Window* window, int x, int y);
 
-		void setCursorOff(bool on);
+		void setCursor(bool on);
 		void getCursorPos(int* x, int* y);
 		void moveCursorToPos(Window* window, int x, int y);
 

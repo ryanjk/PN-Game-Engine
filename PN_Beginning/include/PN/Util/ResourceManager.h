@@ -7,7 +7,7 @@
 
 #include "PN/Render/Image.h"
 #include "PN/Render/Mesh.h"
-#include "PN/Render/ShaderProgram.h"
+#include "PN/Render/Material.h"
 
 #include <map>
 #include <set>
@@ -15,7 +15,7 @@
 using ImageMap = std::map < HashValue, pn::Image > ;
 using MeshMap = std::map < HashValue, pn::Mesh > ;
 using ShaderMap = std::map < HashValue, GLuint > ;
-using ShaderProgramMap = std::map < HashValue, pn::ShaderProgram > ;
+using MaterialMap = std::map < HashValue, pn::Material > ;
 
 namespace pn {
 	class ResourceManager {
@@ -39,8 +39,8 @@ namespace pn {
 		GLuint getFragmentShader(const PString& filename);
 		GLuint getFragmentShader(const HashValue& key);
 
-		const pn::ShaderProgram& getShaderProgram(const PString& filename);
-		const pn::ShaderProgram& getShaderProgram(const HashValue& key);
+		const pn::Material& getMaterial(const PString& filename);
+		const pn::Material& getMaterial(const HashValue& key);
 
 		void removeAll();
 		void remove(const PString& filename);
@@ -50,7 +50,7 @@ namespace pn {
 		MeshMap m_meshMap;
 		ShaderMap m_vshaderMap;
 		ShaderMap m_fshaderMap;
-		ShaderProgramMap m_shaderProgramMap;
+		MaterialMap m_materialMap;
 
 		std::set<std::string> m_used_resource_filenames;
 

@@ -23,7 +23,7 @@ pn::FileTypeEnum pn::FileType::toFileTypeEnum(const PString& filepath) {
 		return pn::FileTypeEnum::FRAGMENT_SHADER;
 	}
 	else if (extension == "sp") {
-		return pn::FileTypeEnum::SHADER_PROGRAM;
+		return pn::FileTypeEnum::MATERIAL;
 	}
 	else {
 		return pn::FileTypeEnum::NONE;
@@ -41,8 +41,8 @@ std::ostream& operator<<(std::ostream& ostream, pn::FileTypeEnum filetype) {
 		return ostream << "VERTEX_SHADER";
 	case pn::FileTypeEnum::FRAGMENT_SHADER:
 		return ostream << "FRAGMENT_SHADER";
-	case pn::FileTypeEnum::SHADER_PROGRAM:
-		return ostream << "SHADER_PROGRAM";
+	case pn::FileTypeEnum::MATERIAL:
+		return ostream << "MATERIAL";
 	case pn::FileTypeEnum::NONE:
 		return ostream << "NONE";
 	default:

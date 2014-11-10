@@ -30,13 +30,13 @@ std::shared_ptr<pn::RenderComponent> pn::RenderComponent::make(const ComponentDa
 	//	pn::ResourceManager::g_resourceManager.load("default.obj");
 	}
 
-	auto shaderProgramData = data["shaderProgram"];
-	if (!shaderProgramData.isNull()) {
-		resources.load(shaderProgramData.asString());
-		component->m_shaderProgram = shaderProgramData.asString();
+	auto materialData = data["material"];
+	if (!materialData.isNull()) {
+		resources.load(materialData.asString());
+		component->m_material = materialData.asString();
 	}
 	else {
-		resources.load("default.sp");
+		resources.load("static_light.sp");
 	}
 
 	auto specularData = data["specular"];
@@ -85,12 +85,12 @@ void pn::RenderComponent::setMesh(const pn::PString& mesh) {
 	m_mesh = mesh;
 }
 
-const pn::PString& pn::RenderComponent::getShaderProgram() const {
-	return m_shaderProgram;
+const pn::PString& pn::RenderComponent::getMaterial() const {
+	return m_material;
 }
 
-void pn::RenderComponent::setShaderProgram(const pn::PString& shaderProgram) {
-	m_shaderProgram = shaderProgram;
+void pn::RenderComponent::setMaterial(const pn::PString& material) {
+	m_material = material;
 }
 
 const vec4& pn::RenderComponent::getSpecular() const {

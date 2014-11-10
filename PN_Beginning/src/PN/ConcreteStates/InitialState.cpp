@@ -3,7 +3,6 @@
 #include "PN/ECS/Component/RenderComponent.h"
 #include "PN/ECS/Component/TransformComponent.h"
 
-
 #include "PN/Input/InputManager.h"
 #include "PN/Input/FirstPersonListener.h"
 
@@ -35,21 +34,17 @@ void pn::InitialState::update(double dt) {
 }
 
 void pn::InitialState::startUpAssist() {
-	const HashValue defaultShaderProgram = pn::PString("default.sp").getHash();
-
 	// set up renderable for each entity that needs one
 	for (auto& entity : m_entities) {
 		bool hasRenderComponent = (entity.getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
 		if (hasRenderComponent) {
 			auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
-			auto shaderProgramName = renderComponent->getShaderProgram();
-		
-		//	if (shaderProgramName.getHash() == defaultShaderProgram) {
+
 			Renderable entity_renderable;
 
 			entity_renderable.mesh = renderComponent->getMesh().getHash();
 			entity_renderable.image_diffuse = renderComponent->getDiffuse().getHash();
-			entity_renderable.SHADER_program = m_resources.getShaderProgram(renderComponent->getShaderProgram()).getGLProgramObject();
+			entity_renderable.SHADER_program = m_resources.getMaterial(renderComponent->getMaterial()).getGLProgramObject();
 
 			glGenVertexArrays(1, &entity_renderable.VAO);
 			glBindVertexArray(entity_renderable.VAO);
@@ -109,6 +104,8 @@ void pn::InitialState::startUpAssist() {
 	auto playerBody = std::dynamic_pointer_cast<pn::TransformComponent>(player.getComponent(pn::ComponentType::TRANSFORM));
 	auto handler = pn::InputManager::g_inputManager.getInputHandler();
 	handler->addListener(std::make_shared<pn::FirstPersonListener>(playerBody));
+
+	mm::setCursor(false);
 	
 }
 
@@ -130,7 +127,6 @@ void pn::InitialState::render() {
 
 	glUseProgram(0);
 
-
 }
 
 void pn::InitialState::buildDrawCalls(EntityID current_entity_ID, pn::MatrixStack& matrixStack, DrawCallContainer& drawCalls) {
@@ -150,7 +146,7 @@ void pn::InitialState::buildDrawCalls(EntityID current_entity_ID, pn::MatrixStac
 	bool hasRender = (current_entity.getKey() & (pn::ComponentType::RENDER)) == (pn::ComponentType::RENDER);
 	if (hasRender) {
 		const auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(current_entity.getComponent(pn::ComponentType::RENDER));
-		const auto& program = m_resources.getShaderProgram(renderComponent->getShaderProgram());
+		const auto& material = m_resources.getMaterial(renderComponent->getMaterial());
 
 		auto& entityRenderable = m_renderables[current_entity_ID];
 
@@ -161,8 +157,8 @@ void pn::InitialState::buildDrawCalls(EntityID current_entity_ID, pn::MatrixStac
 		unsigned int num_vertices = m_resources.getMesh(entityRenderable.mesh).getVertices().size();
 
 		// put draw call into container
-		pn::DrawCall drawCall({ worldTransform, entityRenderable, program, num_vertices, renderComponent });
-		drawCalls.insert({ program.getMaterialID(), drawCall });
+		pn::DrawCall drawCall({ worldTransform, entityRenderable, material, num_vertices, renderComponent });
+		drawCalls.insert({ material.getMaterialID(), drawCall });
 	}
 
 	// Continue visiting the entity's children
@@ -174,8 +170,8 @@ void pn::InitialState::buildDrawCalls(EntityID current_entity_ID, pn::MatrixStac
 }
 
 void pn::InitialState::renderDrawCalls(DrawCallContainer& drawCalls) {
-	static const auto defaultShader = pn::PString("default.sp").getHash();
-	static const auto static_light_shader = pn::PString("static_light.sp").getHash();
+	static const auto dynamic_light_material = pn::PString("dynamic_light.sp").getHash();
+	static const auto static_light_material = pn::PString("static_light.sp").getHash();
 
 	// Camera position
 	const mat4& camera_world_transform = getEntityWorldTransform(m_activeCamera->getID());
@@ -188,16 +184,16 @@ void pn::InitialState::renderDrawCalls(DrawCallContainer& drawCalls) {
 		(float)settings.getWindowWidth() / (float)settings.getWindowHeight(),
 		0.1f, 1000.0f));
 
-	HashValue last_program_rendered = 0;
+	HashValue last_material_rendered = 0;
 	for (const auto& drawCallIter : drawCalls) {
 		const auto& drawCall = drawCallIter.second;
-		auto current_program = drawCall.shader_program.getShaderProgramFilename().getHash();
-		if (current_program == defaultShader) {
+		auto current_material = drawCall.material.getMaterialFilename().getHash();
+		if (current_material == dynamic_light_material) {
 
 			// If the current program is not the same as the last one used, set new global uniforms
-			if (!(current_program == last_program_rendered)) {
+			if (!(current_material == last_material_rendered)) {
 
-				glUseProgram(drawCall.shader_program.getGLProgramObject());
+				glUseProgram(drawCall.material.getGLProgramObject());
 
 				int num_lights_set = 0;
 				for (auto entityID : m_lights) {
@@ -216,23 +212,23 @@ void pn::InitialState::renderDrawCalls(DrawCallContainer& drawCalls) {
 					entity_light.maxRadius = light_component->getMaxRadius();
 					entity_light.type = light_component->getLightType();
 
-					drawCall.shader_program.setUniform("lightUni[" + std::to_string(num_lights_set) + "]", entity_light);
+					drawCall.material.setUniform("lightUni[" + std::to_string(num_lights_set) + "]", entity_light);
 					num_lights_set++;
 				}
 
-				drawCall.shader_program.setUniform("num_lights", num_lights_set);
+				drawCall.material.setUniform("num_lights", num_lights_set);
 
 				const vec3& camera_position(camera_world_transform[3].xyz);
-				drawCall.shader_program.setUniform("cameraPosition", camera_position);
-				drawCall.shader_program.setUniform("view", view_transform);
-				drawCall.shader_program.setUniform("proj", proj_transform);
+				drawCall.material.setUniform("cameraPosition", camera_position);
+				drawCall.material.setUniform("view", view_transform);
+				drawCall.material.setUniform("proj", proj_transform);
 			}
 
-			drawCall.shader_program.setUniform("ambient", drawCall.renderComponent->getAmbient());
-			drawCall.shader_program.setUniform("specular", drawCall.renderComponent->getSpecular());
-			drawCall.shader_program.setUniform("gloss", drawCall.renderComponent->getGloss());
+			drawCall.material.setUniform("ambient", drawCall.renderComponent->getAmbient());
+			drawCall.material.setUniform("specular", drawCall.renderComponent->getSpecular());
+			drawCall.material.setUniform("gloss", drawCall.renderComponent->getGloss());
 
-			auto world_transform_index = glGetUniformLocation(drawCall.shader_program.getGLProgramObject(), "world");
+			auto world_transform_index = glGetUniformLocation(drawCall.material.getGLProgramObject(), "world");
 
 			glBindVertexArray(drawCall.gl_objects.VAO);
 
@@ -248,24 +244,23 @@ void pn::InitialState::renderDrawCalls(DrawCallContainer& drawCalls) {
 
 			glDrawArraysInstanced(GL_TRIANGLES, 0, drawCall.num_vertices, 1);
 
-			last_program_rendered = current_program;
+			last_material_rendered = current_material;
 
 		}
 
-		else if (drawCall.shader_program.getShaderProgramFilename().getHash() == static_light_shader) {
+		else if (drawCall.material.getMaterialFilename().getHash() == static_light_material) {
 
-			if (!(current_program == last_program_rendered)) {
+			if (!(current_material == last_material_rendered)) {
 
-				glUseProgram(drawCall.shader_program.getGLProgramObject());
+				glUseProgram(drawCall.material.getGLProgramObject());
 
 				const vec3& camera_position(camera_world_transform[3].xyz);
-				drawCall.shader_program.setUniform("cameraPosition", camera_position);
-				drawCall.shader_program.setUniform("view", view_transform);
-				drawCall.shader_program.setUniform("proj", proj_transform);
+				drawCall.material.setUniform("view", view_transform);
+				drawCall.material.setUniform("proj", proj_transform);
 
 			}
 
-			auto world_transform_index = glGetUniformLocation(drawCall.shader_program.getGLProgramObject(), "world");
+			auto world_transform_index = glGetUniformLocation(drawCall.material.getGLProgramObject(), "world");
 
 			glBindVertexArray(drawCall.gl_objects.VAO);
 
@@ -281,7 +276,7 @@ void pn::InitialState::renderDrawCalls(DrawCallContainer& drawCalls) {
 
 			glDrawArraysInstanced(GL_TRIANGLES, 0, drawCall.num_vertices, 1);
 
-			last_program_rendered = current_program;
+			last_material_rendered = current_material;
 
 		}
 	}

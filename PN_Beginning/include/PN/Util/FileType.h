@@ -9,7 +9,7 @@ namespace pn {
 		OBJ,
 		VERTEX_SHADER,
 		FRAGMENT_SHADER,
-		SHADER_PROGRAM,
+		MATERIAL,
 		NONE
 	};
 	class FileType {

@@ -77,19 +77,19 @@ void pn::RenderComponent::setGloss(float gloss) {
 	m_gloss = gloss;
 }
 
-const pn::PString& pn::RenderComponent::getMesh() const {
+const pn::PString& pn::RenderComponent::getMeshFilename() const {
 	return m_mesh;
 }
 
-void pn::RenderComponent::setMesh(const pn::PString& mesh) {
+void pn::RenderComponent::setMeshFilename(const pn::PString& mesh) {
 	m_mesh = mesh;
 }
 
-const pn::PString& pn::RenderComponent::getMaterial() const {
+const pn::PString& pn::RenderComponent::getMaterialFilename() const {
 	return m_material;
 }
 
-void pn::RenderComponent::setMaterial(const pn::PString& material) {
+void pn::RenderComponent::setMaterialFilename(const pn::PString& material) {
 	m_material = material;
 }
 

@@ -3,19 +3,19 @@
 
 #include "PN/Util/Math.h"
 
-#include "PN/ECS/Component/RenderComponent.h"
+#include <memory>
 
-#include "PN/Render/Renderable.h"
-#include "PN/Render/Material.h"
+class Material;
+class RenderComponent;
+struct Renderable;
 
 namespace pn {
-	
 	struct DrawCall {
 		mat4 world_transform;
-		pn::Renderable gl_objects;
-		pn::Material material;
+		Renderable gl_objects;
+		Material material;
 		unsigned int num_vertices;
-		std::shared_ptr<pn::RenderComponent> renderComponent;
+		std::shared_ptr<RenderComponent> renderComponent;
 	};
 }
 

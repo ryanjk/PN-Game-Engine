@@ -1,13 +1,22 @@
 #ifndef PN_SHADER_PROGRAM_H
 #define PN_SHADER_PROGRAM_H
 
+#include "PN/Render/Renderable.h"
+
 #include "PN/Window/WindowManager.h"
 
 #include "PN/Util/PString.h"
+#include "PN/Util/Math.h"
 
 #include <vector>
 
 namespace pn {
+
+	struct DrawCall;
+	class GameState;
+	class RenderComponent;
+	class ResourceManager;
+
 	class Material {
 	public:
 		Material(GLuint program, pn::PString shader_program_filename, pn::PString vertex_shader, 
@@ -22,6 +31,17 @@ namespace pn {
 
 		template<typename T>
 		inline void setUniform(const std::string& uniform, T value) const;
+
+		void setUpRenderable(pn::Renderable& renderable, const pn::RenderComponent& renderComponent, pn::ResourceManager& resourceManager) const;
+		void setGlobalUniforms
+			(
+			pn::GameState* gameState,
+			const std::vector<unsigned int>& lights, 
+			const mat4& camera,
+			const mat4& view,
+			const mat4& proj
+			) const;
+		void setInstanceUniforms(pn::DrawCall& drawCall) const;
 
 	private:
 		GLuint m_program;

@@ -9,6 +9,7 @@
 #include "PN/Render/RenderFactory.h"
 #include "PN/Render/Light.h"
 #include "PN/Render/DrawCall.h"
+#include "PN/Render/Material.h"
 
 #include "PN/Util/Math.h"
 
@@ -39,54 +40,11 @@ void pn::InitialState::startUpAssist() {
 		bool hasRenderComponent = (entity.getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
 		if (hasRenderComponent) {
 			auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
-
+			auto& entity_material = m_resources.getMaterial(renderComponent->getMaterialFilename());
+			
 			Renderable entity_renderable;
 
-			entity_renderable.mesh = renderComponent->getMesh().getHash();
-			entity_renderable.image_diffuse = renderComponent->getDiffuse().getHash();
-			entity_renderable.SHADER_program = m_resources.getMaterial(renderComponent->getMaterial()).getGLProgramObject();
-
-			glGenVertexArrays(1, &entity_renderable.VAO);
-			glBindVertexArray(entity_renderable.VAO);
-
-			glGenBuffers(1, &entity_renderable.VBO_v);
-			glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_v);
-			glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
-				entity_renderable.mesh).getVertices().size() * sizeof(GLfloat), 
-				&m_resources.getMesh(entity_renderable.mesh).getVertices()[0], 
-				GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-			glGenBuffers(1, &entity_renderable.VBO_vn);
-			glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_vn);
-			glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
-				entity_renderable.mesh).getNormals().size() * sizeof(GLfloat), 
-				&m_resources.getMesh(entity_renderable.mesh).getNormals()[0], 
-				GL_STATIC_DRAW);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-			glGenBuffers(1, &entity_renderable.VBO_vt);
-			glBindBuffer(GL_ARRAY_BUFFER, entity_renderable.VBO_vt);
-			glBufferData(GL_ARRAY_BUFFER, m_resources.getMesh(
-				entity_renderable.mesh).getTexes().size() * sizeof(GLfloat),
-				&m_resources.getMesh(entity_renderable.mesh).getTexes()[0],
-				GL_STATIC_DRAW);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-
-			glBindVertexArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-			glGenTextures(1, &entity_renderable.TBO_diffuse);
-			glBindTexture(GL_TEXTURE_2D, entity_renderable.TBO_diffuse);
-				const pn::Image& img = m_resources.getImage(entity_renderable.image_diffuse);
-				glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, img.getWidth(), img.getHeight());
-				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.getWidth(), img.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, &img.getPixels()[0]);
-			glBindTexture(GL_TEXTURE_2D, 0);
-
-			glGenSamplers(1, &entity_renderable.sampler_diffuse);
-			glSamplerParameteri(entity_renderable.sampler_diffuse, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glSamplerParameteri(entity_renderable.sampler_diffuse, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glSamplerParameteri(entity_renderable.sampler_diffuse, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			entity_material.setUpRenderable(entity_renderable, *renderComponent, m_resources);
 
 			m_renderables.insert({ entity.getID(), entity_renderable });
 		}
@@ -145,8 +103,8 @@ void pn::InitialState::buildDrawCalls(EntityID current_entity_ID, pn::MatrixStac
 	// If the entity is renderable, create a draw call and add it to the draw call container
 	bool hasRender = (current_entity.getKey() & (pn::ComponentType::RENDER)) == (pn::ComponentType::RENDER);
 	if (hasRender) {
-		const auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(current_entity.getComponent(pn::ComponentType::RENDER));
-		const auto& material = m_resources.getMaterial(renderComponent->getMaterial());
+		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(current_entity.getComponent(pn::ComponentType::RENDER));
+		auto& material = m_resources.getMaterial(renderComponent->getMaterialFilename());
 
 		auto& entityRenderable = m_renderables[current_entity_ID];
 
@@ -185,99 +143,20 @@ void pn::InitialState::renderDrawCalls(DrawCallContainer& drawCalls) {
 		0.1f, 1000.0f));
 
 	HashValue last_material_rendered = 0;
-	for (const auto& drawCallIter : drawCalls) {
-		const auto& drawCall = drawCallIter.second;
-		auto current_material = drawCall.material.getMaterialFilename().getHash();
-		if (current_material == dynamic_light_material) {
-
-			// If the current program is not the same as the last one used, set new global uniforms
-			if (!(current_material == last_material_rendered)) {
-
-				glUseProgram(drawCall.material.getGLProgramObject());
-
-				int num_lights_set = 0;
-				for (auto entityID : m_lights) {
-					auto& entity = getEntity(entityID);
-					auto& light_component = std::dynamic_pointer_cast<pn::LightComponent>(entity.getComponent(pn::ComponentType::LIGHT));
-
-					mat4 transform = getEntityWorldTransform(entityID);
-
-					Light entity_light;
-					entity_light.position = transform[3].xyz;
-					entity_light.direction = -vec3(transform[2].xyz);
-					entity_light.colour = light_component->getColour();
-					entity_light.innerRadians = light_component->getInnerRadians();
-					entity_light.outerRadians = light_component->getOuterRadians();
-					entity_light.intensity = light_component->getIntensity();
-					entity_light.maxRadius = light_component->getMaxRadius();
-					entity_light.type = light_component->getLightType();
-
-					drawCall.material.setUniform("lightUni[" + std::to_string(num_lights_set) + "]", entity_light);
-					num_lights_set++;
-				}
-
-				drawCall.material.setUniform("num_lights", num_lights_set);
-
-				const vec3& camera_position(camera_world_transform[3].xyz);
-				drawCall.material.setUniform("cameraPosition", camera_position);
-				drawCall.material.setUniform("view", view_transform);
-				drawCall.material.setUniform("proj", proj_transform);
-			}
-
-			drawCall.material.setUniform("ambient", drawCall.renderComponent->getAmbient());
-			drawCall.material.setUniform("specular", drawCall.renderComponent->getSpecular());
-			drawCall.material.setUniform("gloss", drawCall.renderComponent->getGloss());
-
-			auto world_transform_index = glGetUniformLocation(drawCall.material.getGLProgramObject(), "world");
-
-			glBindVertexArray(drawCall.gl_objects.VAO);
-
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-
-			glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(drawCall.world_transform));
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, drawCall.gl_objects.TBO_diffuse);
-			glBindSampler(0, drawCall.gl_objects.sampler_diffuse);
-
-			glDrawArraysInstanced(GL_TRIANGLES, 0, drawCall.num_vertices, 1);
-
-			last_material_rendered = current_material;
-
+	// render each draw call -- it goes in order of material ID because the map is sorted by this
+	for (auto& drawCallIter : drawCalls) {
+		auto& drawCall = drawCallIter.second;
+		auto current_material_hash = drawCall.material.getMaterialFilename().getHash();
+		auto& current_material = drawCall.material;
+		
+		// If the current program is not the same as the last one used, set new global uniforms
+		if (!(current_material_hash == last_material_rendered)) {
+			current_material.setGlobalUniforms(this, m_lights, camera_world_transform, view_transform, proj_transform);
+			last_material_rendered = current_material_hash;
 		}
+		
+		current_material.setInstanceUniforms(drawCall);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, drawCall.num_vertices, 1);
 
-		else if (drawCall.material.getMaterialFilename().getHash() == static_light_material) {
-
-			if (!(current_material == last_material_rendered)) {
-
-				glUseProgram(drawCall.material.getGLProgramObject());
-
-				const vec3& camera_position(camera_world_transform[3].xyz);
-				drawCall.material.setUniform("view", view_transform);
-				drawCall.material.setUniform("proj", proj_transform);
-
-			}
-
-			auto world_transform_index = glGetUniformLocation(drawCall.material.getGLProgramObject(), "world");
-
-			glBindVertexArray(drawCall.gl_objects.VAO);
-
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-
-			glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(drawCall.world_transform));
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, drawCall.gl_objects.TBO_diffuse);
-			glBindSampler(0, drawCall.gl_objects.sampler_diffuse);
-
-			glDrawArraysInstanced(GL_TRIANGLES, 0, drawCall.num_vertices, 1);
-
-			last_material_rendered = current_material;
-
-		}
 	}
 }

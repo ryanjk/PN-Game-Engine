@@ -23,11 +23,11 @@ namespace pn {
 		float getGloss() const;
 		void setGloss(float gloss);
 
-		const pn::PString& getMesh() const;
-		void setMesh(const pn::PString& mesh);
+		const pn::PString& getMeshFilename() const;
+		void setMeshFilename(const pn::PString& mesh);
 
-		const pn::PString& getMaterial() const;
-		void setMaterial(const pn::PString& material);
+		const pn::PString& getMaterialFilename() const;
+		void setMaterialFilename(const pn::PString& material);
 
 		const vec4& getSpecular() const;
 		void setSpecular(const vec4& specular);

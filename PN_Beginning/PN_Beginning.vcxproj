@@ -61,6 +61,7 @@
     <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
     <OutDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\temp\</IntDir>
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -70,6 +71,7 @@
     <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
     <OutDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\temp\</IntDir>
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -79,6 +81,7 @@
     <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
     <OutDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\temp\</IntDir>
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

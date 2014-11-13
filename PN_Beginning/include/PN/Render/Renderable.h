@@ -7,6 +7,7 @@
 
 namespace pn {
 	struct Renderable {
+		
 		GLuint VAO;
 
 		GLuint VBO_v;
@@ -17,9 +18,7 @@ namespace pn {
 		GLuint sampler_diffuse;
 		HashValue image_diffuse;
 
-		GLuint SHADER_v;
-		GLuint SHADER_f;
-		GLuint SHADER_program;
+
 
 		HashValue mesh;
 		

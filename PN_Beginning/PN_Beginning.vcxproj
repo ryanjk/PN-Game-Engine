@@ -139,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\PN\ConcreteStates\LoadingState.cpp" />
+    <ClCompile Include="src\PN\ConcreteStates\SecondState.cpp" />
     <ClCompile Include="src\PN\ECS\Component\IComponent.cpp" />
     <ClCompile Include="src\PN\ECS\Component\LightComponent.cpp" />
     <ClCompile Include="src\PN\ECS\Component\RenderComponent.cpp" />
@@ -169,6 +170,10 @@
     <ClInclude Include="include\GL\glew.h" />
     <ClInclude Include="include\GL\glxew.h" />
     <ClInclude Include="include\GL\wglew.h" />
+    <ClInclude Include="include\PN\Command\Command.h" />
+    <ClInclude Include="include\PN\Command\EntityLoadCommand.h" />
+    <ClInclude Include="include\PN\Command\ResourceLoadCommand.h" />
+    <ClInclude Include="include\PN\ConcreteStates\SecondState.h" />
     <ClInclude Include="include\PN\ECS\Component\IComponent.h" />
     <ClInclude Include="include\PN\ECS\Component\LightComponent.h" />
     <ClInclude Include="include\PN\ECS\Component\RenderComponent.h" />

@@ -20,6 +20,7 @@
 				},
 				"render": {
 					"mesh":"monkey_hd.obj",
+			//		"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "monkey_diffuse.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -44,7 +45,7 @@
 			"components": {
 				"transform": {
 					"translation":[0.0, 0.0, 0.0],
-					"rotation": [-1.57, 0.0, 0.0]
+					"rotation": [0.0, 0.0, 0.0]
 				},
 				"light": {
 					"lightType":1,
@@ -62,8 +63,11 @@
 				},
 				"render": {
 					"mesh":"dragon_lr.obj",
-					"diffuse": "red.png",
-					"gloss":0
+			//		"material":"dynamic_light.sp",
+					"diffuse": "green.png",
+					"ambient":[0.0, 0.1, 0.0],
+					"specular":[0.4, 0.4, 0.4],
+					"gloss":10
 				}
 			}
 		},
@@ -76,14 +80,15 @@
 				},
 				"render": {
 					"mesh":"dragon_lr.obj",
+			//		"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
-					"diffuse": "red.png",
+					"diffuse": "blue.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
 					"gloss":100
 				}
 			}
 		},
-		"monkey": {
+		"cube": {
 			"components": {
 				"transform": {
 					"translation": [0.0, 0.0, 0.0],
@@ -92,10 +97,11 @@
 				},
 				"render": {
 					"mesh":"cube.obj",
-		//			"ambient": [0.0, 0.0, 0.0, 1.0],
-					"diffuse": "cube_diffuse.png"
-		//			"specular": [0.4, 0.4, 0.4, 1.0],
-		//			"gloss":1000
+			//		"material":"dynamic_light.sp",
+					"diffuse": "cube_diffuse.png",
+					"specular":[0.2, 0.2, 0.2],
+					"ambient":[0.0, 0.0, 0.0],
+					"gloss":0
 				}
 			}
 		},
@@ -108,6 +114,7 @@
 				},
 				"render": {
 					"mesh":"dragon_lr.obj",
+			//		"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.1, 0.1, 1.0],
 					"diffuse": "white.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -136,6 +143,7 @@
 				},
 				"render": {
 					"mesh":"dragon_lr.obj",
+			//		"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "red.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -165,7 +173,7 @@
 							"translation":[0.0, -1.0, -1.0]
 						},
 						"light":{
-							"intensity":50.0,
+							"intensity":30.0,
 							"colour":[1.0, 1.0, 1.0],
 							"innerRadians":0.2,
 							"outerRadians":0.6,

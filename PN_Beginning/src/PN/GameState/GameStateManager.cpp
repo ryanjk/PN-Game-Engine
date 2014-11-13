@@ -39,10 +39,6 @@ void pn::GameStateManager::shutdown() {
 	m_loadingState = nullptr;
 }
 
-void pn::GameStateManager::beginLoad() {
-	
-}
-
 void pn::GameStateManager::notifyState(double dt) {
 	assert(m_currentState);
 
@@ -58,14 +54,13 @@ void pn::GameStateManager::renderState() {
 void pn::GameStateManager::setState(GameStatePointer state) {
 	assert(state);
 	
-	auto t1 = mm::getTime();
+	// if new state isn't currently loaded, let the loading state load it.
+	if (!state->isLoaded()) {
+		m_loadingState->setStateToLoad(state);
+		m_currentState = m_loadingState;
+	}
+	else {
+		m_currentState = state;
+	}
 
-	// Go into "loading state": display loading screen and load incoming state's resources
-	beginLoad();
-	state->startUp();
-
-	// once new state is loaded, set it to current state so it renders and receives updates
-	m_currentState = state;
-
-	std::cout << "Time to initialize state: " << mm::getTime() - t1 << std::endl;
 }

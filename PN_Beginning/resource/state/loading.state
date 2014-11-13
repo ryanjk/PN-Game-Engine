@@ -1,14 +1,42 @@
 {
     "resource": {
         "image": [
-            "loading_screen.png"
+
         ],
         "mesh": [
-            "loading_screen.obj"
-        ],
-        "shader": [
-            "vertex_shader.vglsl",
-            "frag_shader.fglsl"
+
         ]
-    }
+    },
+	"entities":{
+		"camera":{
+			"components":{
+				"transform":{
+					"translation":[0.0, 0.0, 5.0]
+				}
+			}
+		},
+		"box":{
+			"components":{
+				"transform":{
+					
+				},
+				"render":{
+					"mesh":"loading_screen.obj",
+					"diffuse":"blue.png"
+				}
+			}
+		},
+		"loading_indicator":{
+			"components":{
+				"transform":{
+					"translation":[0.0, 0.0, 0.0001],
+					"scale":[0.0, 0.0, 0.0]
+				},
+				"render":{
+					"mesh":"loading_screen.obj",
+					"diffuse":"loading_screen.png"
+				}
+			}
+		}
+	}
 }

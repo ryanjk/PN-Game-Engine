@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <memory>
+
+#include "PN/ConcreteStates/LoadingState.h"
 #include "PN/GameState/GameState.h"
 
 using GameStatePointer = std::shared_ptr < pn::GameState > ;
@@ -10,6 +12,9 @@ using GameStates = std::vector < GameStatePointer >;
 
 namespace pn {
 	class GameStateManager {
+
+		friend class LoadingState;
+
 	public:
 		static GameStateManager g_gameStateManager;
 
@@ -24,10 +29,9 @@ namespace pn {
 		void renderState();
 	private:
 		GameStateManager();
-		void beginLoad();  // Called so the game begins switching between states
 
 		GameStatePointer m_currentState;
-		GameStatePointer m_loadingState;
+		std::shared_ptr<pn::LoadingState> m_loadingState;
 	};
 }
 

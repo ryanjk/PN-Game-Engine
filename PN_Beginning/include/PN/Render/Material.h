@@ -1,14 +1,10 @@
 #ifndef PN_SHADER_PROGRAM_H
 #define PN_SHADER_PROGRAM_H
 
-#include "PN/Render/Renderable.h"
-
-#include "PN/Window/WindowManager.h"
+#include <vector>
 
 #include "PN/Util/PString.h"
 #include "PN/Util/Math.h"
-
-#include <vector>
 
 namespace pn {
 
@@ -16,6 +12,11 @@ namespace pn {
 	class GameState;
 	class RenderComponent;
 	class ResourceManager;
+	struct Renderable;
+
+	using GLint = int;
+	using GLuint = unsigned int;
+	using HashValue = unsigned int;
 
 	class Material {
 	public:
@@ -35,7 +36,7 @@ namespace pn {
 		void setUpRenderable(pn::Renderable& renderable, const pn::RenderComponent& renderComponent, pn::ResourceManager& resourceManager) const;
 		void setGlobalUniforms
 			(
-			pn::GameState* gameState,
+			pn::GameState& gameState,
 			const std::vector<unsigned int>& lights, 
 			const mat4& camera,
 			const mat4& view,
@@ -59,3 +60,6 @@ namespace pn {
 }
 
 #endif
+
+
+

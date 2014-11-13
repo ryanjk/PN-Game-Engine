@@ -1,0 +1,29 @@
+{
+    "resource": {
+        "image": [
+
+        ],
+        "mesh": [
+
+        ]
+    },
+	"entities":{
+		"camera":{
+			"components":{
+				"transform":{
+					"translation":[0.0, 0.0, 5.0]
+				}
+			}
+		},
+		"thing":{
+			"components":{
+				"transform":{
+				},
+				"render":{
+					"mesh":"monkey.obj",
+					"diffuse":"red.png"
+				}
+			}
+		}
+	}
+}

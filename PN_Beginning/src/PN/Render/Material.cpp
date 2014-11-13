@@ -1,15 +1,17 @@
 #include "PN/Render/Material.h"
 #include "PN/Render/Light.h"
+#include "PN/Render/Renderable.h"
 #include "PN/Render/DrawCall.h"
 
 #include "PN/GameState/GameState.h"
 
 #include "PN/Util/ResourceManager.h"
+#include "PN/Util/Math.h"
 
 #include "PN/ECS/Component/RenderComponent.h"
 #include "PN/ECS/Component/LightComponent.h"
 
-#include "PN/Util/Math.h"
+#include "PN/Window/WindowManager.h"
 
 #include <iostream>
 
@@ -153,21 +155,21 @@ void pn::Material::setUpRenderable(pn::Renderable& renderable, const pn::RenderC
 	}
 }
 
-void pn::Material::setGlobalUniforms(pn::GameState* gameState, const std::vector<EntityID>& lights, 
+void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector<EntityID>& lights,
 	const mat4& camera, const mat4& view, const mat4& proj) const {
 	switch (m_materialID) {
 
-	// dynamic lighting
+		// dynamic lighting
 	case 1:
 	{
 		glUseProgram(getGLProgramObject());
 		{
 			int num_lights_set = 0;
 			for (auto entityID : lights) {
-				auto& entity = gameState->getEntity(entityID);
+				auto& entity = gameState.getEntity(entityID);
 				auto& light_component = std::dynamic_pointer_cast<pn::LightComponent>(entity.getComponent(pn::ComponentType::LIGHT));
 
-				mat4 transform = gameState->getEntityWorldTransform(entityID);
+				mat4 transform = gameState.getEntityWorldTransform(entityID);
 
 				Light entity_light;
 				entity_light.position = transform[3].xyz;
@@ -193,7 +195,7 @@ void pn::Material::setGlobalUniforms(pn::GameState* gameState, const std::vector
 	}
 		break;
 
-	// static lighting
+		// static lighting
 	case 2:
 	{
 		glUseProgram(getGLProgramObject());
@@ -208,7 +210,6 @@ void pn::Material::setGlobalUniforms(pn::GameState* gameState, const std::vector
 
 	}
 }
-
 
 void pn::Material::setInstanceUniforms(pn::DrawCall& drawCall) const {
 	switch (m_materialID) {

@@ -82,6 +82,9 @@
     <Filter Include="Header Files\glew">
       <UniqueIdentifier>{aad350f9-ed06-48c2-96f4-1ae874f39a03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\PN\Command">
+      <UniqueIdentifier>{8f3d45d0-c858-4830-87d2-4291f959e994}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PN\Input\InputEventHandler.cpp">
@@ -161,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="src\PN\main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PN\ConcreteStates\SecondState.cpp">
+      <Filter>Source Files\ConcreteStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +268,18 @@
     </ClInclude>
     <ClInclude Include="include\PN\Render\Material.h">
       <Filter>Header Files\PN\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ConcreteStates\SecondState.h">
+      <Filter>Header Files\PN\ConcreteStates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Command\Command.h">
+      <Filter>Header Files\PN\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Command\ResourceLoadCommand.h">
+      <Filter>Header Files\PN\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Command\EntityLoadCommand.h">
+      <Filter>Header Files\PN\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

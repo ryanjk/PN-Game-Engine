@@ -13,7 +13,11 @@
 
 #include "PN/Window/WindowManager.h"
 
+#include "PN/Settings/SettingsManager.h"
+
 #include <iostream>
+
+static auto& settings = pn::SettingsManager::g_SettingsManager;
 
 pn::Material::Material(GLuint program, pn::PString shader_program_filename, 
 	pn::PString vertex_shader, pn::PString fragment_shader, int materialID) 
@@ -99,10 +103,7 @@ void pn::Material::setUpRenderable(pn::Renderable& renderable, const pn::RenderC
 	pn::ResourceManager& resources) const {
 
 	switch (m_materialID) {
-	// dynamic lighting
-	case 1:
-	// static lighting
-	case 2:
+	case MaterialID::DYNAMIC_LIGHT:
 		renderable.mesh = renderComponent.getMeshFilename().getHash();
 		renderable.image_diffuse = renderComponent.getDiffuse().getHash();
 
@@ -149,6 +150,46 @@ void pn::Material::setUpRenderable(pn::Renderable& renderable, const pn::RenderC
 		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		break;
+	case MaterialID::STATIC_LIGHT:
+	case MaterialID::SCREEN_OVERLAY:
+		renderable.mesh = renderComponent.getMeshFilename().getHash();
+		renderable.image_diffuse = renderComponent.getDiffuse().getHash();
+
+		glGenVertexArrays(1, &renderable.VAO);
+		glBindVertexArray(renderable.VAO);
+
+		glGenBuffers(1, &renderable.VBO_v);
+		glBindBuffer(GL_ARRAY_BUFFER, renderable.VBO_v);
+		glBufferData(GL_ARRAY_BUFFER, resources.getMesh(
+			renderable.mesh).getVertices().size() * sizeof(GLfloat),
+			&resources.getMesh(renderable.mesh).getVertices()[0],
+			GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+		glGenBuffers(1, &renderable.VBO_vt);
+		glBindBuffer(GL_ARRAY_BUFFER, renderable.VBO_vt);
+		glBufferData(GL_ARRAY_BUFFER, resources.getMesh(
+			renderable.mesh).getTexes().size() * sizeof(GLfloat),
+			&resources.getMesh(renderable.mesh).getTexes()[0],
+			GL_STATIC_DRAW);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glGenTextures(1, &renderable.TBO_diffuse);
+		glBindTexture(GL_TEXTURE_2D, renderable.TBO_diffuse);
+		{
+			const pn::Image& img = resources.getImage(renderable.image_diffuse);
+			glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, img.getWidth(), img.getHeight());
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.getWidth(), img.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, &img.getPixels()[0]);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		glGenSamplers(1, &renderable.sampler_diffuse);
+		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		break;
 	default:
 		assert(false && "Couldn't identify material to set up renderable for");
 		break;
@@ -156,11 +197,10 @@ void pn::Material::setUpRenderable(pn::Renderable& renderable, const pn::RenderC
 }
 
 void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector<EntityID>& lights,
-	const mat4& camera, const mat4& view, const mat4& proj) const {
+	const mat4& camera, const mat4& view) const {
 	switch (m_materialID) {
 
-		// dynamic lighting
-	case 1:
+	case MaterialID::DYNAMIC_LIGHT:
 	{
 		glUseProgram(getGLProgramObject());
 		{
@@ -191,20 +231,23 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 		const vec3& camera_position(camera[3].xyz);
 		setUniform("cameraPosition", camera_position);
 		setUniform("view", view);
-		setUniform("proj", proj);
+		setUniform("proj", settings.getProjectionMatrix());
 	}
 		break;
 
-		// static lighting
-	case 2:
+	case MaterialID::STATIC_LIGHT:
 	{
 		glUseProgram(getGLProgramObject());
 
 		const vec3& camera_position(camera[3].xyz);
 		setUniform("view", view);
-		setUniform("proj", proj);
+		setUniform("proj", settings.getProjectionMatrix());
 	}
 		break;
+	case MaterialID::SCREEN_OVERLAY:
+		glUseProgram(getGLProgramObject());
+
+		setUniform("proj", settings.getHUDMatrix());
 	default:
 		break;
 
@@ -213,14 +256,13 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 
 void pn::Material::setInstanceUniforms(pn::DrawCall& drawCall) const {
 	switch (m_materialID) {
-	// global lighting
-	case 1:
+
+	case MaterialID::DYNAMIC_LIGHT:
 	{
 		setUniform("ambient", drawCall.renderComponent->getAmbient());
 		setUniform("specular", drawCall.renderComponent->getSpecular());
 		setUniform("gloss", drawCall.renderComponent->getGloss());
-
-		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
+		setUniform("alpha", drawCall.renderComponent->getAlpha());
 
 		glBindVertexArray(drawCall.gl_objects.VAO);
 
@@ -228,6 +270,7 @@ void pn::Material::setInstanceUniforms(pn::DrawCall& drawCall) const {
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 
+		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
 		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(drawCall.world_transform));
 
 		glActiveTexture(GL_TEXTURE0);
@@ -238,23 +281,40 @@ void pn::Material::setInstanceUniforms(pn::DrawCall& drawCall) const {
 
 		break;
 
-	// static lighting
-	case 2:
+	case MaterialID::STATIC_LIGHT:
 	{
-		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
-
 		glBindVertexArray(drawCall.gl_objects.VAO);
 
 		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 
+		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
 		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(drawCall.world_transform));
+		setUniform("alpha", drawCall.renderComponent->getAlpha());
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, drawCall.gl_objects.TBO_diffuse);
 		glBindSampler(0, drawCall.gl_objects.sampler_diffuse);
 		setUniform("diffuseMap", 0);
+	}
+		break;
+	case MaterialID::SCREEN_OVERLAY:
+	{
+		glBindVertexArray(drawCall.gl_objects.VAO);
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(2);
+
+		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
+		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(drawCall.world_transform));
+		setUniform("alpha", drawCall.renderComponent->getAlpha());
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, drawCall.gl_objects.TBO_diffuse);
+		glBindSampler(0, drawCall.gl_objects.sampler_diffuse);
+		setUniform("diffuseMap", 0);
+
+		glDisable(GL_DEPTH_TEST);
 	}
 		break;
 	default:

@@ -26,6 +26,8 @@ namespace pn {
 		void startUpAssist() override;
 
 	private:
+		double m_startLoadTime;
+		
 		int m_totalCommands;
 		int m_commandsLoadedSoFar;
 

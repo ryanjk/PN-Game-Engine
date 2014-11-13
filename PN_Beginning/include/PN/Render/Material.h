@@ -18,6 +18,12 @@ namespace pn {
 	using GLuint = unsigned int;
 	using HashValue = unsigned int;
 
+	enum MaterialID {
+		DYNAMIC_LIGHT = 1,
+		STATIC_LIGHT = 2,
+		SCREEN_OVERLAY = 3
+	};
+
 	class Material {
 	public:
 		Material(GLuint program, pn::PString shader_program_filename, pn::PString vertex_shader, 
@@ -39,8 +45,7 @@ namespace pn {
 			pn::GameState& gameState,
 			const std::vector<unsigned int>& lights, 
 			const mat4& camera,
-			const mat4& view,
-			const mat4& proj
+			const mat4& view
 			) const;
 		void setInstanceUniforms(pn::DrawCall& drawCall) const;
 

@@ -161,7 +161,7 @@ void pn::GameState::loadEntities() {
 	#ifdef _DEBUG
 	for (size_t i = 0; i < m_entities.size(); i++) {
 		for (size_t j = i + 1; j < m_entities.size(); j++) {
-			assert(m_entities[i].getID() != m_entities[j].getID() && "Two entities share an ID\n");
+			assert(m_entities[i]->getID() != m_entities[j]->getID() && "Two entities share an ID\n");
 		}
 	}
 	#endif
@@ -391,6 +391,8 @@ mat4 pn::GameState::getEntityWorldTransform(const pn::PString& entity_name) {
 }
 
 void pn::GameState::render() {
+	glEnable(GL_DEPTH_TEST);
+	
 	DrawCallContainer drawCalls;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -458,11 +460,6 @@ void pn::GameState::renderDrawCalls(DrawCallContainer& drawCalls) {
 	// Get view transform from camera
 	const auto view_transform(glm::inverse(camera_world_transform));
 
-	// Get projection transform from screen settings
-	const auto proj_transform(glm::perspective(glm::radians(50.0f),
-		(float)settings.getWindowWidth() / (float)settings.getWindowHeight(),
-		0.1f, 1000.0f));
-
 	HashValue last_material_rendered = 0;
 	// render each draw call -- it goes in order of material ID because the map is sorted by this
 	for (auto& drawCallIter : drawCalls) {
@@ -472,7 +469,7 @@ void pn::GameState::renderDrawCalls(DrawCallContainer& drawCalls) {
 
 		// If the current program is not the same as the last one used, set new global uniforms
 		if (!(current_material_hash == last_material_rendered)) {
-			current_material.setGlobalUniforms(*this, m_lights, camera_world_transform, view_transform, proj_transform);
+			current_material.setGlobalUniforms(*this, m_lights, camera_world_transform, view_transform);
 			last_material_rendered = current_material_hash;
 		}
 

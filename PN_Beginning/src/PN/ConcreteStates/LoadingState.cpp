@@ -22,6 +22,8 @@ void pn::LoadingState::startUpAssist() {
 void pn::LoadingState::setStateToLoad(std::shared_ptr<pn::GameState> stateToLoad) {
 	m_stateBeingLoaded = stateToLoad;
 
+	m_startLoadTime = mm::getTime();
+
 	stateToLoad->loadResourcesCommand(m_loadingCommands);
 	stateToLoad->loadEntitiesCommand(m_loadingCommands);
 
@@ -50,6 +52,9 @@ void pn::LoadingState::update(double dt) {
 	else {
 		m_stateBeingLoaded->startUpAssist();
 		m_stateBeingLoaded->m_loaded = true;
+
+		std::cout << "Time to load initial state " << mm::getTime() - m_startLoadTime << std::endl;
+
 		pn::GameStateManager::g_gameStateManager.m_currentState = m_stateBeingLoaded;
 
 		m_stateBeingLoaded = nullptr;

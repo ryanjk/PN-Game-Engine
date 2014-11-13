@@ -92,12 +92,12 @@
 			"components": {
 				"transform": {
 					"translation": [0.0, 0.0, 0.0],
-					"scale":[1.0, 1.0, 1.0],
+					"scale":[0.1, 0.1, 0.1],
 					"rotation":[0.0, 0.0, 0.0]
 				},
 				"render": {
 					"mesh":"cube.obj",
-			//		"material":"dynamic_light.sp",
+					"material":"static_light.sp",
 					"diffuse": "cube_diffuse.png",
 					"specular":[0.2, 0.2, 0.2],
 					"ambient":[0.0, 0.0, 0.0],

@@ -23,6 +23,9 @@ namespace pn {
 		float getGloss() const;
 		void setGloss(float gloss);
 
+		float getAlpha() const;
+		void setAlpha(float alpha);
+
 		const pn::PString& getMeshFilename() const;
 		void setMeshFilename(const pn::PString& mesh);
 
@@ -36,6 +39,7 @@ namespace pn {
 		vec4 m_ambient = { 0.0f, 0.0f, 0.0f, 1.0f };
 		pn::PString m_diffuse = "red.png";
 		float m_gloss = 1;
+		float m_alpha = 1.0f;
 		pn::PString m_mesh = "cube.obj";
 		pn::PString m_material = "static_light.sp";
 		vec4 m_specular = { 0.0f, 0.0f, 0.0f, 1.0f };

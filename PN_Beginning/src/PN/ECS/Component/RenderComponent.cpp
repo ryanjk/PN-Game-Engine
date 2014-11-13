@@ -21,6 +21,11 @@ std::shared_ptr<pn::RenderComponent> pn::RenderComponent::make(const ComponentDa
 		component->m_gloss = glossData.asFloat();
 	}
 
+	auto alphaData = data["alpha"];
+	if (!alphaData.isNull()) {
+		component->m_alpha = alphaData.asFloat();
+	}
+
 	auto meshData = data["mesh"];
 	if (!meshData.isNull()) {
 		resources.load(meshData.asString());
@@ -75,6 +80,14 @@ float pn::RenderComponent::getGloss() const {
 
 void pn::RenderComponent::setGloss(float gloss) {
 	m_gloss = gloss;
+}
+
+float pn::RenderComponent::getAlpha() const {
+	return m_alpha;
+}
+
+void pn::RenderComponent::setAlpha(float alpha) {
+	m_alpha = alpha;
 }
 
 const pn::PString& pn::RenderComponent::getMeshFilename() const {

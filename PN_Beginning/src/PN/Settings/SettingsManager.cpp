@@ -69,10 +69,19 @@ void pn::SettingsManager::startUp(std::string configDataPath) {
 	}
 
 	config.close();
+
+	m_aspect_ratio = (float)m_window_width / m_window_height;
+
+	m_projection_matrix = glm::perspective(glm::radians(50.0f), getAspectRatio(), 0.1f, 1000.0f);
+	m_hud_matrix = mat4({ 2 / m_aspect_ratio, 0, 0, 0 }, { 0, 2, 0, 0 }, { -1, -1, 0, 0 }, { 0, 0, 0, 1 });
 }
 
 void pn::SettingsManager::save_settings(std::string configDataPath) {
 
+}
+
+float pn::SettingsManager::getAspectRatio() const {
+	return m_aspect_ratio;
 }
 
 unsigned int pn::SettingsManager::getWindowWidth() const {
@@ -81,6 +90,14 @@ unsigned int pn::SettingsManager::getWindowWidth() const {
 
 unsigned int pn::SettingsManager::getWindowHeight() const {
 	return m_window_height;
+}
+
+const mat4& pn::SettingsManager::getProjectionMatrix() const {
+	return m_projection_matrix;
+}
+
+const mat4& pn::SettingsManager::getHUDMatrix() const {
+	return m_hud_matrix;
 }
 
 bool pn::SettingsManager::isWindowFullscreen() const {

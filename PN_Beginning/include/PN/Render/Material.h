@@ -48,6 +48,7 @@ namespace pn {
 			const mat4& view
 			) const;
 		void setInstanceUniforms(pn::DrawCall& drawCall) const;
+		void postRender() const;
 
 	private:
 		GLuint m_program;

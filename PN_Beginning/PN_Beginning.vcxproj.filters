@@ -168,6 +168,9 @@
     <ClCompile Include="src\PN\ConcreteStates\SecondState.cpp">
       <Filter>Source Files\ConcreteStates</Filter>
     </ClCompile>
+    <ClCompile Include="src\PN\Render\RenderSystem.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\PN\GameState\GameState.h">
@@ -280,6 +283,9 @@
     </ClInclude>
     <ClInclude Include="include\PN\Command\EntityLoadCommand.h">
       <Filter>Header Files\PN\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Render\RenderSystem.h">
+      <Filter>Header Files\PN\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 #include "PN/ECS/Entity/Entity.h"
 
 #include "PN/Render/Renderable.h"
+#include "PN/Render/RenderSystem.h"
 
 #include "json/json.h"
 
@@ -20,12 +21,11 @@ using Entities = std::vector < EntityPointer >;
 namespace pn {
 
 	class MatrixStack;
-	struct DrawCall;
-	using DrawCallContainer = std::multimap < int, DrawCall >;
 
 	class GameState {
 
 		friend class LoadingState;
+		friend class RenderSystem;
 
 	public:
 		GameState(pn::PString stateFileName);
@@ -38,6 +38,9 @@ namespace pn {
 
 		bool isLoaded() const;
 
+		/*
+		Entity Access Methods
+		*/
 		pn::Entity& getRootEntity();
 
 		pn::Entity& getEntity(const pn::PString& entity_name);
@@ -50,32 +53,29 @@ namespace pn {
 		virtual void startUpAssist();
 		virtual void shutdownAssist();
 
-		pn::Entity* m_activeCamera;
+		RenderSystem m_renderSystem;
 
 		Entities m_entities;
 		pn::ResourceManager m_resources;
 
 	private:
-		void buildDrawCalls(EntityID start, pn::MatrixStack& matrixStack, DrawCallContainer& m_drawCalls);
-		void renderDrawCalls(DrawCallContainer& drawCalls);
-
-		std::map<EntityID, pn::Renderable> m_renderables;
-		std::vector<EntityID> m_lights;
-		
 		pn::PString m_stateFilename;
 		Json::Value m_root;
 
-		void loadResources();
-		void releaseResources();
+		void startUpSystems();
+		void shutdownSystems();
 
+		void loadResources();
 		void loadEntities();
 		void loadEntitiesRec(const Json::Value& entity_tree_root, EntityPointer& parent);
-		void releaseEntities();
 
 		// only called by loading state, these contribute to the command queue used by the state to load sequentially
 		void loadResourcesCommand(CommandQueue& commandQueue);
 		void loadEntitiesCommand(CommandQueue& commandQueue);
 		void loadEntitiesRecCommand(const Json::Value& entity_tree_root, EntityPointer& parent, CommandQueue& commandQueue);
+
+		void releaseResources();
+		void releaseEntities();
 
 		bool m_loaded; // is the state already loaded in memory
 

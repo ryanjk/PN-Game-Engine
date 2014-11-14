@@ -322,3 +322,13 @@ void pn::Material::setInstanceUniforms(pn::DrawCall& drawCall) const {
 	}
 
 }
+
+void pn::Material::postRender() const {
+	switch (m_materialID) {
+	case MaterialID::SCREEN_OVERLAY:
+		glEnable(GL_DEPTH_TEST);
+		break;
+	default:
+		break;
+	}
+}

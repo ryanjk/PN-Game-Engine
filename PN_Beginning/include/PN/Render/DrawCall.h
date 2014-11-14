@@ -4,6 +4,7 @@
 #include "PN/Util/Math.h"
 
 #include <memory>
+#include <map>
 
 class Material;
 class RenderComponent;
@@ -17,6 +18,7 @@ namespace pn {
 		unsigned int num_vertices;
 		std::shared_ptr<RenderComponent> renderComponent;
 	};
+	using DrawCallContainer = std::multimap < int, pn::DrawCall > ;
 }
 
 #endif 

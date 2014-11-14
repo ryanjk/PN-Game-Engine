@@ -50,6 +50,7 @@ void pn::LoadingState::update(double dt) {
 	}
 
 	else {
+		m_stateBeingLoaded->startUpSystems();
 		m_stateBeingLoaded->startUpAssist();
 		m_stateBeingLoaded->m_loaded = true;
 

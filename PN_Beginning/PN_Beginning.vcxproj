@@ -98,6 +98,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>sdl2.lib;glew32s.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;jsoncpp_dbg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)\build\cpyToDropbox.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -117,6 +120,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>sdl2.lib;glew32s.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;jsoncpp_rel.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)\build\cpyToDropbox.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">
     <ClCompile>
@@ -136,6 +142,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>sdl2.lib;glew32s.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;jsoncpp_rel.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)\build\cpyToDropbox.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\PN\ConcreteStates\LoadingState.cpp" />
@@ -157,6 +166,7 @@
     <ClCompile Include="src\LodePNG\lodepng.cpp" />
     <ClCompile Include="src\PN\main.cpp" />
     <ClCompile Include="src\PN\Render\Material.cpp" />
+    <ClCompile Include="src\PN\Render\RenderSystem.cpp" />
     <ClCompile Include="src\PN\Util\FileType.cpp" />
     <ClCompile Include="src\PN\Util\Math.cpp" />
     <ClCompile Include="src\PN\Util\MatrixStack.cpp" />
@@ -194,6 +204,7 @@
     <ClInclude Include="include\PN\Render\Renderable.h" />
     <ClInclude Include="include\PN\Render\RenderFactory.h" />
     <ClInclude Include="include\PN\Render\Material.h" />
+    <ClInclude Include="include\PN\Render\RenderSystem.h" />
     <ClInclude Include="include\PN\Settings\SettingsManager.h" />
     <ClInclude Include="include\PN\ConcreteStates\InitialState.h" />
     <ClInclude Include="include\PN\ConcreteStates\LoadingState.h" />

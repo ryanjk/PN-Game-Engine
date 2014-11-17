@@ -13,7 +13,7 @@ void pn::RenderSystem::startUp(pn::GameState* state) {
 	// set up renderable for each entity that needs one
 	for (auto& entity_i : m_state->m_entities) {
 		auto& entity = *entity_i;
-		bool hasRenderComponent = (entity.getKey() & pn::ComponentType::RENDER) == pn::ComponentType::RENDER;
+		bool hasRenderComponent = entity.hasComponents(pn::ComponentType::RENDER);
 		if (hasRenderComponent) {
 			auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
 			auto& entity_material = m_state->m_resources.getMaterial(renderComponent->getMaterialFilename());
@@ -26,7 +26,7 @@ void pn::RenderSystem::startUp(pn::GameState* state) {
 		}
 
 		// add to light entities if applicable
-		bool hasLightComponent = (entity.getKey() & pn::ComponentType::LIGHT) == pn::ComponentType::LIGHT;
+		bool hasLightComponent = entity.hasComponents(pn::ComponentType::LIGHT);
 		if (hasLightComponent) {
 			m_lights.push_back(entity.getID());
 		}
@@ -75,7 +75,7 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 	const auto& current_entity = m_state->getEntity(current_entity_ID);
 
 	// If the entity does not have a position in space, then its children do not, so stop travelling down this branch
-	bool hasTransform = (current_entity.getKey() & (pn::ComponentType::TRANSFORM)) == (pn::ComponentType::TRANSFORM);
+	bool hasTransform = current_entity.hasComponents(pn::ComponentType::TRANSFORM);
 	if (!hasTransform) {
 		return;
 	}
@@ -85,7 +85,7 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 	matrixStack.push(transformComponent->getTransformMatrix());
 
 	// If the entity is renderable, create a draw call and add it to the draw call container
-	bool hasRender = (current_entity.getKey() & (pn::ComponentType::RENDER)) == (pn::ComponentType::RENDER);
+	bool hasRender = current_entity.hasComponents(pn::ComponentType::RENDER);
 	if (hasRender) {
 		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(current_entity.getComponent(pn::ComponentType::RENDER));
 		auto& material = m_state->m_resources.getMaterial(renderComponent->getMaterialFilename());

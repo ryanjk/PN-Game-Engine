@@ -11,6 +11,8 @@
 #include "PN/Render/Renderable.h"
 #include "PN/Render/RenderSystem.h"
 
+#include "PN/Physics/PhysicsSystem.h"
+
 #include "json/json.h"
 
 #include <map>
@@ -26,11 +28,13 @@ namespace pn {
 
 		friend class LoadingState;
 		friend class RenderSystem;
+		friend class PhysicsSystem;
 
 	public:
 		GameState(pn::PString stateFileName);
 
 		virtual void update(double dt) = 0;
+		void updatePhysics(double dt);
 		void render();  // call rendering functions
 
 		void startUp();  // set up the state (load resources, set rendering state, etc)
@@ -54,6 +58,7 @@ namespace pn {
 		virtual void shutdownAssist();
 
 		RenderSystem m_renderSystem;
+		PhysicsSystem m_physicsSystem;
 
 		Entities m_entities;
 		pn::ResourceManager m_resources;

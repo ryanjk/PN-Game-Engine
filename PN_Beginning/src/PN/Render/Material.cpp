@@ -82,7 +82,6 @@ void pn::Material::setUniform<mat4>(const std::string& uniform, mat4 value) cons
 
 template<>
 void pn::Material::setUniform<pn::Light>(const std::string& uniform, pn::Light value) const {
-	GLint uniform_location = getUniformLocation(uniform);
 	setUniform(uniform + ".position", value.position);
 	setUniform(uniform + ".direction", value.direction);
 	setUniform(uniform + ".type", value.type);
@@ -146,8 +145,8 @@ void pn::Material::setUpRenderable(pn::Renderable& renderable, const pn::RenderC
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 		glGenSamplers(1, &renderable.sampler_diffuse);
-		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glSamplerParameteri(renderable.sampler_diffuse, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		break;
 	case MaterialID::STATIC_LIGHT:
@@ -202,8 +201,9 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 
 	case MaterialID::DYNAMIC_LIGHT:
 	{
-		glUseProgram(getGLProgramObject());
 		{
+			glUseProgram(getGLProgramObject());
+
 			int num_lights_set = 0;
 			for (auto entityID : lights) {
 				auto& entity = gameState.getEntity(entityID);

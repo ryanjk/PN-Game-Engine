@@ -13,8 +13,6 @@
 
 namespace pn {
 	class RenderSystem {
-		class GameState;
-
 	public:
 		RenderSystem();
 		void startUp(pn::GameState* state);

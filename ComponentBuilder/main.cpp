@@ -70,7 +70,7 @@ int buildComponentHeaderAndSource(std::ifstream& component_file, Json::Reader& r
 	fputs("public:\n\t\t", header);
 
 	// Simple factory
-	fputs(("static std::shared_ptr<" + class_name + "> make(const ComponentData& data);\n\t\t").c_str(), header);
+	fputs(("static std::shared_ptr<" + class_name + "> make(const ComponentData& data, pn::ResourceManager& resources);\n\t\t").c_str(), header);
 
 	// Get component's type enum
 	fputs("ComponentType getType() const override;\n\n\t\t", header);
@@ -156,7 +156,7 @@ int buildComponentHeaderAndSource(std::ifstream& component_file, Json::Reader& r
 	fputs(("#include \"PN/ECS/Component/" + class_name + ".h\"\n\n").c_str(), source);
 
 	// Define simple factory
-	fputs(("std::shared_ptr<pn::" + class_name + "> " + "pn::" + class_name + "::make(const ComponentData& data) {\n\t").c_str(), source);
+	fputs(("std::shared_ptr<pn::" + class_name + "> " + "pn::" + class_name + "::make(const ComponentData& data, pn::ResourceManager& resources) {\n\t").c_str(), source);
 	fputs(("std::shared_ptr<" + class_name + "> component = std::make_shared<" + class_name + ">();\n").c_str(), source);
 
 	// For each data member, if defined by component implementer, replace the default value

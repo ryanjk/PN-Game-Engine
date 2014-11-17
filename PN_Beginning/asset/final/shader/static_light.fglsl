@@ -1,0 +1,19 @@
+#version 330
+
+in VS_OUT {
+	vec2 tc;
+} fs_in;
+
+uniform sampler2D diffuseMap;
+uniform float alpha;
+
+out vec4 colour;
+
+void main() {
+	vec4 finalColour = vec4(0.0, 0.0, 0.0, 1.0);
+
+	// Add diffuse colour from texture
+	finalColour += texture(diffuseMap, fs_in.tc);
+
+	colour = vec4(finalColour.xyz, alpha);
+}

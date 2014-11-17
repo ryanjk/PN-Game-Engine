@@ -26,6 +26,10 @@ EntityKey pn::Entity::getKey() const {
 	return m_key;
 }
 
+bool pn::Entity::hasComponents(unsigned int types) const {
+	return ((m_key & types) == types);
+}
+
 Component pn::Entity::getComponent(ComponentType componentType) const {
 	auto findComponent = m_components.find(componentType);
 	if (findComponent != m_components.end()) {

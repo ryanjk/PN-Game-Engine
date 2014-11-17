@@ -14,10 +14,10 @@
 std::mutex imageMutex;
 std::mutex meshMutex;
 
-static const pn::PString IMAGE_FOLDER_PATH = "resource/image/";
-static const pn::PString MESH_FOLDER_PATH = "resource/mesh/";
-static const pn::PString SHADER_FOLDER_PATH = "resource/shader/";
-static const pn::PString SHADER_PROGRAM_FOLDER_PATH = "resource/material/";
+static const pn::PString IMAGE_FOLDER_PATH = "asset/final/image/";
+static const pn::PString MESH_FOLDER_PATH = "asset/final/mesh/";
+static const pn::PString SHADER_FOLDER_PATH = "asset/final/shader/";
+static const pn::PString SHADER_PROGRAM_FOLDER_PATH = "asset/final/material/";
 
 pn::ResourceManager::ResourceManager() {}
 

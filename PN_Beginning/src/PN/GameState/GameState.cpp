@@ -19,12 +19,12 @@
 #include <algorithm>
 #include <fstream>
 
-static const pn::PString STATE_RESOURCE_FILEPATH = "resource/state/";
+static const pn::PString STATE_RESOURCE_FILEPATH = "asset/final/state/";
 
 static auto& settings = pn::SettingsManager::g_SettingsManager;
 
 pn::GameState::GameState(pn::PString stateFileName) : 
-m_stateFilename(stateFileName), m_entities(), m_resources(), m_root(), m_loaded(false), m_renderSystem()
+m_stateFilename(stateFileName), m_entities(), m_resources(), m_root(), m_loaded(false), m_renderSystem(), m_physicsSystem()
 {}
 
 /*
@@ -277,12 +277,18 @@ void pn::GameState::render() {
 	m_renderSystem.run();
 }
 
+void pn::GameState::updatePhysics(double dt) {
+	m_physicsSystem.run(dt);
+}
+
 void pn::GameState::startUpSystems() {
 	m_renderSystem.startUp(this);
+	m_physicsSystem.startUp(this);
 }
 
 void pn::GameState::shutdownSystems() {
 	m_renderSystem.shutdown();
+	m_physicsSystem.shutdown();
 }
 
 void pn::GameState::startUpAssist() {}

@@ -15,16 +15,15 @@ namespace pn {
 		NONE = 0,
 		TRANSFORM = 1,
 		RENDER = 2,
-		LIGHT = 4
+		LIGHT = 4,
+		MOVE = 8
 	};
 
 	class IComponent {
 	public:
 		virtual ComponentType getType() const = 0;
 
-		~IComponent() {
-		//	std::cout << "Destroyed component" << std::endl;
-		}
+		~IComponent() {}
 		
 		static ComponentType textToType(std::string type);
 		static std::shared_ptr<pn::IComponent> make(const ComponentData& data, std::string componentName, pn::ResourceManager& resources);

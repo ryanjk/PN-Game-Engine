@@ -93,6 +93,7 @@ int main(int argc, char* args[])
 	const double dt = 0.01667;
 	const double MAX_DT = dt * 10;
 	double past_time = 0;
+	double accumulator = 0;
 
 	double FPS_counter = -current_time;
 	int frames_passed = 0;
@@ -117,9 +118,6 @@ int main(int argc, char* args[])
 			FPS_counter = 0;
 		}
 
-		// Update game data
-		pn::GameStateManager::g_gameStateManager.notifyState(frame_time);
-
 		while (pn::mm::pollEvent(&e)) {
 			if (e.type == pn::mm::QUIT_EVENT) {
 				shouldClose = true;
@@ -128,6 +126,17 @@ int main(int argc, char* args[])
 		}
 
 		pn::InputManager::g_inputManager.update(frame_time);
+
+		// Update game data
+		accumulator += frame_time;
+		while (accumulator >= dt) {
+			pn::GameStateManager::g_gameStateManager.getCurrentState()->updatePhysics(dt);
+			accumulator -= dt;
+		}
+
+		pn::GameStateManager::g_gameStateManager.notifyState(frame_time);
+
+
 
 		// Render game world
 		pn::GameStateManager::g_gameStateManager.renderState();

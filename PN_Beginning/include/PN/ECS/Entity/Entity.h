@@ -31,6 +31,8 @@ namespace pn {
 		EntityID getID() const;
 		EntityKey getKey() const;
 
+		bool hasComponents(unsigned int types) const;
+
 		void setParent(EntityID parentID);
 		EntityID getParent() const;
 

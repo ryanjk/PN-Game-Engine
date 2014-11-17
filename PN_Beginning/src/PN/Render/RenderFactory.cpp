@@ -1,5 +1,7 @@
 #include "PN/Render/RenderFactory.h"
 
+#include "PN/Physics/BoundingContainer/BoundingBox.h"
+
 #include "LodePNG/lodepng.h"
 
 #include <iostream>
@@ -45,6 +47,7 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 	static const std::string TOKEN_VERTEX_NOR = "vn";
 	static const std::string TOKEN_VERTEX_TEX = "vt";
 	static const std::string TOKEN_FACE = "f";
+	static const std::string BOUNDING_BOX = "BB";
 	
 	std::vector<GLfloat> temp_vertices;
 	temp_vertices.reserve(50000 * 3);
@@ -63,6 +66,8 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 
 	std::vector<GLuint> vt_indices;
 	vt_indices.reserve(300000);
+
+	std::shared_ptr<pn::BoundingContainer> bounding_container_ptr;
 
 	std::ifstream filestream;
 	filestream.open(filename);
@@ -124,6 +129,11 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 				vt_indices.push_back(ti3 - 1);
 
 		}
+		else if (type_str == BOUNDING_BOX) {
+			float bb_length, bb_height, bb_width;
+			str_stream >> bb_length >> bb_height >> bb_width;
+			bounding_container_ptr = std::make_shared<pn::BoundingBox>(bb_length, bb_width, bb_height);
+		}
 	}
 
 	pn::Mesh mesh;
@@ -163,6 +173,7 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 	mesh.setVertices(std::move(vertices));
 	mesh.setNormals(std::move(normals));
 	mesh.setTexes(std::move(texes));
+	mesh.setBoundingContainer(bounding_container_ptr);
 
 	return mesh;
 }

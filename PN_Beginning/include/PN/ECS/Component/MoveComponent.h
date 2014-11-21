@@ -14,15 +14,23 @@ namespace pn {
 
 		MoveComponent();
 
-		vec3 getAcceleration() const;
-		void setAcceleration(vec3 acceleration);
+		const vec3& getAcceleration() const;
+		void setAcceleration(const vec3& acceleration);
 
-		vec3 getVelocity() const;
-		void setVelocity(vec3 velocity);
+		const vec3& getVelocity() const;
+		void setVelocity(const vec3& velocity);
+
+		const vec3& getAngularVelocity() const;
+		void setAngularVelocity(const vec3& angularVelocity);
+
+		const vec3& getAngularAcceleration() const;
+		void setAngularAcceleration(const vec3& angularAcceleration);
 
 	private:
-		vec3 m_acceleration = { 0.0f, 0.0f, 1.0f };
+		vec3 m_acceleration = { 0.0f, 0.0f, 0.0f };
 		vec3 m_velocity = { 0.0f, 0.0f, 0.0f };
+		vec3 m_angularAcceleration = { 0.0f, 0.0f, 0.0f };
+		vec3 m_angularVelocity = { 0.0f, 0.0f, 0.0f };
 	};
 }
 

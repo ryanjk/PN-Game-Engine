@@ -90,7 +90,7 @@ int main(int argc, char* args[])
 
 	pn::GameStateManager::g_gameStateManager.setState(std::make_shared<pn::InitialState>("initial.state"));
 
-	const double dt = 0.01667;
+	const double dt = 0.00833;
 	const double MAX_DT = dt * 10;
 	double past_time = 0;
 	double accumulator = 0;
@@ -103,8 +103,19 @@ int main(int argc, char* args[])
 
 	pn::mm::InputEvent e;
 	bool shouldClose = false;
+
+	bool is_limit = false;
+	unsigned int frame_limit = 0;
+	if (argc > 1) {
+		is_limit = true;
+		frame_limit = atoi(args[1]);
+		std::cout << frame_limit << "\n";
+	}
+
+	unsigned int fc = 0;
 	while (!shouldClose)
 	{
+
 		double frame_time = current_time - past_time;
 		past_time = pn::mm::getTime();
 
@@ -127,16 +138,15 @@ int main(int argc, char* args[])
 
 		pn::InputManager::g_inputManager.update(frame_time);
 
-		// Update game data
+		// Update optional game data
+		pn::GameStateManager::g_gameStateManager.notifyState(frame_time);
+
+		// Update physics
 		accumulator += frame_time;
 		while (accumulator >= dt) {
 			pn::GameStateManager::g_gameStateManager.getCurrentState()->updatePhysics(dt);
 			accumulator -= dt;
 		}
-
-		pn::GameStateManager::g_gameStateManager.notifyState(frame_time);
-
-
 
 		// Render game world
 		pn::GameStateManager::g_gameStateManager.renderState();
@@ -147,6 +157,7 @@ int main(int argc, char* args[])
 		current_time = pn::mm::getTime();
 
 		frames_passed++;
+		if (is_limit && (fc++ > frame_limit)) shouldClose = true;
 	}
 
 	pn::GameStateManager::g_gameStateManager.shutdown();

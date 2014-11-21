@@ -56,15 +56,15 @@ void pn::RenderSystem::shutdown() {
 void pn::RenderSystem::run() {
 	DrawCallContainer drawCalls;
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
 	pn::MatrixStack matrixStack;
 
 	for (auto root_children : m_state->getRootEntity().getChildrenID()) {
 		buildDrawCalls(root_children, matrixStack, drawCalls);
 	}
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	renderDrawCalls(drawCalls);
 
@@ -100,7 +100,7 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 
 		// put draw call into container
 		pn::DrawCall drawCall({ worldTransform, entityRenderable, material, num_vertices, renderComponent });
-		drawCalls.insert({ material.getMaterialID(), drawCall });
+		drawCalls.insert({ std::move(material.getMaterialID()), std::move(drawCall) });
 	}
 
 	// Continue visiting the entity's children

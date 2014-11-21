@@ -23,3 +23,13 @@ glm::fquat make_quat(const vec3& axis, float angle) {
 
 	return glm::fquat(w, rotation_axis);
 }
+
+vec3 safe_normalize(const vec3& vector) {
+	vec3 zerov = vec3(0);
+	if (vector == zerov) {
+		return zerov;
+	}
+	else {
+		return glm::normalize(vector);
+	}
+}

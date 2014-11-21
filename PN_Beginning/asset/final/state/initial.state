@@ -27,8 +27,9 @@
 					"gloss":100
 				},
 				"move": {
-					"velocity":[0.5, 0.0, 0.0],
-					"acceleration":[0.0, 0.0, 0.0]
+					"velocity":[1.0, 0.0, 0.0],
+					"acceleration":[0.0, 0.0, 0.0],
+					"angularVelocity":[1.0, 0.0, 0.0]
 				}
 			}
 		},
@@ -42,6 +43,9 @@
 					"lightType":1,
 					"intensity":1.0,
 					"colour":[1.0, 1.0, 1.0]
+				},
+				"move":{
+					"angularVelocity":[1.0, 0.0, 0.0]
 				}
 			}
 		},
@@ -54,7 +58,7 @@
 				"light": {
 					"lightType":1,
 					"intensity":1.0,
-					"colour":[1.0, 1.0, 1.0]
+					"colour":[0.6, 0.0, 0.0]
 				}
 			}
 		},
@@ -66,8 +70,8 @@
 					"rotation": [0.0, 0.0, 0.0]
 				},
 				"render": {
-					"mesh":"dragon_lr.obj",
-			//		"material":"dynamic_light.sp",
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
 					"diffuse": "green.png",
 					"ambient":[0.0, 0.1, 0.0],
 					"specular":[0.4, 0.4, 0.4],
@@ -83,8 +87,8 @@
 					"rotation": [0.0, -1.57, 0.0]
 				},
 				"render": {
-					"mesh":"dragon_lr.obj",
-			//		"material":"dynamic_light.sp",
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "blue.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -101,7 +105,7 @@
 				},
 				"render": {
 					"mesh":"cube.obj",
-					"material":"static_light.sp",
+					"material":"dynamic_light.sp",
 					"diffuse": "cube_diffuse.png",
 					"specular":[0.2, 0.2, 0.2],
 					"ambient":[0.0, 0.0, 0.0],
@@ -117,8 +121,8 @@
 					"rotation": [0.0, -3.14, 0.0]
 				},
 				"render": {
-					"mesh":"dragon_lr.obj",
-			//		"material":"dynamic_light.sp",
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.1, 0.1, 1.0],
 					"diffuse": "white.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -146,8 +150,8 @@
 					"rotation": [0.0, 3.14, 0.0]
 				},
 				"render": {
-					"mesh":"dragon_lr.obj",
-			//		"material":"dynamic_light.sp",
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "red.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -161,6 +165,9 @@
 					"translation": [0.0, 0.0, 5.0],
 					"scale": [1.0, 1.0, 1.0],
 					"rotation": [0.0, 0.0, 0.0]
+				},
+				"move":{
+
 				}
 			},
 			"children": {

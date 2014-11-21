@@ -7,7 +7,7 @@
 		},
 		"Acceleration":{
 			"type":"vec3",
-			"default":["0.0f", "0.0f", "1.0f"]
+			"default":["0.0f", "0.0f", "0.0f"]
 		}
 	}
 }

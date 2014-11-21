@@ -1,6 +1,8 @@
 #ifndef FIRST_PERSON_LISTENER_H
 #define FIRST_PERSON_LISTENER_H
 
+#include "PN/ECS/Entity/Entity.h"
+#include "PN/ECS/Component/MoveComponent.h"
 #include "PN/ECS/Component/TransformComponent.h"
 
 #include "PN/Input/InputEventListener.h"
@@ -11,7 +13,7 @@
 
 #include <memory>
 
-using ControlledBody = std::shared_ptr < pn::TransformComponent > ;
+using ControlledBody = pn::Entity* ;
 
 namespace pn {
 	class FirstPersonListener : public pn::InputEventListener {
@@ -26,15 +28,21 @@ namespace pn {
 		void update(double dt) override;
 
 	private:
-		ControlledBody m_controlledBody;
+		std::shared_ptr<MoveComponent> m_body_moveComponent;
+		std::shared_ptr<TransformComponent> m_body_transformComponent;
 
 		double m_scrollSpeed;
-		double m_moveSpeed;
+		float m_moveSpeed;
 
-		bool m_moveForward;
-		bool m_moveBack;
-		bool m_moveRight;
-		bool m_moveLeft;
+		bool move_forward;
+		bool move_back;
+		bool move_right;
+		bool move_left;
+
+		pn::mm::KeyEnum m_forward_key;
+		pn::mm::KeyEnum m_back_key;
+		pn::mm::KeyEnum m_right_key;
+		pn::mm::KeyEnum m_left_key;
 	};
 }
 

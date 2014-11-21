@@ -21,6 +21,7 @@ void print_mat4(mat4 m);
 
 glm::fquat make_quat(const vec3& axis, float angle);
 
+vec3 safe_normalize(const vec3& vector);
 
 
 #endif

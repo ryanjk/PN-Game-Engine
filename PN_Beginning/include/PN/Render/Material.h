@@ -12,7 +12,8 @@ namespace pn {
 	class GameState;
 	class RenderComponent;
 	class ResourceManager;
-	struct Renderable;
+	class Mesh;
+	class Image;
 
 	using GLint = int;
 	using GLuint = unsigned int;
@@ -39,7 +40,6 @@ namespace pn {
 		template<typename T>
 		inline void setUniform(const std::string& uniform, T value) const;
 
-		void setUpRenderable(pn::Renderable& renderable, const pn::RenderComponent& renderComponent, pn::ResourceManager& resourceManager) const;
 		void setGlobalUniforms
 			(
 			pn::GameState& gameState,
@@ -47,7 +47,14 @@ namespace pn {
 			const mat4& camera,
 			const mat4& view
 			) const;
-		void setInstanceUniforms(pn::DrawCall& drawCall) const;
+		void setInstanceUniforms
+			(
+			const mat4& worldTransform, 
+			const RenderComponent& renderComponent, 
+			const Mesh& mesh, 
+			const Image& diffuse_texture,
+			bool swapVAO
+			) const;
 		void postRender() const;
 
 	private:

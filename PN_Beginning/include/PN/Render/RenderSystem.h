@@ -3,7 +3,6 @@
 
 #include "PN/ECS/Entity/Entity.h"
 
-#include "PN/Render/Renderable.h"
 #include "PN/Render/DrawCall.h"
 
 #include "PN/Util/MatrixStack.h"
@@ -25,7 +24,7 @@ namespace pn {
 		void renderDrawCalls(DrawCallContainer& drawCalls);
 
 		pn::GameState* m_state;
-		std::map<EntityID, pn::Renderable> m_renderables;
+//		std::map<EntityID, pn::Renderable> m_renderables;
 		std::vector<EntityID> m_lights;
 		Entity* m_activeCamera;
 	};

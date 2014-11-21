@@ -8,7 +8,6 @@
 
 #include "PN/ECS/Entity/Entity.h"
 
-#include "PN/Render/Renderable.h"
 #include "PN/Render/RenderSystem.h"
 
 #include "PN/Physics/PhysicsSystem.h"

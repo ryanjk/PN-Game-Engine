@@ -7,7 +7,7 @@
 
 namespace pn {
 	struct Renderable {
-		
+		/*
 		GLuint VAO;
 
 		GLuint VBO_v;
@@ -20,7 +20,7 @@ namespace pn {
 
 
 
-		HashValue mesh;
+		HashValue mesh; */
 		
 	};
 }

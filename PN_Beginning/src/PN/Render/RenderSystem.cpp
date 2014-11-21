@@ -13,17 +13,6 @@ void pn::RenderSystem::startUp(pn::GameState* state) {
 	// set up renderable for each entity that needs one
 	for (auto& entity_i : m_state->m_entities) {
 		auto& entity = *entity_i;
-		bool hasRenderComponent = entity.hasComponents(pn::ComponentType::RENDER);
-		if (hasRenderComponent) {
-			auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
-			auto& entity_material = m_state->m_resources.getMaterial(renderComponent->getMaterialFilename());
-
-			Renderable entity_renderable;
-
-			entity_material.setUpRenderable(entity_renderable, *renderComponent, m_state->m_resources);
-
-			m_renderables.insert({ entity.getID(), entity_renderable });
-		}
 
 		// add to light entities if applicable
 		bool hasLightComponent = entity.hasComponents(pn::ComponentType::LIGHT);
@@ -38,19 +27,7 @@ void pn::RenderSystem::startUp(pn::GameState* state) {
 }
 
 void pn::RenderSystem::shutdown() {
-	// delete gl objects used by renderables
-	for (auto& i : m_renderables) {
-		auto& renderable = i.second;
 
-		glDeleteVertexArrays(1, &renderable.VAO);
-
-		glDeleteBuffers(1, &renderable.VBO_v);
-		glDeleteBuffers(1, &renderable.VBO_vn);
-		glDeleteBuffers(1, &renderable.VBO_vt);
-
-		glDeleteTextures(1, &renderable.TBO_diffuse);
-		glDeleteSamplers(1, &renderable.sampler_diffuse);
-	}
 }
 
 void pn::RenderSystem::run() {
@@ -89,18 +66,14 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 	if (hasRender) {
 		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(current_entity.getComponent(pn::ComponentType::RENDER));
 		auto& material = m_state->m_resources.getMaterial(renderComponent->getMaterialFilename());
-
-		auto& entityRenderable = m_renderables[current_entity_ID];
+		auto& mesh = m_state->m_resources.getMesh(renderComponent->getMeshFilename());
 
 		// world position of entity
 		mat4 worldTransform(matrixStack.multiply());
 
-		// amount of vertices to render
-		unsigned int num_vertices = m_state->m_resources.getMesh(entityRenderable.mesh).getVertices().size();
-
 		// put draw call into container
-		pn::DrawCall drawCall({ worldTransform, entityRenderable, material, num_vertices, renderComponent });
-		drawCalls.insert({ std::move(material.getMaterialID()), std::move(drawCall) });
+		pn::DrawCall drawCall({ worldTransform, renderComponent });
+		drawCalls.insert({ (mesh.getVAO() << 2) | material.getMaterialID(), std::move(drawCall) });
 	}
 
 	// Continue visiting the entity's children
@@ -120,22 +93,35 @@ void pn::RenderSystem::renderDrawCalls(DrawCallContainer& drawCalls) {
 	const auto view_transform(glm::inverse(camera_world_transform));
 
 	HashValue last_material_rendered = 0;
+	HashValue last_mesh_rendered = 0;
+
 	// render each draw call -- it goes in order of material ID because the map is sorted by this
 	for (auto& drawCallIter : drawCalls) {
 		auto& drawCall = drawCallIter.second;
-		auto current_material_hash = drawCall.material.getMaterialFilename().getHash();
-		auto& current_material = drawCall.material;
+
+		auto current_material_hash = drawCall.renderComponent->getMaterialFilename().getHash();
+		auto& current_material = m_state->m_resources.getMaterial(current_material_hash);
+
+		auto current_mesh_hash = drawCall.renderComponent->getMeshFilename().getHash();
+		auto& current_mesh = m_state->m_resources.getMesh(current_mesh_hash);
+
+		auto current_texture_hash = drawCall.renderComponent->getDiffuse().getHash();
+		auto& current_texture = m_state->m_resources.getImage(current_texture_hash);
 
 		// If the current program is not the same as the last one used, set new global uniforms
-		if (!(current_material_hash == last_material_rendered)) {
+		if (current_material_hash != last_material_rendered) {
 			current_material.setGlobalUniforms(*m_state, m_lights, camera_world_transform, view_transform);
 			last_material_rendered = current_material_hash;
 		}
 
-		current_material.setInstanceUniforms(drawCall);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, drawCall.num_vertices, 1);
+		// if rendering a different mesh, change VAO, otherwise keep from last time
+		bool swapVAO = current_mesh_hash != last_mesh_rendered;
+		last_mesh_rendered = current_mesh_hash;
+
+		current_material.setInstanceUniforms(drawCall.world_transform, *drawCall.renderComponent, current_mesh, current_texture, swapVAO);
+//		std::cout << current_mesh_hash << ", " << current_material_hash << std::endl;
+		glDrawArraysInstanced(GL_TRIANGLES, 0, current_mesh.getNumVertices(), 1);
 
 		current_material.postRender();
-
 	}
 }

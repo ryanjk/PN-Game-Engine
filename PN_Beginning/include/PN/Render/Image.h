@@ -3,28 +3,21 @@
 
 #include <vector>
 
-using PixelFormat = unsigned char;
-using PixelContainer = std::vector < PixelFormat > ;
-using Dimension = unsigned int;
+#include "PN/Window/WindowManager.h"
 
 namespace pn {
 	class Image {
 	public:
+		friend class RenderFactory;
 		Image();
-		Image(PixelContainer&& pixels, Dimension width, Dimension height);
-		Image(const Image& image) = default;
-		Image(Image&& image) _NOEXCEPT;
+		~Image();
 
-		Image& operator=(Image&& image) _NOEXCEPT;
-
-		const PixelContainer& getPixels() const;
-		Dimension getWidth() const;
-		Dimension getHeight() const;
+		const GLuint& getTBO() const;
+		const GLuint& getSamplerObject() const;
 
 	private:
-		PixelContainer m_pixels;
-		Dimension m_width;
-		Dimension m_height;
+		GLuint m_tbo;
+		GLuint m_sampler;
 	};
 }
 

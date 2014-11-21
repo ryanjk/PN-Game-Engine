@@ -33,6 +33,13 @@ void pn::InitialState::update(double dt) {
 
 	moveComponent.setVelocity(new_velocity);
 	transformComponent.translateLocal((new_position - current_position));
+
+/*	if (time > 5.0f) {
+		time = 0;
+		this->shutdown();
+		pn::GameStateManager::g_gameStateManager.setState(std::make_shared<pn::SecondState>("second.state"));
+	}
+	*/
 }
 
 void pn::InitialState::startUpAssist() {

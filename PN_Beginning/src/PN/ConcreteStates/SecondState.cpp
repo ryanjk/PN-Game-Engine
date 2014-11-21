@@ -12,10 +12,10 @@ void pn::SecondState::update(double dt) {
 	static double time = 0.0;
 	time += dt;
 
-	/*if (time > 5) {
+	if (time > 5) {
 		time = 0;
 		this->shutdown();
 		pn::GameStateManager::g_gameStateManager.setState(std::make_shared<pn::InitialState>("initial.state"));
-	} */
+	}
 
 }

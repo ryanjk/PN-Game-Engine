@@ -9,14 +9,9 @@
 #include <sstream>
 #include <algorithm>
 
-using GLfloat = float;
-using GLuint = unsigned int;
-
-static inline void swap(PixelFormat& a, PixelFormat& b) {
-	PixelFormat temp = b;
-	b = a;
-	a = temp;
-}
+using PixelFormat = unsigned char;
+using PixelContainer = std::vector < PixelFormat >;
+using Dimension = unsigned int;
 
 pn::Image pn::RenderFactory::makeFromPNG(const char* filename) {
 	PixelContainer pixels;
@@ -33,7 +28,18 @@ pn::Image pn::RenderFactory::makeFromPNG(const char* filename) {
 		std::cout << "LodePNG: Could not load file '" << filename << "' : " << lodepng_error_text(error) << std::endl;
 	}
 
-	pn::Image image(std::move(pixels), width, height);
+	Image image;
+
+	glGenTextures(1, &image.m_tbo);
+	glBindTexture(GL_TEXTURE_2D, image.m_tbo);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenSamplers(1, &image.m_sampler);
+	glSamplerParameteri(image.m_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glSamplerParameteri(image.m_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glSamplerParameteri(image.m_sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
 	return image;
 }
@@ -73,7 +79,7 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 	filestream.open(filename);
 
 	if (!filestream) {
-		std::cout << "OBJ Loader: Could not load file " << filename << std::endl;
+		std::cout << "OBJ Loader: Could not open file " << filename << std::endl;
 	}
 
 	std::string line_stream;
@@ -135,44 +141,55 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 			bounding_container_ptr = std::make_shared<pn::BoundingBox>(bb_length, bb_width, bb_height);
 		}
 	}
-
-	pn::Mesh mesh;
 	
 	const unsigned int v_size = 3 * v_indices.size();
 	const unsigned int vn_size = 3 * vn_indices.size();
 	const unsigned int vt_size = 2 * vt_indices.size();
 
-	std::vector<GLfloat> vertices(v_size);
-	std::vector<GLfloat> normals(vn_size);
-	std::vector<GLfloat> texes(vt_size);
+	std::vector<GLfloat> vertices;
+
+	
+	vertices.reserve(v_size + vn_size + vt_size);
 
 	unsigned int current_vertex = 0;
 	for (auto i : v_indices) {
-		vertices[current_vertex++] = temp_vertices[i * 3];
-		vertices[current_vertex++] = temp_vertices[i * 3 + 1];
-		vertices[current_vertex++] = temp_vertices[i * 3 + 2];
+		vertices.push_back(temp_vertices[i * 3]);
+		vertices.push_back(temp_vertices[i * 3 + 1]);
+		vertices.push_back(temp_vertices[i * 3 + 2]);
 	}
 
-	unsigned int current_normal = 0;
 	for (auto i : vn_indices) {
-		normals[current_normal++] = temp_normals[i * 3];
-		normals[current_normal++] = temp_normals[i * 3 + 1];
-		normals[current_normal++] = temp_normals[i * 3 + 2];
+		vertices.push_back(temp_normals[i * 3]);
+		vertices.push_back(temp_normals[i * 3 + 1]);
+		vertices.push_back(temp_normals[i * 3 + 2]);
 	}
 
-	unsigned int current_tex = 0;
 	for (auto i : vt_indices) {
-		texes[current_tex++] = temp_texes[i * 2];
-		texes[current_tex++] = temp_texes[i * 2 + 1];
-
+		vertices.push_back(temp_texes[i * 2]);
+		vertices.push_back(temp_texes[i * 2 + 1]);
 	}
 
 	// Explicit closing of the file 
 	filestream.close();
 
-	mesh.setVertices(std::move(vertices));
-	mesh.setNormals(std::move(normals));
-	mesh.setTexes(std::move(texes));
+	pn::Mesh mesh;
+
+	glGenVertexArrays(1, &mesh.m_vao);
+	glBindVertexArray(mesh.m_vao);
+
+	glGenBuffers(1, &mesh.m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.m_vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	int offset = v_size * sizeof(GLfloat);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (char*)(offset));
+	offset += vn_size * sizeof(GLfloat);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (char*)(offset));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	mesh.m_num_vertices = v_size / 3;
 	mesh.setBoundingContainer(bounding_container_ptr);
 
 	return mesh;

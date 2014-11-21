@@ -19,7 +19,7 @@ static const pn::PString MESH_FOLDER_PATH = "asset/final/mesh/";
 static const pn::PString SHADER_FOLDER_PATH = "asset/final/shader/";
 static const pn::PString SHADER_PROGRAM_FOLDER_PATH = "asset/final/material/";
 
-pn::ResourceManager::ResourceManager() {}
+pn::ResourceManager::ResourceManager() : m_imageMap(), m_fshaderMap(), m_materialMap(), m_meshMap(), m_vshaderMap(), m_used_resource_filenames()  {}
 
 void pn::ResourceManager::startUp() {}
 
@@ -237,10 +237,20 @@ void pn::ResourceManager::remove(const PString& filename) {
 
 	switch (filetype) {
 	case pn::FileTypeEnum::PNG:
-		m_imageMap.erase(filename.getHash());
+	{
+		auto& image = getImage(filename);
+		glDeleteTextures(1, &image.getTBO());
+		glDeleteSamplers(1, &image.getSamplerObject());
+		m_imageMap.erase(filename.getHash()); 
+	}
 		break;
 	case pn::FileTypeEnum::OBJ:
+	{
+		auto& mesh = getMesh(filename);
+		glDeleteVertexArrays(1, &mesh.getVAO());
+		glDeleteBuffers(1, &mesh.getVBO());
 		m_meshMap.erase(filename.getHash());
+	}
 		break;
 	case pn::FileTypeEnum::VERTEX_SHADER: {
 		GLuint vshader = getVertexShader(filename);

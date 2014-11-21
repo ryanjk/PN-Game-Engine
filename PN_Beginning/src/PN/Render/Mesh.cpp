@@ -1,30 +1,36 @@
 #include "PN/Render/Mesh.h"
 
-pn::Mesh::Mesh() {}
+#include <iostream>
+
+pn::Mesh::Mesh() : m_vao(0), m_vbo(0), m_num_vertices(0), m_boundingContainer() {}
+
+pn::Mesh::~Mesh() {
+
+}
 
 pn::Mesh::Mesh(Mesh&& mesh)
-	: m_vertices(std::move(mesh.m_vertices)), m_normals(std::move(mesh.m_normals)), m_texes(std::move(mesh.m_texes)), 
-	m_boundingContainer(mesh.m_boundingContainer)
+	: m_boundingContainer(mesh.m_boundingContainer), m_vao(mesh.m_vao), 
+	m_vbo(mesh.m_vbo), m_num_vertices(mesh.m_num_vertices)
 {}
 
 pn::Mesh& pn::Mesh::operator=(Mesh&& mesh) {
-	m_vertices = std::move(mesh.m_vertices);
-	m_normals = std::move(mesh.m_normals);
-	m_texes = std::move(mesh.m_texes);
+	m_vao = mesh.m_vao;
+	m_vbo = mesh.m_vbo;
 	m_boundingContainer = mesh.m_boundingContainer;
+	m_num_vertices = mesh.m_num_vertices;
 	return *this;
 }
 
-void pn::Mesh::setVertices(VertexDataContainer&& vertices) {
-	m_vertices = std::move(vertices);
+unsigned int pn::Mesh::getNumVertices() const {
+	return m_num_vertices;
 }
 
-void pn::Mesh::setNormals(VertexDataContainer&& normals) {
-	m_normals = std::move(normals);
+const GLuint& pn::Mesh::getVAO() const {
+	return m_vao;
 }
 
-void pn::Mesh::setTexes(VertexDataContainer&& texes) {
-	m_texes = std::move(texes);
+const GLuint& pn::Mesh::getVBO() const {
+	return m_vbo;
 }
 
 void pn::Mesh::setBoundingContainer(std::shared_ptr<pn::BoundingContainer> boundingContainer) {
@@ -33,16 +39,4 @@ void pn::Mesh::setBoundingContainer(std::shared_ptr<pn::BoundingContainer> bound
 
 const std::shared_ptr<pn::BoundingContainer>& pn::Mesh::getBoundingContainer() const {
 	return m_boundingContainer;
-}
-
-const VertexDataContainer& pn::Mesh::getVertices() const {
-	return m_vertices;
-}
-
-const VertexDataContainer& pn::Mesh::getNormals() const {
-	return m_normals;
-}
-
-const VertexDataContainer& pn::Mesh::getTexes() const {
-	return m_texes;
 }

@@ -46,7 +46,8 @@ void pn::LoadingState::update(double dt) {
 		auto& loading_icon = getEntity("loading_indicator");
 		auto& transform = std::dynamic_pointer_cast<pn::TransformComponent>(loading_icon.getComponent(pn::ComponentType::TRANSFORM));
 		float s = (float)m_commandsLoadedSoFar / m_totalCommands;
-		transform->setScale({ s, s, s });
+		m_physicsSystem.setScale(*transform, { s, s, s });
+		m_worldMatrix_needUpdate[loading_icon.getID()] = true;
 	}
 
 	else {

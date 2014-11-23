@@ -112,7 +112,7 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 				auto& entity = gameState.getEntity(entityID);
 				auto& light_component = std::dynamic_pointer_cast<pn::LightComponent>(entity.getComponent(pn::ComponentType::LIGHT));
 
-				mat4 transform = gameState.getEntityWorldTransform(entityID);
+				mat4 transform = gameState.getEntityWorldTransform(entityID, nullptr);
 
 				Light entity_light;
 				entity_light.position = transform[3].xyz;

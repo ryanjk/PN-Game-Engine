@@ -11,6 +11,8 @@
 
 #include "PN/Settings/SettingsManager.h"
 
+#include "PN/Physics/PhysicsSystem.h"
+
 #include <memory>
 
 using ControlledBody = pn::Entity* ;
@@ -18,7 +20,7 @@ using ControlledBody = pn::Entity* ;
 namespace pn {
 	class FirstPersonListener : public pn::InputEventListener {
 	public:
-		FirstPersonListener(ControlledBody controlledBody);
+		FirstPersonListener(ControlledBody controlledBody, PhysicsSystem* physicsSystem);
 
 		void onMouseMove(double from_x, double from_y, double to_x, double to_y) override;
 		
@@ -30,6 +32,7 @@ namespace pn {
 	private:
 		std::shared_ptr<MoveComponent> m_body_moveComponent;
 		std::shared_ptr<TransformComponent> m_body_transformComponent;
+		PhysicsSystem* m_physicsSystem;
 
 		double m_scrollSpeed;
 		float m_moveSpeed;

@@ -3,6 +3,8 @@
 
 #include "PN/GameState/GameState.h"
 
+#include "PN/Input/FirstPersonListener.h"
+
 namespace pn {
 	class SecondState : public pn::GameState {
 	public:
@@ -11,11 +13,11 @@ namespace pn {
 		void update(double dt) override;
 
 	protected:
-//		void startUpAssist() override;
+		void startUpAssist() override;
 //		void shutdownAssist() override;
 
 	private:
-
+		std::shared_ptr<pn::FirstPersonListener> firstPersonListener;
 
 	};
 }

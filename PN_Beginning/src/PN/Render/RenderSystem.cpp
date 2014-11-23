@@ -5,6 +5,8 @@
 #include "PN/ECS/Component/RenderComponent.h"
 #include "PN/ECS/Component/TransformComponent.h"
 
+#include "PN/Physics/BoundingContainer/BoundingBox.h"
+
 pn::RenderSystem::RenderSystem() {}
 
 void pn::RenderSystem::startUp(pn::GameState* state) {
@@ -69,7 +71,7 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 		auto& mesh = m_state->m_resources.getMesh(renderComponent->getMeshFilename());
 
 		// world position of entity
-		mat4 worldTransform(matrixStack.multiply());
+		mat4 worldTransform = m_state->getEntityWorldTransform(current_entity_ID, [&]()->mat4 { return matrixStack.multiply(); });
 
 		// put draw call into container
 		pn::DrawCall drawCall({ worldTransform, renderComponent });
@@ -87,7 +89,7 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 void pn::RenderSystem::renderDrawCalls(DrawCallContainer& drawCalls) {
 
 	// Camera position
-	const mat4& camera_world_transform = m_state->getEntityWorldTransform(m_activeCamera->getID());
+	const mat4& camera_world_transform = m_state->getEntityWorldTransform(m_activeCamera->getID(), nullptr);
 
 	// Get view transform from camera
 	const auto view_transform(glm::inverse(camera_world_transform));

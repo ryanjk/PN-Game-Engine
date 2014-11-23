@@ -10,6 +10,7 @@
 #include "PN/GameState/GameState.h"
 
 #include "PN/ConcreteStates/InitialState.h"
+#include "PN/ConcreteStates/SecondState.h"
 
 #include "PN/Util/PString.h"
 #include "PN/Util/ResourceManager.h"

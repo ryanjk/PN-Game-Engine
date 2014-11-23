@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-pn::FirstPersonListener::FirstPersonListener(ControlledBody controlledBody) 
+pn::FirstPersonListener::FirstPersonListener(ControlledBody controlledBody, PhysicsSystem* physicsSystem) 
 	: m_body_moveComponent(std::dynamic_pointer_cast<pn::MoveComponent>(controlledBody->getComponent(pn::ComponentType::MOVE))), 
 	m_body_transformComponent(std::dynamic_pointer_cast<pn::TransformComponent>(controlledBody->getComponent(pn::ComponentType::TRANSFORM))),
+	m_physicsSystem(physicsSystem),
 	m_scrollSpeed(0.0015f), m_moveSpeed(5.0f),
 	m_back_key(pn::mm::KeyEnum::KEY_S), m_forward_key(pn::mm::KeyEnum::KEY_W),
 	m_left_key(pn::mm::KeyEnum::KEY_A), m_right_key(pn::mm::KeyEnum::KEY_D),
@@ -17,8 +18,8 @@ void pn::FirstPersonListener::onMouseMove(double from_x, double from_y, double t
 	static const int center_x = pn::SettingsManager::g_SettingsManager.getWindowWidth() / 2;
 	static const int center_y = pn::SettingsManager::g_SettingsManager.getWindowWidth() / 2;
 
-	m_body_transformComponent->rotatePitchLocal((float)m_scrollSpeed * -(float)(to_y - center_y));
-	m_body_transformComponent->rotateYawLocal((float)m_scrollSpeed * -(float)(to_x - center_x));
+	m_physicsSystem->rotatePitchLocal(*m_body_transformComponent, (float)m_scrollSpeed * -(float)(to_y - center_y));
+	m_physicsSystem->rotateYawLocal(*m_body_transformComponent, (float)m_scrollSpeed * -(float)(to_x - center_x));
 
 	pn::mm::moveCursorToPos(pn::WindowManager::g_windowManager.getWindow(), center_x, center_y);
 }

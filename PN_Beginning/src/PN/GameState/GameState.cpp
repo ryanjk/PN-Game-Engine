@@ -24,7 +24,8 @@ static const pn::PString STATE_RESOURCE_FILEPATH = "asset/final/state/";
 static auto& settings = pn::SettingsManager::g_SettingsManager;
 
 pn::GameState::GameState(pn::PString stateFileName) : 
-m_stateFilename(stateFileName), m_entities(), m_resources(), m_root(), m_loaded(false), m_renderSystem(), m_physicsSystem()
+m_stateFilename(stateFileName), m_entities(), m_resources(), m_root(), m_loaded(false), m_renderSystem(), m_physicsSystem(),
+m_worldMatrix_cache(), m_worldMatrix_needUpdate()
 {}
 
 /*
@@ -248,29 +249,47 @@ pn::Entity& pn::GameState::getEntity(EntityID entity_id) {
 	return *m_entities[0];
 }
 
-mat4 pn::GameState::getEntityWorldTransform(EntityID entity_id) {
-	const EntityID& root = this->m_stateFilename.getHash();
-
-	auto& entity = getEntity(entity_id);
-
-	auto transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(entity.getComponent(pn::ComponentType::TRANSFORM));
-	mat4 world_matrix = transformComponent->getTransformMatrix();
-
-	auto parentID = entity.getParent();
-	while (parentID != root) {
-		auto& parent = getEntity(parentID);
-		auto parentTransform = std::dynamic_pointer_cast<pn::TransformComponent>(parent.getComponent(pn::ComponentType::TRANSFORM));
-		mat4 parent_world_matrix = parentTransform->getTransformMatrix();
-		world_matrix = parent_world_matrix * world_matrix;
-
-		parentID = parent.getParent();
+const mat4& pn::GameState::getEntityWorldTransform(EntityID entity_id, std::function<mat4(void)> calcMatrix) {
+	if (m_worldMatrix_needUpdate[entity_id] == false) {
+		return m_worldMatrix_cache[entity_id];
 	}
 
-	return world_matrix;
+	else if (calcMatrix != nullptr) {
+		//std::cout << "using function to calc\n";
+
+		m_worldMatrix_cache[entity_id] = calcMatrix();
+		m_worldMatrix_needUpdate[entity_id] = false;
+		return m_worldMatrix_cache[entity_id];
+	}
+
+	else {
+		//std::cout << "getting the long way\n";
+		const EntityID& root = this->m_stateFilename.getHash();
+
+		auto& entity = getEntity(entity_id);
+
+		auto transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(entity.getComponent(pn::ComponentType::TRANSFORM));
+		mat4 world_matrix = transformComponent->getTransformMatrix();
+
+		auto parentID = entity.getParent();
+		while (parentID != root) {
+			auto& parent = getEntity(parentID);
+			auto parentTransform = std::dynamic_pointer_cast<pn::TransformComponent>(parent.getComponent(pn::ComponentType::TRANSFORM));
+			mat4 parent_world_matrix = parentTransform->getTransformMatrix();
+			world_matrix = parent_world_matrix * world_matrix;
+
+			parentID = parent.getParent();
+		}
+
+		m_worldMatrix_cache[entity_id] = world_matrix;
+		m_worldMatrix_needUpdate[entity_id] = false;
+		return m_worldMatrix_cache[entity_id];
+	}
+	
 }
 
-mat4 pn::GameState::getEntityWorldTransform(const pn::PString& entity_name) {
-	return getEntityWorldTransform(entity_name.getHash());
+const mat4& pn::GameState::getEntityWorldTransform(const pn::PString& entity_name, std::function<mat4(void)> calcMatrix) {
+	return getEntityWorldTransform(entity_name.getHash(), calcMatrix);
 }
 
 void pn::GameState::render() {
@@ -284,6 +303,10 @@ void pn::GameState::updatePhysics(double dt) {
 void pn::GameState::startUpSystems() {
 	m_renderSystem.startUp(this);
 	m_physicsSystem.startUp(this);
+
+	for (auto& entity_ptr : m_entities) {
+		m_worldMatrix_needUpdate[entity_ptr->getID()] = true;
+	}
 }
 
 void pn::GameState::shutdownSystems() {

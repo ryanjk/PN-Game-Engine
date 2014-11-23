@@ -8,20 +8,154 @@
         ]
     },
 	"entities":{
-		"camera":{
-			"components":{
-				"transform":{
-					"translation":[0.0, 0.0, 5.0]
+		"player": {
+			"components" : {
+				"transform" : {
+					"translation": [0.0, 0.0, 5.0],
+					"scale": [1.0, 1.0, 1.0],
+					"rotation": [0.0, 0.0, 0.0]
+				},
+				"move":{
+
+				}
+			},
+			"children": {
+				"camera": {
+					"components": {
+						"transform": {
+							"translation": [0.0, 0.0, 0.0]
+						}
+					}
 				}
 			}
 		},
 		"thing":{
 			"components":{
 				"transform":{
+					"translation":[0.0, 0.0, 0.0]
 				},
 				"render":{
-					"mesh":"monkey.obj",
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
 					"diffuse":"red.png"
+				}
+			}
+		},
+		"thing2":{
+			"components":{
+				"transform":{
+					"translation":[3.0, 0.0, 0.0]
+				},
+				"render":{
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
+					"diffuse":"red.png"
+				}
+			}
+		},
+		"thing3":{
+			"components":{
+				"transform":{
+					"translation":[6.0, 0.0, 0.0]
+				},
+				"render":{
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
+					"diffuse":"red.png"
+				}
+			}
+		},
+		"thing4":{
+			"components":{
+				"transform":{
+					"translation":[9.0, 0.0, 0.0]
+				},
+				"render":{
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
+					"diffuse":"red.png"
+				}
+			}
+		},
+		"thing5":{
+			"components":{
+				"transform":{
+					"translation":[12.0, 0.0, 0.0]
+				},
+				"render":{
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
+					"diffuse":"red.png"
+				}
+			}
+		},
+		"thing6":{
+			"components":{
+				"transform":{
+					"translation":[15.0, 0.0, 0.0]
+				},
+				"render":{
+					"mesh":"dragon.obj",
+					"material":"dynamic_light.sp",
+					"diffuse":"red.png"
+				}
+			}
+		},
+		"monkey2": {
+			"components": {
+				"transform": {
+					"translation": [-2.0, 3.0, 0.0],
+					"scale": [2.0, 2.0, 2.0],
+					"rotation": [0.7, 0.0, 0.0]
+				},
+				"render": {
+					"mesh":"monkey.obj",
+					"material":"dynamic_light.sp",
+					"ambient": [0.1, 0.0, 0.0, 1.0],
+					"diffuse": "monkey_diffuse.png",
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":100
+				}
+			}
+		},
+		"directional_light": {
+			"components": {
+				"transform": {
+					"translation":[0.0, 0.0, 0.0],
+					"rotation": [-0.2, 1.57, 0.0]
+				},
+				"light": {
+					"lightType":1,
+					"intensity":1.0,
+					"colour":[1.0, 1.0, 1.0]
+				},
+				"move":{
+					"angularVelocity":[1.0, 0.0, 0.0]
+				}
+			}
+		},
+		"point_light":{
+			"components":{
+				"transform":{
+					"translation":[0.0, 0.0, 4.0]
+				},
+				"light":{
+					"intensity":100.0,
+					"colour":[1.0, 1.0, 1.0],
+					"maxRadius":5.0
+				}
+			}
+		},
+		"directional_light2": {
+			"components": {
+				"transform": {
+					"translation":[0.0, 0.0, 0.0],
+					"rotation": [0.0, 0.0, 0.0]
+				},
+				"light": {
+					"lightType":1,
+					"intensity":1.0,
+					"colour":[0.6, 0.0, 0.0]
 				}
 			}
 		}

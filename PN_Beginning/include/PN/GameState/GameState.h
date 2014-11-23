@@ -15,6 +15,7 @@
 #include "json/json.h"
 
 #include <map>
+#include <functional>
 
 using EntityPointer = std::shared_ptr < pn::Entity >;
 using Entities = std::vector < EntityPointer >;
@@ -49,8 +50,8 @@ namespace pn {
 		pn::Entity& getEntity(const pn::PString& entity_name);
 		pn::Entity& getEntity(EntityID entity_id);
 
-		mat4 getEntityWorldTransform(const pn::PString& entity_name);
-		mat4 getEntityWorldTransform(EntityID entity_id);
+		const mat4& getEntityWorldTransform(const pn::PString& entity_name, std::function<mat4(void)> calcMatrix);
+		const mat4& getEntityWorldTransform(EntityID entity_id, std::function<mat4(void)> calcMatrix);
 
 	protected:
 		virtual void startUpAssist();
@@ -65,6 +66,9 @@ namespace pn {
 	private:
 		pn::PString m_stateFilename;
 		Json::Value m_root;
+
+		std::map<EntityID, mat4> m_worldMatrix_cache;
+		std::map<EntityID, bool> m_worldMatrix_needUpdate;
 
 		void startUpSystems();
 		void shutdownSystems();

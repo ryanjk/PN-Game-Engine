@@ -7,7 +7,7 @@
 			"floor.obj"
         ],
         "material": [
-
+			"deferred_finish.sp"
         ]
     },
 	"entities": {
@@ -20,7 +20,7 @@
 				},
 				"render": {
 					"mesh":"monkey.obj",
-					"material":"dynamic_light.sp",
+					"material":"deferred.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "monkey_diffuse.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -70,8 +70,8 @@
 					"rotation": [0.0, 0.0, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
-					"material":"dynamic_light.sp",
+					"mesh":"dragon_lr.obj",
+					"material":"deferred.sp",
 					"diffuse": "green.png",
 					"ambient":[0.0, 0.1, 0.0],
 					"specular":[0.4, 0.4, 0.4],
@@ -87,8 +87,8 @@
 					"rotation": [0.0, -1.57, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
-					"material":"dynamic_light.sp",
+					"mesh":"dragon_lr.obj",
+					"material":"deferred.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "blue.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -105,7 +105,7 @@
 				},
 				"render": {
 					"mesh":"cube.obj",
-					"material":"dynamic_light.sp",
+					"material":"deferred.sp",
 					"diffuse": "cube_diffuse.png",
 					"specular":[0.2, 0.2, 0.2],
 					"ambient":[0.0, 0.0, 0.0],
@@ -121,8 +121,8 @@
 					"rotation": [0.0, -3.14, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
-					"material":"dynamic_light.sp",
+					"mesh":"dragon_lr.obj",
+					"material":"deferred.sp",
 					"ambient": [0.1, 0.1, 0.1, 1.0],
 					"diffuse": "white.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
@@ -150,8 +150,8 @@
 					"rotation": [0.0, 3.14, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
-					"material":"dynamic_light.sp",
+					"mesh":"dragon_lr.obj",
+					"material":"deferred.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "red.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],

@@ -22,7 +22,9 @@ namespace pn {
 	enum MaterialID {
 		DYNAMIC_LIGHT = 1,
 		STATIC_LIGHT = 2,
-		SCREEN_OVERLAY = 3
+		SCREEN_OVERLAY = 3,
+		DEFERRED = 4,
+		DEFERRED_FINISH = 5
 	};
 
 	class Material {

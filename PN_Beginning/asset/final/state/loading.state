@@ -5,7 +5,10 @@
         ],
         "mesh": [
 
-        ]
+        ],
+		"material": [
+		"deferred_finish.sp"
+		]
     },
 	"entities":{
 		"camera":{
@@ -22,6 +25,7 @@
 				},
 				"render":{
 					"mesh":"loading_screen.obj",
+					"material":"deferred.sp",
 					"diffuse":"blue.png"
 				}
 			}
@@ -34,6 +38,7 @@
 				},
 				"render":{
 					"mesh":"loading_screen.obj",
+					"material":"deferred.sp",
 					"diffuse":"loading_screen.png"
 				}
 			}

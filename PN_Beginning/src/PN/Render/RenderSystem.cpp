@@ -7,6 +7,10 @@
 
 #include "PN/Physics/BoundingContainer/BoundingBox.h"
 
+#include "PN/Settings/SettingsManager.h"
+
+static const auto& settings = pn::SettingsManager::g_SettingsManager;
+
 pn::RenderSystem::RenderSystem() {}
 
 void pn::RenderSystem::startUp(pn::GameState* state) {
@@ -26,6 +30,31 @@ void pn::RenderSystem::startUp(pn::GameState* state) {
 	// set the state's camera
 	auto& camera = m_state->getEntity("camera");
 	m_activeCamera = &camera;
+
+	glGenFramebuffers(1, &g_buffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, g_buffer);
+
+	glGenTextures(3, g_buffer_tex);
+	glBindTexture(GL_TEXTURE_2D, g_buffer_tex[0]);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32UI, 2048, 2048);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glBindTexture(GL_TEXTURE_2D, g_buffer_tex[1]);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, 2048, 2048);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glBindTexture(GL_TEXTURE_2D, g_buffer_tex[2]);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, 2048, 2048);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, g_buffer_tex[0], 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, g_buffer_tex[1], 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, g_buffer_tex[2], 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 }
 
 void pn::RenderSystem::shutdown() {
@@ -33,19 +62,52 @@ void pn::RenderSystem::shutdown() {
 }
 
 void pn::RenderSystem::run() {
-	DrawCallContainer drawCalls;
-
 	pn::MatrixStack matrixStack;
+	
+	DrawCallContainer drawCalls{};
 
 	for (auto root_children : m_state->getRootEntity().getChildrenID()) {
 		buildDrawCalls(root_children, matrixStack, drawCalls);
 	}
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
+//	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+//	glClear(GL_COLOR_BUFFER_BIT);
+//	glClear(GL_DEPTH_BUFFER_BIT);
+
+	static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	static const GLuint uint_zeros[] = { 0, 0, 0, 0 };
+	static const GLfloat float_zeros[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	static const GLfloat float_ones[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	glBindFramebuffer(GL_FRAMEBUFFER, g_buffer);
+	glDrawBuffers(2, draw_buffers);
+	glClearBufferuiv(GL_COLOR, 0, uint_zeros);
+	glClearBufferuiv(GL_COLOR, 1, uint_zeros);
+	glClearBufferfv(GL_DEPTH, 0, float_ones);
+	
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
 	renderDrawCalls(drawCalls);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDrawBuffer(GL_BACK);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, g_buffer_tex[0]);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, g_buffer_tex[1]);
+
+	deferred_program = m_state->m_resources.getMaterial("deferred_finish.sp").getGLProgramObject();
+	glUseProgram(deferred_program);
+
+	glDisable(GL_DEPTH_TEST);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(0);
 }
@@ -67,7 +129,7 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 	bool hasRender = current_entity.hasComponents(pn::ComponentType::RENDER);
 	if (hasRender) {
 		auto& renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(current_entity.getComponent(pn::ComponentType::RENDER));
-		auto& material = m_state->m_resources.getMaterial(renderComponent->getMaterialFilename());
+		auto& material = m_state->m_resources.getMaterial(renderComponent->getMaterialFilename().getHash());
 		auto& mesh = m_state->m_resources.getMesh(renderComponent->getMeshFilename());
 
 		// world position of entity

@@ -151,6 +151,14 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 		glUseProgram(getGLProgramObject());
 
 		setUniform("proj", settings.getHUDMatrix());
+	case MaterialID::DEFERRED:
+		glUseProgram(getGLProgramObject());
+
+		setUniform("view", view);
+		setUniform("proj", settings.getProjectionMatrix());
+		setUniform("materialID", getMaterialID());
+
+		break;
 	default:
 		break;
 
@@ -214,6 +222,20 @@ void pn::Material::setInstanceUniforms(const mat4& worldTransform, const RenderC
 		glDisable(GL_DEPTH_TEST);
 	}
 		break;
+	case MaterialID::DEFERRED:
+	{
+		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
+		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(worldTransform));
+
+		setUniform("gloss", renderComponent.getGloss());
+//		setUniform("alpha", renderComponent.getAlpha());
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuse_texture.getTBO());
+		glBindSampler(0, diffuse_texture.getSamplerObject());
+		setUniform("diffuseMap", 0);
+	}
+	break;
 	default:
 		break;
 	}

@@ -20,6 +20,8 @@ namespace pn {
 
 		void run(double dt);
 
+		const std::map<EntityID, std::shared_ptr<pn::BoundingContainer>>& getBoundingContainers() const;
+
 		inline void updateEntity(Entity& entity, double dt);
 
 		void translateWorld(TransformComponent& transformComponent, const vec3& by);

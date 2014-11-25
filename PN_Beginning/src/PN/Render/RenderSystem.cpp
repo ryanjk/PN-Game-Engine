@@ -7,6 +7,10 @@
 
 #include "PN/Physics/BoundingContainer/BoundingBox.h"
 
+#include "PN/Settings/SettingsManager.h"
+
+static auto& settings = pn::SettingsManager::g_SettingsManager;
+
 pn::RenderSystem::RenderSystem() {}
 
 void pn::RenderSystem::startUp(pn::GameState* state) {
@@ -47,6 +51,59 @@ void pn::RenderSystem::run() {
 	renderDrawCalls(drawCalls);
 
 	glUseProgram(0);
+	glBindVertexArray(0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+
+#ifdef _DEBUG
+	// Camera position
+	const mat4& camera_world_transform = m_state->getEntityWorldTransform(m_activeCamera->getID(), nullptr);
+
+	// Get view transform from camera
+	const auto view_transform(glm::inverse(camera_world_transform));
+	
+	for (auto entity : m_state->m_entities) {
+		if (entity->getName().getText() == "player") continue;
+		auto map_itr = m_state->m_physicsSystem.getBoundingContainers().find(entity->getID());
+		if (map_itr != m_state->m_physicsSystem.getBoundingContainers().end()) {
+			auto& boundingContainer = map_itr->second;
+
+			GLuint collision_draw_program = m_state->m_resources.getMaterial("collision_container_draw.sp").getGLProgramObject();
+			glUseProgram(collision_draw_program);
+
+			int worldIndex = glGetUniformLocation(collision_draw_program, "world");
+			const auto& world_matrix = m_state->getEntityWorldTransform(entity->getID(), nullptr);
+			glUniformMatrix4fv(worldIndex, 1, GL_FALSE, glm::value_ptr(world_matrix));
+
+			int viewIndex = glGetUniformLocation(collision_draw_program, "view");
+			glUniformMatrix4fv(viewIndex, 1, GL_FALSE, glm::value_ptr(view_transform));
+
+			int projIndex = glGetUniformLocation(collision_draw_program, "proj");
+			glUniformMatrix4fv(projIndex, 1, GL_FALSE, glm::value_ptr(settings.getProjectionMatrix()));
+
+			if (boundingContainer->getContainerType() == pn::BoundingContainerType::BOUNDING_BOX) {
+				glBindVertexArray(boundingContainer->getVAO());
+				glBindBuffer(GL_ARRAY_BUFFER, boundingContainer->getVBO());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boundingContainer->getIBO());
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+				glDisableVertexAttribArray(0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glUseProgram(0);
+			}
+		}
+	}
+
+#endif
 }
 
 void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& matrixStack, DrawCallContainer& drawCalls) {
@@ -111,14 +168,10 @@ void pn::RenderSystem::renderDrawCalls(DrawCallContainer& drawCalls) {
 
 		// If the current program is not the same as the last one used, set new global uniforms
 
-#ifndef _DEBUG
 		if (current_material_hash != last_material_rendered) {
-#endif
 			current_material.setGlobalUniforms(*m_state, m_lights, camera_world_transform, view_transform);
 			last_material_rendered = current_material_hash;
-#ifndef _DEBUG
 		}
-#endif
 
 		// if rendering a different mesh, change VAO, otherwise keep from last time
 		bool swapVAO = current_mesh_hash != last_mesh_rendered;

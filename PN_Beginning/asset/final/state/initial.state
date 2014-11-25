@@ -7,7 +7,7 @@
 			"floor.obj"
         ],
         "material": [
-
+			"collision_container_draw.sp"
         ]
     },
 	"entities": {
@@ -137,6 +137,9 @@
 					"gloss":100
 				},
 				"collide":{
+				},
+				"move":{
+					"angularVelocity":[0.0, 1.0, 0.0]
 				}
 			}
 		},

@@ -65,7 +65,13 @@ void pn::PhysicsSystem::startUp(pn::GameState* state) {
 	}
 }
 
-void pn::PhysicsSystem::shutdown() {}
+void pn::PhysicsSystem::shutdown() {
+	for (auto boundingContainer_itr : m_boundingContainerMap) {
+		const auto& boundingContainer = boundingContainer_itr.second;
+		glDeleteBuffers(1, &boundingContainer->getVBO());
+		glDeleteBuffers(1, &boundingContainer->getIBO());
+	}
+}
 
 void pn::PhysicsSystem::run(double dt) {
 	integrateWorld(dt);
@@ -78,6 +84,10 @@ void pn::PhysicsSystem::run(double dt) {
 
 	std::vector < CollisionData > collisionData{};
 	detectCollisions(collisionData);
+}
+
+const std::map<EntityID, std::shared_ptr<pn::BoundingContainer>>& pn::PhysicsSystem::getBoundingContainers() const {
+	return m_boundingContainerMap;
 }
 
 void pn::PhysicsSystem::integrateWorld(double dt) {

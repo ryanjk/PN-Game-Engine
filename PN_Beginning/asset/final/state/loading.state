@@ -5,7 +5,10 @@
         ],
         "mesh": [
 
-        ]
+        ],
+		"material": [
+			
+		]
     },
 	"entities":{
 		"camera":{

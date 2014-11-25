@@ -30,6 +30,8 @@
 					"velocity":[1.0, 0.0, 0.0],
 					"acceleration":[0.0, 0.0, 0.0],
 					"angularVelocity":[1.0, 0.0, 0.0]
+				},
+				"collide":{
 				}
 			}
 		},
@@ -70,12 +72,14 @@
 					"rotation": [0.0, 0.0, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
+					"mesh":"dragon_lr.obj",
 					"material":"dynamic_light.sp",
 					"diffuse": "green.png",
 					"ambient":[0.0, 0.1, 0.0],
 					"specular":[0.4, 0.4, 0.4],
 					"gloss":10
+				},
+				"collide":{
 				}
 			}
 		},
@@ -87,12 +91,14 @@
 					"rotation": [0.0, -1.57, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
+					"mesh":"dragon_lr.obj",
 					"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "blue.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
 					"gloss":100
+				},
+				"collide":{
 				}
 			}
 		},
@@ -110,6 +116,8 @@
 					"specular":[0.2, 0.2, 0.2],
 					"ambient":[0.0, 0.0, 0.0],
 					"gloss":0
+				},
+				"collide":{
 				}
 			}
 		},
@@ -121,12 +129,14 @@
 					"rotation": [0.0, -3.14, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
+					"mesh":"dragon_lr.obj",
 					"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.1, 0.1, 1.0],
 					"diffuse": "white.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
-					"gloss":10
+					"gloss":100
+				},
+				"collide":{
 				}
 			}
 		},
@@ -150,12 +160,14 @@
 					"rotation": [0.0, 3.14, 0.0]
 				},
 				"render": {
-					"mesh":"dragon.obj",
+					"mesh":"dragon_lr.obj",
 					"material":"dynamic_light.sp",
 					"ambient": [0.1, 0.0, 0.0, 1.0],
 					"diffuse": "red.png",
 					"specular": [0.4, 0.4, 0.4, 1.0],
 					"gloss":1000
+				},
+				"collide":{
 				}
 			}
 		},
@@ -167,7 +179,9 @@
 					"rotation": [0.0, 0.0, 0.0]
 				},
 				"move":{
-
+					
+				},
+				"collide":{
 				}
 			},
 			"children": {

@@ -45,43 +45,43 @@ const pn::PString& pn::Material::getMaterialFilename() const {
 }
 
 template<>
-void pn::Material::setUniform<int>(const std::string& uniform, int value) const {
+void pn::Material::setUniform<int>(const PString& uniform, int value) const {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform1i(uniform_location, value);
 }
 
 template<>
-void pn::Material::setUniform<float>(const std::string& uniform, float value) const {
+void pn::Material::setUniform<float>(const PString& uniform, float value) const {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform1f(uniform_location, value);
 }
 
 template<>
-void pn::Material::setUniform<float*>(const std::string& uniform, float* value) const {
+void pn::Material::setUniform<float*>(const PString& uniform, float* value) const {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform1fv(uniform_location, 1, value);
 }
 
 template<>
-void pn::Material::setUniform<vec3>(const std::string& uniform, vec3 value) const {
+void pn::Material::setUniform<vec3>(const PString& uniform, vec3 value) const {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform3fv(uniform_location, 1, glm::value_ptr(value));
 }
 
 template<>
-void pn::Material::setUniform<vec4>(const std::string& uniform, vec4 value) const {
+void pn::Material::setUniform<vec4>(const PString& uniform, vec4 value) const {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniform4fv(uniform_location, 1, glm::value_ptr(value));
 }
 
 template<>
-void pn::Material::setUniform<mat4>(const std::string& uniform, mat4 value) const {
+void pn::Material::setUniform<mat4>(const PString& uniform, mat4 value) const {
 	GLint uniform_location = getUniformLocation(uniform);
 	glUniformMatrix4fv(uniform_location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
 template<>
-void pn::Material::setUniform<pn::Light>(const std::string& uniform, pn::Light value) const {
+void pn::Material::setUniform<pn::Light>(const PString& uniform, pn::Light value) const {
 	setUniform(uniform + ".position", value.position);
 	setUniform(uniform + ".direction", value.direction);
 	setUniform(uniform + ".type", value.type);
@@ -92,14 +92,28 @@ void pn::Material::setUniform<pn::Light>(const std::string& uniform, pn::Light v
 	setUniform(uniform + ".maxRadius", value.maxRadius);
 }
 
-GLint pn::Material::getUniformLocation(const std::string& uniform) const {
-	GLint uniform_location = glGetUniformLocation(m_program, uniform.c_str());
-	assert(uniform_location != -1);
-	return uniform_location;
+GLint pn::Material::getUniformLocation(const PString& uniform) const {
+	HashValue hash = uniform.getHash();
+	if (m_uniform_location_cache.count(hash) == 1) {
+		return m_uniform_location_cache.at(hash);
+	}
+	else {
+		GLint uniform_location = glGetUniformLocation(m_program, uniform.c_str());
+		assert(uniform_location != -1);
+		m_uniform_location_cache[hash] = uniform_location;
+		return m_uniform_location_cache[hash];
+	}
 }
 
 void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector<EntityID>& lights,
 	const mat4& camera, const mat4& view) const {
+
+	static const PString p_world = PString("world");
+	static const PString p_num_lights = PString("num_lights");
+	static const PString p_camera_position = PString("cameraPosition");
+	static const PString p_view = PString("view");
+	static const PString p_proj = PString("proj");
+
 	switch (m_materialID) {
 
 	case MaterialID::DYNAMIC_LIGHT:
@@ -128,13 +142,13 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 				num_lights_set++;
 			}
 
-			setUniform("num_lights", num_lights_set);
+			setUniform(p_num_lights, num_lights_set);
 		}
 
 		const vec3& camera_position(camera[3].xyz);
-		setUniform("cameraPosition", camera_position);
-		setUniform("view", view);
-		setUniform("proj", settings.getProjectionMatrix());
+		setUniform(p_camera_position, camera_position);
+		setUniform(p_view, view);
+		setUniform(p_proj, settings.getProjectionMatrix());
 	}
 		break;
 
@@ -143,14 +157,14 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 		glUseProgram(getGLProgramObject());
 
 		const vec3& camera_position(camera[3].xyz);
-		setUniform("view", view);
-		setUniform("proj", settings.getProjectionMatrix());
+		setUniform(p_view, view);
+		setUniform(p_proj, settings.getProjectionMatrix());
 	}
 		break;
 	case MaterialID::SCREEN_OVERLAY:
 		glUseProgram(getGLProgramObject());
 
-		setUniform("proj", settings.getHUDMatrix());
+		setUniform(p_proj, settings.getHUDMatrix());
 	default:
 		break;
 
@@ -159,6 +173,14 @@ void pn::Material::setGlobalUniforms(pn::GameState& gameState, const std::vector
 
 void pn::Material::setInstanceUniforms(const mat4& worldTransform, const RenderComponent& renderComponent, 
 	const Mesh& mesh, const Image& diffuse_texture, bool swapVAO) const {
+
+	static const PString p_ambient = PString("ambient");
+	static const PString p_specular = PString("specular");
+	static const PString p_gloss = PString("gloss");
+	static const PString p_alpha = PString("alpha");
+	static const PString p_world = PString("world");
+	static const PString p_diffuseMap = PString("diffuseMap");
+
 	
 	if (swapVAO) {
 		glBindVertexArray(mesh.getVAO());
@@ -172,44 +194,44 @@ void pn::Material::setInstanceUniforms(const mat4& worldTransform, const RenderC
 
 	case MaterialID::DYNAMIC_LIGHT:
 	{
-		setUniform("ambient", renderComponent.getAmbient());
-		setUniform("specular", renderComponent.getSpecular());
-		setUniform("gloss", renderComponent.getGloss());
-		setUniform("alpha", renderComponent.getAlpha());
+		setUniform(p_ambient, renderComponent.getAmbient());
+		setUniform(p_specular, renderComponent.getSpecular());
+		setUniform(p_gloss, renderComponent.getGloss());
+		setUniform(p_alpha, renderComponent.getAlpha());
 
-		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
+		auto world_transform_index = getUniformLocation(p_world);
 		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(worldTransform));
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuse_texture.getTBO());
 		glBindSampler(0, diffuse_texture.getSamplerObject());
-		setUniform("diffuseMap", 0);
+		setUniform(p_diffuseMap, 0);
 	}
 
 		break;
 
 	case MaterialID::STATIC_LIGHT:
 	{
-		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
+		auto world_transform_index = getUniformLocation(p_world);
 		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(worldTransform));
-		setUniform("alpha", renderComponent.getAlpha());
+		setUniform(p_alpha, renderComponent.getAlpha());
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuse_texture.getTBO());
 		glBindSampler(0, diffuse_texture.getSamplerObject());
-		setUniform("diffuseMap", 0);
+		setUniform(p_diffuseMap, 0);
 	}
 		break;
 	case MaterialID::SCREEN_OVERLAY:
 	{
-		auto world_transform_index = glGetUniformLocation(getGLProgramObject(), "world");
+		auto world_transform_index = getUniformLocation(p_world);
 		glUniformMatrix4fv(world_transform_index, 1, GL_FALSE, glm::value_ptr(worldTransform));
-		setUniform("alpha", renderComponent.getAlpha());
+		setUniform(p_alpha, renderComponent.getAlpha());
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuse_texture.getTBO());
 		glBindSampler(0, diffuse_texture.getSamplerObject());
-		setUniform("diffuseMap", 0);
+		setUniform(p_diffuseMap, 0);
 
 		glDisable(GL_DEPTH_TEST);
 	}

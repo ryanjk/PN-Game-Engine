@@ -7,6 +7,7 @@ namespace pn{
 	class InputEventListener {
 	public:
 		InputEventListener() {}
+		virtual ~InputEventListener() {}
 		
 		virtual void update(double dt) {}
 

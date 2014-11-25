@@ -3,9 +3,14 @@
 
 #include "PN/ECS/Component/TransformComponent.h"
 
+#include <vector>
+#include <functional>
+
 namespace pn {
 	class GameState;
 	class Entity;
+	class MatrixStack;
+	struct CollisionData;
 
 	class PhysicsSystem {
 	public:
@@ -42,6 +47,16 @@ namespace pn {
 		void updateTransformMatrix(TransformComponent& transformComponent);
 
 		void integrateWorld(double dt);
+		void updateBoundingContainers(EntityID current_entityID, MatrixStack& matrixStack);
+
+		void detectCollisions(std::vector<CollisionData>& collisionData);
+		std::function<bool(BoundingContainer*, BoundingContainer*, CollisionData&)> getCollisionTestFunc(BoundingContainerType, BoundingContainerType);
+
+		bool OBB_OBB(BoundingContainer*, BoundingContainer*, CollisionData&);
+
+		std::map<EntityID, std::shared_ptr<pn::BoundingContainer>> m_boundingContainerMap;
+		std::map<EntityID, bool> m_checkedForCollision;
+		std::vector<EntityID> m_movingEntities;
 
 		void setEntityWorldMatrixDirty(Entity& entity);
 		void setEntityWorldMatrixDirty(TransformComponent& transformComponent);

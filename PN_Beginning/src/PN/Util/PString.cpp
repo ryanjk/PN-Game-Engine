@@ -4,13 +4,25 @@ pn::PString::PString() : m_string(), m_hash()
 {}
 
 pn::PString::PString(const std::string& string) : m_string(string), m_hash(hash(string.c_str())) 
-{}
+{
+#ifdef _DEBUG
+//	std::cout << "constructing new pstring " << string << std::endl;
+#endif
+}
 
 pn::PString::PString(const PString& pstring) : m_string(pstring.m_string), m_hash(pstring.m_hash)  
-{}
+{
+#ifdef _DEBUG
+//	std::cout << "constructing new pstring " << pstring << std::endl;
+#endif
+}
 
 pn::PString::PString(const char* string) : m_string(string), m_hash(hash(string))  
-{}
+{
+#ifdef _DEBUG
+//	std::cout << "constructing new pstring " << string << std::endl;
+#endif
+}
 
 const std::string& pn::PString::getText() const {
 	return m_string;

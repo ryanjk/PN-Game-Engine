@@ -73,7 +73,7 @@ pn::Mesh pn::RenderFactory::loadMeshFromObj(const char* filename) {
 	std::vector<GLuint> vt_indices;
 	vt_indices.reserve(300000);
 
-	std::shared_ptr<pn::BoundingContainer> bounding_container_ptr;
+	std::shared_ptr<pn::BoundingContainer> bounding_container_ptr = nullptr;
 
 	std::ifstream filestream;
 	filestream.open(filename);

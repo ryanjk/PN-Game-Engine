@@ -24,7 +24,6 @@ namespace pn {
 		void renderDrawCalls(DrawCallContainer& drawCalls);
 
 		pn::GameState* m_state;
-//		std::map<EntityID, pn::Renderable> m_renderables;
 		std::vector<EntityID> m_lights;
 		Entity* m_activeCamera;
 	};

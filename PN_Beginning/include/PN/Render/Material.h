@@ -6,6 +6,8 @@
 #include "PN/Util/PString.h"
 #include "PN/Util/Math.h"
 
+#include <map>
+
 namespace pn {
 
 	struct DrawCall;
@@ -38,7 +40,7 @@ namespace pn {
 		const pn::PString& getMaterialFilename() const;
 
 		template<typename T>
-		inline void setUniform(const std::string& uniform, T value) const;
+		inline void setUniform(const PString& uniform, T value) const;
 
 		void setGlobalUniforms
 			(
@@ -68,7 +70,8 @@ namespace pn {
 
 		std::vector<HashValue> m_uniforms;
 
-		inline GLint getUniformLocation(const std::string& uniform) const;
+		inline GLint getUniformLocation(const PString& uniform) const;
+		mutable std::map<HashValue, GLint> m_uniform_location_cache;
 	};
 }
 

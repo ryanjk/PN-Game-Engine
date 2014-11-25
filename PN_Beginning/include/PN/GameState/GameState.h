@@ -32,6 +32,7 @@ namespace pn {
 
 	public:
 		GameState(pn::PString stateFileName);
+		virtual ~GameState() {}
 
 		virtual void update(double dt) = 0;
 		void updatePhysics(double dt);

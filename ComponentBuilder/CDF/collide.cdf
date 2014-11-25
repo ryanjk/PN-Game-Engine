@@ -1,0 +1,9 @@
+{
+	"name":"Collide",
+	"data":{
+		"ContainerType":{
+			"type":"int",
+			"default":1
+		}
+	}
+}

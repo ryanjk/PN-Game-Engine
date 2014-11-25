@@ -1,6 +1,7 @@
 #include "PN/Render/Mesh.h"
 
 #include <iostream>
+#include <cassert>
 
 pn::Mesh::Mesh() : m_vao(0), m_vbo(0), m_num_vertices(0), m_boundingContainer() {}
 
@@ -38,5 +39,6 @@ void pn::Mesh::setBoundingContainer(std::shared_ptr<pn::BoundingContainer> bound
 }
 
 const std::shared_ptr<pn::BoundingContainer>& pn::Mesh::getBoundingContainer() const {
+	assert(m_boundingContainer != nullptr);
 	return m_boundingContainer;
 }

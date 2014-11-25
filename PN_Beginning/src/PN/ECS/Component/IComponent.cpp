@@ -3,6 +3,7 @@
 #include "PN/ECS/Component/RenderComponent.h"
 #include "PN/ECS/Component/LightComponent.h"
 #include "PN/ECS/Component/MoveComponent.h"
+#include "PN/ECS/Component/CollideComponent.h"
 
 #include <iostream>
 
@@ -23,6 +24,10 @@ pn::ComponentType pn::IComponent::textToType(std::string type) {
 		return pn::ComponentType::MOVE;
 	}
 
+	else if (type == "collide" || type == "Collide") {
+		return pn::ComponentType::COLLIDE;
+	}
+
 	else {
 		return pn::ComponentType::NONE;
 	}
@@ -38,6 +43,8 @@ std::shared_ptr<pn::IComponent> pn::IComponent::make(const ComponentData& compon
 		return pn::LightComponent::make(componentData, resources);
 	case pn::ComponentType::MOVE:
 		return pn::MoveComponent::make(componentData, resources);
+	case pn::ComponentType::COLLIDE:
+		return pn::CollideComponent::make(componentData, resources);
 	default:
 		std::cout << "Could not create component " + componentName + " -- couldn't recognize type (check name in entity definition)" << std::endl;
 		return nullptr;

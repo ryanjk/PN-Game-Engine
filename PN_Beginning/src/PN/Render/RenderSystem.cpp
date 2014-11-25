@@ -12,7 +12,6 @@ pn::RenderSystem::RenderSystem() {}
 void pn::RenderSystem::startUp(pn::GameState* state) {
 	m_state = state;
 
-	// set up renderable for each entity that needs one
 	for (auto& entity_i : m_state->m_entities) {
 		auto& entity = *entity_i;
 
@@ -33,7 +32,7 @@ void pn::RenderSystem::shutdown() {
 }
 
 void pn::RenderSystem::run() {
-	DrawCallContainer drawCalls;
+	DrawCallContainer drawCalls{};
 
 	pn::MatrixStack matrixStack;
 
@@ -71,7 +70,7 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 		auto& mesh = m_state->m_resources.getMesh(renderComponent->getMeshFilename());
 
 		// world position of entity
-		mat4 worldTransform = m_state->getEntityWorldTransform(current_entity_ID, [&]()->mat4 { return matrixStack.multiply(); });
+		const mat4& worldTransform = m_state->getEntityWorldTransform(current_entity_ID, [&]()->mat4 { return matrixStack.multiply(); });
 
 		// put draw call into container
 		pn::DrawCall drawCall({ worldTransform, renderComponent });
@@ -111,17 +110,22 @@ void pn::RenderSystem::renderDrawCalls(DrawCallContainer& drawCalls) {
 		auto& current_texture = m_state->m_resources.getImage(current_texture_hash);
 
 		// If the current program is not the same as the last one used, set new global uniforms
+
+#ifndef _DEBUG
 		if (current_material_hash != last_material_rendered) {
+#endif
 			current_material.setGlobalUniforms(*m_state, m_lights, camera_world_transform, view_transform);
 			last_material_rendered = current_material_hash;
+#ifndef _DEBUG
 		}
+#endif
 
 		// if rendering a different mesh, change VAO, otherwise keep from last time
 		bool swapVAO = current_mesh_hash != last_mesh_rendered;
 		last_mesh_rendered = current_mesh_hash;
 
 		current_material.setInstanceUniforms(drawCall.world_transform, *drawCall.renderComponent, current_mesh, current_texture, swapVAO);
-//		std::cout << current_mesh_hash << ", " << current_material_hash << std::endl;
+
 		glDrawArraysInstanced(GL_TRIANGLES, 0, current_mesh.getNumVertices(), 1);
 
 		current_material.postRender();

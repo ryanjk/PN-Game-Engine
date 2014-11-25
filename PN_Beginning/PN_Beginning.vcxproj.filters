@@ -189,6 +189,9 @@
     <ClCompile Include="src\PN\Physics\PhysicsSystem.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\PN\ECS\Component\CollideComponent.cpp">
+      <Filter>Source Files\ECS\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\PN\GameState\GameState.h">
@@ -309,6 +312,12 @@
       <Filter>Header Files\PN\ECS\Component</Filter>
     </ClInclude>
     <ClInclude Include="include\PN\Physics\PhysicsSystem.h">
+      <Filter>Header Files\PN\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\ECS\Component\CollideComponent.h">
+      <Filter>Header Files\PN\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PN\Physics\CollisionData.h">
       <Filter>Header Files\PN\Physics</Filter>
     </ClInclude>
   </ItemGroup>

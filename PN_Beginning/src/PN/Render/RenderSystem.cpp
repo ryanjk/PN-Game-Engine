@@ -16,6 +16,9 @@ pn::RenderSystem::RenderSystem() {}
 void pn::RenderSystem::startUp(pn::GameState* state) {
 	m_state = state;
 
+	// Initialize GL data for drawing collision primitives
+	createCollisionPrimitiveGLObjects();
+
 	for (auto& entity_i : m_state->m_entities) {
 		auto& entity = *entity_i;
 
@@ -31,8 +34,218 @@ void pn::RenderSystem::startUp(pn::GameState* state) {
 	m_activeCamera = &camera;
 }
 
-void pn::RenderSystem::shutdown() {
+void pn::RenderSystem::createCollisionPrimitiveGLObjects() {
+	pn::RenderSystem::glObjects bounding_box;
+	GLfloat buffer_data[] = {
+		-0.5, -0.5, 0.5,
+		0.5, -0.5, 0.5,
+		0.5, 0.5, 0.5,
+		-0.5, 0.5, 0.5,
+		-0.5, -0.5, -0.5,
+		0.5, -0.5, -0.5,
+		0.5, 0.5, -0.5,
+		-0.5, 0.5, -0.5
+	};
 
+	GLushort buffer_indices[] = {
+		// front
+		0, 1, 2,
+		2, 3, 0,
+		// top
+		3, 2, 6,
+		6, 7, 3,
+		// back
+		7, 6, 5,
+		5, 4, 7,
+		// bottom
+		4, 5, 1,
+		1, 0, 4,
+		// left
+		4, 0, 3,
+		3, 7, 4,
+		// right
+		1, 5, 6,
+		6, 2, 1,
+	};
+
+	glGenVertexArrays(1, &bounding_box.VAO);
+	glBindVertexArray(bounding_box.VAO);
+
+	glGenBuffers(1, &bounding_box.VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, bounding_box.VBO);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), buffer_data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &bounding_box.IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bounding_box.IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(GLushort), buffer_indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
+	bounding_box.num_tris = 36;
+	m_primitiveGLObjects.insert(std::make_pair(pn::BoundingContainerType::BOUNDING_BOX, bounding_box));
+
+	GLfloat sphere_buffer_data[] = {
+		0.000000f, -1.000000f, 0.000000f,
+		0.723607f, -0.447220f, 0.525725f,
+		-0.276388f, -0.447220f, 0.850649f,
+		-0.894426f, -0.447216f, 0.000000f,
+		-0.276388f, -0.447220f, -0.850649f,
+		0.723607f, -0.447220f, -0.525725f,
+		0.276388f, 0.447220f, 0.850649f,
+		-0.723607f, 0.447220f, 0.525725f,
+		-0.723607f, 0.447220f, -0.525725f,
+		0.276388f, 0.447220f, -0.850649f,
+		0.894426f, 0.447216f, 0.000000f,
+		0.000000f, 1.000000f, 0.000000f,
+		-0.162456f, -0.850654f, 0.499995f,
+		0.425323f, -0.850654f, 0.309011f,
+		0.262869f, -0.525738f, 0.809012f,
+		0.850648f, -0.525736f, 0.000000f,
+		0.425323f, -0.850654f, -0.309011f,
+		-0.525730f, -0.850652f, 0.000000f,
+		-0.688189f, -0.525736f, 0.499997f,
+		-0.162456f, -0.850654f, -0.499995f,
+		-0.688189f, -0.525736f, -0.499997f,
+		0.262869f, -0.525738f, -0.809012f,
+		0.951058f, 0.000000f, 0.309013f,
+		0.951058f, 0.000000f, -0.309013f,
+		0.000000f, 0.000000f, 1.000000f,
+		0.587786f, 0.000000f, 0.809017f,
+		-0.951058f, 0.000000f, 0.309013f,
+		-0.587786f, 0.000000f, 0.809017f,
+		-0.587786f, 0.000000f, -0.809017f,
+		-0.951058f, 0.000000f, -0.309013f,
+		0.587786f, 0.000000f, -0.809017f,
+		0.000000f, 0.000000f, -1.000000f,
+		0.688189f, 0.525736f, 0.499997f,
+		-0.262869f, 0.525738f, 0.809012f,
+		-0.850648f, 0.525736f, 0.000000f,
+		-0.262869f, 0.525738f, -0.809012f,
+		0.688189f, 0.525736f, -0.499997f,
+		0.162456f, 0.850654f, 0.499995f,
+		0.525730f, 0.850652f, 0.000000f,
+		-0.425323f, 0.850654f, 0.309011f,
+		-0.425323f, 0.850654f, -0.309011f,
+		0.162456f, 0.850654f, -0.499995f
+	};
+
+	GLushort sphere_buffer_indices[] = {
+		1, 14, 13,
+		2, 14, 16,
+		1, 13, 18,
+		1, 18, 20,
+		1, 20, 17,
+		2, 16, 23,
+		3, 15, 25,
+		4, 19, 27,
+		5, 21, 29,
+		6, 22, 31,
+		2, 23, 26,
+		3, 25, 28,
+		4, 27, 30,
+		5, 29, 32,
+		6, 31, 24,
+		7, 33, 38,
+		8, 34, 40,
+		9, 35, 41,
+		10, 36, 42,
+		11, 37, 39,
+		13, 15, 3,
+		13, 14, 15,
+		14, 2, 15,
+		16, 17, 6,
+		16, 14, 17,
+		14, 1, 17,
+		18, 19, 4,
+		18, 13, 19,
+		13, 3, 19,
+		20, 21, 5,
+		20, 18, 21,
+		18, 4, 21,
+		17, 22, 6,
+		17, 20, 22,
+		20, 5, 22,
+		23, 24, 11,
+		23, 16, 24,
+		16, 6, 24,
+		25, 26, 7,
+		25, 15, 26,
+		15, 2, 26,
+		27, 28, 8,
+		27, 19, 28,
+		19, 3, 28,
+		29, 30, 9,
+		29, 21, 30,
+		21, 4, 30,
+		31, 32, 10,
+		31, 22, 32,
+		22, 5, 32,
+		26, 33, 7,
+		26, 23, 33,
+		23, 11, 33,
+		28, 34, 8,
+		28, 25, 34,
+		25, 7, 34,
+		30, 35, 9,
+		30, 27, 35,
+		27, 8, 35,
+		32, 36, 10,
+		32, 29, 36,
+		29, 9, 36,
+		24, 37, 11,
+		24, 31, 37,
+		31, 10, 37,
+		38, 39, 12,
+		38, 33, 39,
+		33, 11, 39,
+		40, 38, 12,
+		40, 34, 38,
+		34, 7, 38,
+		41, 40, 12,
+		41, 35, 40,
+		35, 8, 40,
+		42, 41, 12,
+		42, 36, 41,
+		36, 9, 41,
+		39, 42, 12,
+		39, 37, 42,
+		37, 10, 42
+	};
+
+	RenderSystem::glObjects sphere;
+	sphere.num_tris = sizeof(sphere_buffer_indices) / sizeof(GLushort);
+
+	for (unsigned int i = 0; i < sphere.num_tris; i++) {
+		sphere_buffer_indices[i]--;
+	}
+
+
+	glGenVertexArrays(1, &sphere.VAO);
+	glBindVertexArray(sphere.VAO);
+
+	glGenBuffers(1, &sphere.VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, sphere.VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_buffer_data), sphere_buffer_data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &sphere.IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sphere_buffer_indices), sphere_buffer_indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
+	
+	m_primitiveGLObjects.insert(std::make_pair(pn::BoundingContainerType::BOUNDING_SPHERE, sphere));
+}
+
+void pn::RenderSystem::shutdown() {
+	for (auto i : m_primitiveGLObjects) {
+		auto& obj = i.second;
+		glDeleteVertexArrays(1, &obj.VAO);
+		glDeleteBuffers(1, &obj.VBO);
+		glDeleteBuffers(1, &obj.IBO);
+	}
 }
 
 void pn::RenderSystem::run() {
@@ -75,7 +288,7 @@ void pn::RenderSystem::run() {
 			glUseProgram(collision_draw_program);
 
 			int worldIndex = glGetUniformLocation(collision_draw_program, "world");
-			const auto& world_matrix = m_state->getEntityWorldTransform(entity->getID(), nullptr);
+			const auto& world_matrix = boundingContainer->getTransform();
 			glUniformMatrix4fv(worldIndex, 1, GL_FALSE, glm::value_ptr(world_matrix));
 
 			int viewIndex = glGetUniformLocation(collision_draw_program, "view");
@@ -84,22 +297,22 @@ void pn::RenderSystem::run() {
 			int projIndex = glGetUniformLocation(collision_draw_program, "proj");
 			glUniformMatrix4fv(projIndex, 1, GL_FALSE, glm::value_ptr(settings.getProjectionMatrix()));
 
-			if (boundingContainer->getContainerType() == pn::BoundingContainerType::BOUNDING_BOX) {
-				glBindVertexArray(boundingContainer->getVAO());
-				glBindBuffer(GL_ARRAY_BUFFER, boundingContainer->getVBO());
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boundingContainer->getIBO());
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+			const auto& glObjects = m_primitiveGLObjects.find(boundingContainer->getContainerType())->second;
 
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, NULL);
-				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glBindVertexArray(glObjects.VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, glObjects.VBO);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glObjects.IBO);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-				glDisableVertexAttribArray(0);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-				glUseProgram(0);
-			}
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDrawElements(GL_TRIANGLES, glObjects.num_tris, GL_UNSIGNED_SHORT, NULL);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+			glDisableVertexAttribArray(0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glUseProgram(0);
 		}
 	}
 

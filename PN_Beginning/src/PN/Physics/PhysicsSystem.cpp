@@ -1,5 +1,6 @@
 #include "PN/Physics/PhysicsSystem.h"
 #include "PN/Physics/BoundingContainer/BoundingBox.h"
+#include "PN/Physics/BoundingContainer/BoundingSphere.h"
 #include "PN/Physics/CollisionData.h"
 
 #include "PN/GameState/GameState.h"
@@ -37,8 +38,23 @@ void pn::PhysicsSystem::startUp(pn::GameState* state) {
 			if (hasMeshBoundingContainer) {
 				auto renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
 				auto boundingContainer_ptr = m_gameState->m_resources.getMesh(renderComponent->getMeshFilename()).getBoundingContainer();
-				boundingContainer_ptr->update(glm::scale(mat4(), vec3(containerScale)));
-				m_boundingContainerMap.insert(std::make_pair(entity.getID(), boundingContainer_ptr));
+				switch (boundingContainer_ptr->getContainerType()) {
+				case pn::BoundingContainerType::BOUNDING_BOX:
+				{
+					auto n_boundingContainer_ptr = std::make_shared<pn::BoundingBox>(boundingContainer_ptr.get(), containerScale);
+					m_boundingContainerMap.insert(std::make_pair(entity.getID(), n_boundingContainer_ptr));
+				}
+				break;
+				case pn::BoundingContainerType::BOUNDING_SPHERE:
+				{
+					auto n_boundingContainer_ptr = std::make_shared<pn::BoundingSphere>(boundingContainer_ptr.get(), containerScale);
+					m_boundingContainerMap.insert(std::make_pair(entity.getID(), n_boundingContainer_ptr));
+				}
+				break;
+				default:
+					break;
+				}
+
 			}
 
 			// entity does not have mesh-provided bounding container, so create one
@@ -50,6 +66,12 @@ void pn::PhysicsSystem::startUp(pn::GameState* state) {
 					m_boundingContainerMap.insert(std::make_pair(entity.getID(), boundingContainer_ptr));
 				}
 					break;
+				case pn::BoundingContainerType::BOUNDING_SPHERE:
+				{
+					auto boundingContainer_ptr = std::make_shared<pn::BoundingSphere>(containerScale);
+					m_boundingContainerMap.insert(std::make_pair(entity.getID(), boundingContainer_ptr));
+				}
+				break;
 				default:
 					break;
 				}
@@ -66,11 +88,6 @@ void pn::PhysicsSystem::startUp(pn::GameState* state) {
 }
 
 void pn::PhysicsSystem::shutdown() {
-	for (auto boundingContainer_itr : m_boundingContainerMap) {
-		const auto& boundingContainer = boundingContainer_itr.second;
-		glDeleteBuffers(1, &boundingContainer->getVBO());
-		glDeleteBuffers(1, &boundingContainer->getIBO());
-	}
 }
 
 void pn::PhysicsSystem::run(double dt) {
@@ -112,13 +129,14 @@ void pn::PhysicsSystem::detectCollisions(std::vector<CollisionData>& collisionDa
 
 			auto& other_boundingContainer = *key.second;
 			auto test_collision_function = getCollisionTestFunc(entity_boundingContainer.getContainerType(), other_boundingContainer.getContainerType());
+			if (test_collision_function == nullptr) continue;
 
 			CollisionData collisionData{};
 			collisionData.e1 = entityID;
 			collisionData.e2 = otherID;
 			bool isCollision = test_collision_function(&entity_boundingContainer, &other_boundingContainer, collisionData);
 			if (isCollision) {
-		//		std::cout << "COLLISION!!!!!!!!!!\n";
+		//		std::cout << "Collision between " + m_gameState->getEntity(entityID).getName().getText() + " and " + m_gameState->getEntity(otherID).getName().getText() + "\n";
 				collisionDataContainer.push_back(collisionData);
 			}
 
@@ -132,19 +150,13 @@ void pn::PhysicsSystem::detectCollisions(std::vector<CollisionData>& collisionDa
 
 std::function<bool(pn::BoundingContainer*, pn::BoundingContainer*, pn::CollisionData&)>
 pn::PhysicsSystem::getCollisionTestFunc(BoundingContainerType b1, BoundingContainerType b2) {
-	if (b1 == pn::BoundingContainerType::BOUNDING_BOX) {
-		if (b2 == pn::BoundingContainerType::BOUNDING_BOX) {
+	if ((b1 == pn::BoundingContainerType::BOUNDING_BOX) && (b2 == pn::BoundingContainerType::BOUNDING_BOX)) {
 			return ([&](BoundingContainer* b1, BoundingContainer* b2, pn::CollisionData& collisionData){ return OBB_OBB(b1, b2, collisionData); });
-		}
-
-		else {
-			return nullptr;
-		}
 	}
 
 	else {
-		assert(false);
-		return ([&](BoundingContainer* b1, BoundingContainer* b2, pn::CollisionData& collisionData){ return OBB_OBB(b1, b2, collisionData); });
+	//	assert(false && "No collision function found");
+		return nullptr;
 	}
 }
 
@@ -210,8 +222,18 @@ bool pn::PhysicsSystem::OBB_OBB(pn::BoundingContainer* b1, pn::BoundingContainer
 		return false;
 	}
 
+	vec3 n_axis1(-axis1);
+	if (!is_overlap(n_axis1)) {
+		return false;
+	}
+
 	vec3 axis2 = glm::cross(bb1_corners[2] - bb1_corners[3], bb1_corners[7] - bb1_corners[3]);
 	if (!is_overlap(axis2)) {
+		return false;
+	}
+
+	vec3 n_axis2(-axis2);
+	if (!is_overlap(n_axis2)) {
 		return false;
 	}
 
@@ -220,8 +242,18 @@ bool pn::PhysicsSystem::OBB_OBB(pn::BoundingContainer* b1, pn::BoundingContainer
 		return false;
 	}
 
+	vec3 n_axis3(-axis3);
+	if (!is_overlap(n_axis3)) {
+		return false;
+	}
+
 	vec3 axis4 = glm::cross(bb2_corners[1] - bb2_corners[0], bb2_corners[3] - bb2_corners[0]);
 	if (!is_overlap(axis4)) {
+		return false;
+	}
+
+	vec3 n_axis4(-axis4);
+	if (!is_overlap(n_axis4)) {
 		return false;
 	}
 
@@ -230,8 +262,18 @@ bool pn::PhysicsSystem::OBB_OBB(pn::BoundingContainer* b1, pn::BoundingContainer
 		return false;
 	}
 
+	vec3 n_axis5(-axis5);
+	if (!is_overlap(n_axis5)) {
+		return false;
+	}
+
 	vec3 axis6 = glm::cross(bb2_corners[5] - bb2_corners[1], bb2_corners[2] - bb2_corners[1]);
 	if (!is_overlap(axis6)) {
+		return false;
+	}
+
+	vec3 n_axis6(-axis6);
+	if (!is_overlap(n_axis6)) {
 		return false;
 	}
 

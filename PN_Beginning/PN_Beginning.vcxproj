@@ -172,6 +172,7 @@ call "$(SolutionDir)build\obj_build.bat"</Command>
     <ClCompile Include="src\PN\GameState\GameStateManager.cpp" />
     <ClCompile Include="src\PN\Input\FirstPersonListener.cpp" />
     <ClCompile Include="src\PN\Physics\BoundingContainer\BoundingBox.cpp" />
+    <ClCompile Include="src\PN\Physics\BoundingContainer\BoundingSphere.cpp" />
     <ClCompile Include="src\PN\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="src\PN\Render\Image.cpp" />
     <ClCompile Include="src\PN\Render\Mesh.cpp" />
@@ -215,6 +216,7 @@ call "$(SolutionDir)build\obj_build.bat"</Command>
     <ClInclude Include="include\PN\Input\InputManager.h" />
     <ClInclude Include="include\PN\Physics\BoundingContainer\BoundingBox.h" />
     <ClInclude Include="include\PN\Physics\BoundingContainer\BoundingContainer.h" />
+    <ClInclude Include="include\PN\Physics\BoundingContainer\BoundingSphere.h" />
     <ClInclude Include="include\PN\Physics\CollisionData.h" />
     <ClInclude Include="include\PN\Physics\PhysicsSystem.h" />
     <ClInclude Include="include\PN\Render\DrawCall.h" />

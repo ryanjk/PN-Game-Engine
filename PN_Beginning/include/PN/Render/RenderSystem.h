@@ -7,6 +7,8 @@
 
 #include "PN/Util/MatrixStack.h"
 
+#include "PN/Physics/BoundingContainer/BoundingContainer.h"
+
 #include <memory>
 #include <map>
 
@@ -22,6 +24,17 @@ namespace pn {
 	private:
 		void buildDrawCalls(EntityID current_entity_ID, MatrixStack& matrixStack, DrawCallContainer& drawCalls);
 		void renderDrawCalls(DrawCallContainer& drawCalls);
+
+		void createCollisionPrimitiveGLObjects();
+
+		struct glObjects {
+			GLuint VAO;
+			GLuint VBO;
+			GLuint IBO;
+			unsigned int num_tris;
+		};
+
+		std::map<pn::BoundingContainerType, glObjects> m_primitiveGLObjects;
 
 		pn::GameState* m_state;
 		std::vector<EntityID> m_lights;

@@ -32,6 +32,7 @@
 					"angularVelocity":[1.0, 0.0, 0.0]
 				},
 				"collide":{
+					"containerType":2
 				}
 			}
 		},
@@ -115,9 +116,12 @@
 					"diffuse": "cube_diffuse.png",
 					"specular":[0.2, 0.2, 0.2],
 					"ambient":[0.0, 0.0, 0.0],
-					"gloss":0
+					"gloss":190
 				},
 				"collide":{
+				},
+				"move":{
+					"angularVelocity":[0.0, 1.0, 0.0]
 				}
 			}
 		},
@@ -137,9 +141,6 @@
 					"gloss":100
 				},
 				"collide":{
-				},
-				"move":{
-					"angularVelocity":[0.0, 1.0, 0.0]
 				}
 			}
 		},

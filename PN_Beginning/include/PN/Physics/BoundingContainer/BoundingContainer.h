@@ -8,25 +8,23 @@
 namespace pn {
 
 	enum BoundingContainerType {
-		BOUNDING_BOX = 1
+		BOUNDING_BOX = 1,
+		BOUNDING_SPHERE = 2
 	};
 
 	class BoundingContainer {
 	public:
-		BoundingContainer(BoundingContainerType type) : m_type(type) {}
+		BoundingContainer(BoundingContainerType type) : m_type(type), m_transform() {}
 		virtual ~BoundingContainer() {}
 
 		BoundingContainerType getContainerType() const { return m_type; }
 
-		const GLuint& getVAO() const { return m_VAO; }
-		const GLuint& getVBO() const { return m_VBO; }
-		const GLuint& getIBO() const { return m_IBO; }
-
 		virtual void update(const mat4& worldMatrix) = 0;
+		const mat4& getTransform() const { return m_transform; }
+
 	protected:
-		GLuint m_VAO;
-		GLuint m_VBO;
-		GLuint m_IBO;
+		mat4 m_transform;
+
 	private:
 		BoundingContainerType m_type;
 	};

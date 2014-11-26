@@ -24,6 +24,11 @@ void pn::InitialState::update(double dt) {
 	auto& transformComponent = std::dynamic_pointer_cast<pn::TransformComponent>(player.getComponent(pn::ComponentType::TRANSFORM));
 	m_physicsSystem.setTranslation(*transformComponent, transformComponent->getTranslation() * vec3(1.0f, 0.0f, 1.0f));
 
+//	auto& monkey = getEntity("monkey2");
+
+//	auto& monkey_transform = std::dynamic_pointer_cast<pn::TransformComponent>(monkey.getComponent(ComponentType::TRANSFORM));
+//	m_physicsSystem.scale(*monkey_transform, vec3(1.0001f, 1.0001f, 1.0001f));
+
 /*	if (time > 5.0f) {
 		time = 0;
 		this->shutdown();

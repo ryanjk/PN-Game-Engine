@@ -22,7 +22,7 @@ namespace pn {
 		float getScale() const;
 
 	private:
-		BoundingContainerType m_containerType = BOUNDING_BOX;
+		BoundingContainerType m_containerType = BOUNDING_OBB;
 		float m_scale = 1.0f;
 	};
 }

@@ -15,7 +15,7 @@ namespace pn {
 		mat4 world_transform;
 		std::shared_ptr<RenderComponent> renderComponent;
 	};
-	using DrawCallContainer = std::multimap < int, pn::DrawCall > ;
+	using DrawCallContainer = std::multimap < unsigned int, pn::DrawCall > ;
 }
 
 #endif 

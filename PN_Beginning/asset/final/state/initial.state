@@ -36,6 +36,43 @@
 				}
 			}
 		},
+		"floor": {
+			"components": {
+				"transform": {
+					"translation":[0.0, -5.0, 0.0],
+					"scale":[5.0, 5.0, 5.0]
+				},
+				"render": {
+					"mesh":"floor.obj",
+					"material":"dynamic_light.sp",
+					"ambient": [0.1, 0.0, 0.0, 1.0],
+					"diffuse": "monkey_diffuse.png",
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":1000
+				},
+				"collide":{
+				}
+			}
+		},
+		"wall1": {
+			"components": {
+				"transform": {
+					"translation":[0.0, 0.0, 10.0],
+					"scale":[5.0, 5.0, 5.0],
+					"rotation":[1.57, 0.0, 0.0]
+				},
+				"render": {
+					"mesh":"floor.obj",
+					"material":"dynamic_light.sp",
+					"ambient": [0.1, 0.0, 0.0, 1.0],
+					"diffuse": "monkey_diffuse.png",
+					"specular": [0.4, 0.4, 0.4, 1.0],
+					"gloss":1000
+				},
+				"collide":{
+				}
+			}
+		},
 		"directional_light": {
 			"components": {
 				"transform": {
@@ -81,6 +118,9 @@
 					"gloss":10
 				},
 				"collide":{
+				},
+				"move":{
+					"angularVelocity":[0.0, 0.0, 1.0]
 				}
 			}
 		},
@@ -186,13 +226,15 @@
 					
 				},
 				"collide":{
+					"containerType":3,
+					"scale":1
 				}
 			},
 			"children": {
 				"camera": {
 					"components": {
 						"transform": {
-							"translation": [0.0, 0.0, 0.0]
+							
 						}
 					}
 				},

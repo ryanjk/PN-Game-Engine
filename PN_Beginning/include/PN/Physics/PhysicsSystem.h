@@ -54,7 +54,9 @@ namespace pn {
 		void detectCollisions(std::vector<CollisionData>& collisionData);
 		std::function<bool(BoundingContainer*, BoundingContainer*, CollisionData&)> getCollisionTestFunc(BoundingContainerType, BoundingContainerType);
 
+		bool AABB_AABB(BoundingContainer*, BoundingContainer*, CollisionData&);
 		bool OBB_OBB(BoundingContainer*, BoundingContainer*, CollisionData&);
+		bool Sphere_Sphere(BoundingContainer*, BoundingContainer*, CollisionData&);
 
 		std::map<EntityID, std::shared_ptr<pn::BoundingContainer>> m_boundingContainerMap;
 		std::map<EntityID, bool> m_checkedForCollision;

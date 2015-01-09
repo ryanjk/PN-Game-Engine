@@ -5,7 +5,7 @@
 #include "PN/ECS/Component/RenderComponent.h"
 #include "PN/ECS/Component/TransformComponent.h"
 
-#include "PN/Physics/BoundingContainer/BoundingBox.h"
+#include "PN/Physics/BoundingContainer/BoundingOBB.h"
 
 #include "PN/Settings/SettingsManager.h"
 
@@ -83,7 +83,8 @@ void pn::RenderSystem::createCollisionPrimitiveGLObjects() {
 
 	glBindVertexArray(0);
 	bounding_box.num_tris = 36;
-	m_primitiveGLObjects.insert(std::make_pair(pn::BoundingContainerType::BOUNDING_BOX, bounding_box));
+	m_primitiveGLObjects.insert(std::make_pair(pn::BoundingContainerType::BOUNDING_AABB, bounding_box));
+	m_primitiveGLObjects.insert(std::make_pair(pn::BoundingContainerType::BOUNDING_OBB, bounding_box));
 
 	GLfloat sphere_buffer_data[] = {
 		0.000000f, -1.000000f, 0.000000f,
@@ -264,12 +265,12 @@ void pn::RenderSystem::run() {
 	renderDrawCalls(drawCalls);
 
 	glUseProgram(0);
-	glBindVertexArray(0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+	glBindVertexArray(0);
 
 #ifdef _DEBUG
 	// Camera position
@@ -279,7 +280,7 @@ void pn::RenderSystem::run() {
 	const auto view_transform(glm::inverse(camera_world_transform));
 	
 	for (auto entity : m_state->m_entities) {
-		if (entity->getName().getText() == "player") continue;
+	//	if (entity->getName().getText() == "player") continue;
 		auto map_itr = m_state->m_physicsSystem.getBoundingContainers().find(entity->getID());
 		if (map_itr != m_state->m_physicsSystem.getBoundingContainers().end()) {
 			auto& boundingContainer = map_itr->second;
@@ -344,7 +345,12 @@ void pn::RenderSystem::buildDrawCalls(EntityID current_entity_ID, MatrixStack& m
 
 		// put draw call into container
 		pn::DrawCall drawCall({ worldTransform, renderComponent });
-		drawCalls.insert({ (mesh.getVAO() << 2) | material.getMaterialID(), std::move(drawCall) });
+
+		auto& camera = glm::inverse(m_state->getEntityWorldTransform("camera", nullptr));
+		int distance = (int)(camera * worldTransform)[3].z;
+		distance = glm::abs(distance);
+	//	drawCalls.insert({ ( distance << 6) |  (mesh.getVAO() << 2) | material.getMaterialID(), std::move(drawCall) });
+		drawCalls.insert({ distance, std::move(drawCall) });
 	}
 
 	// Continue visiting the entity's children

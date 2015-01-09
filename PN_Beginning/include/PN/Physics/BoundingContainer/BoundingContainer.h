@@ -8,8 +8,9 @@
 namespace pn {
 
 	enum BoundingContainerType {
-		BOUNDING_BOX = 1,
-		BOUNDING_SPHERE = 2
+		BOUNDING_OBB = 1,
+		BOUNDING_SPHERE = 2,
+		BOUNDING_AABB = 3
 	};
 
 	class BoundingContainer {

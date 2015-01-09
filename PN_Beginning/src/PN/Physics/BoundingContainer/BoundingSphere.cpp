@@ -4,7 +4,7 @@
 
 pn::BoundingSphere::BoundingSphere(float radius) :
 pn::BoundingContainer(pn::BoundingContainerType::BOUNDING_SPHERE),
-m_radius(radius), m_world_position(), m_scaleFactor()
+m_radius(radius), m_world_position(), m_scaleFactor(radius)
 {
 
 }
@@ -22,7 +22,7 @@ pn::BoundingContainer(pn::BoundingContainerType::BOUNDING_SPHERE), m_world_posit
 
 void pn::BoundingSphere::update(const mat4& worldMatrix) {
 	m_radius = glm::length(vec3(worldMatrix[0].xyz)) * m_scaleFactor;
-	m_world_position += vec3(worldMatrix[2].xyz);
+	m_world_position = vec3(worldMatrix[3].xyz);
 	m_transform = worldMatrix * glm::scale(mat4(), vec3(m_scaleFactor));
 }
 

@@ -37,6 +37,12 @@ void pn::WindowManager::startUp(bool fullscreen, unsigned int width, unsigned in
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	glEnable(GL_MULTISAMPLE);
+	glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -44,11 +50,18 @@ void pn::WindowManager::startUp(bool fullscreen, unsigned int width, unsigned in
 
 	m_window = window;
 	updateSize(fullscreen, width, height);
-
+	
 	pn::mm::moveCursorToPos(m_window, m_width / 2, m_height / 2);
 
+	std::cout << glGetString(GL_RENDERER) << std::endl;
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+
+	GLint iMultiSample, iNumSamples;
+	glGetIntegerv(GL_SAMPLE_BUFFERS, &iMultiSample);
+	glGetIntegerv(GL_SAMPLES, &iNumSamples);
+
+	std::cout << iMultiSample << " " << iNumSamples << std::endl;
 
 }
 

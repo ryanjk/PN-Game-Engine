@@ -1,5 +1,6 @@
 #include "PN/Physics/PhysicsSystem.h"
-#include "PN/Physics/BoundingContainer/BoundingBox.h"
+#include "PN/Physics/BoundingContainer/BoundingAABB.h"
+#include "PN/Physics/BoundingContainer/BoundingOBB.h"
 #include "PN/Physics/BoundingContainer/BoundingSphere.h"
 #include "PN/Physics/CollisionData.h"
 
@@ -34,14 +35,21 @@ void pn::PhysicsSystem::startUp(pn::GameState* state) {
 			float containerScale = collideComponent->getScale();
 
 			// if entity has model-provided bounding container, update by component-provided scale factor then add it to container
+			// it's assumed that if an entity has a collision component and a render component then the model provides the collision primitive
 			bool hasMeshBoundingContainer = entity.hasComponents(pn::RENDER);
 			if (hasMeshBoundingContainer) {
 				auto renderComponent = std::dynamic_pointer_cast<pn::RenderComponent>(entity.getComponent(pn::ComponentType::RENDER));
 				auto boundingContainer_ptr = m_gameState->m_resources.getMesh(renderComponent->getMeshFilename()).getBoundingContainer();
 				switch (boundingContainer_ptr->getContainerType()) {
-				case pn::BoundingContainerType::BOUNDING_BOX:
+				case pn::BoundingContainerType::BOUNDING_AABB:
 				{
-					auto n_boundingContainer_ptr = std::make_shared<pn::BoundingBox>(boundingContainer_ptr.get(), containerScale);
+					auto n_boundingContainer_ptr = std::make_shared<pn::BoundingAABB>(boundingContainer_ptr.get(), containerScale);
+					m_boundingContainerMap.insert(std::make_pair(entity.getID(), n_boundingContainer_ptr));
+				}
+				break;
+				case pn::BoundingContainerType::BOUNDING_OBB:
+				{
+					auto n_boundingContainer_ptr = std::make_shared<pn::BoundingOBB>(boundingContainer_ptr.get(), containerScale);
 					m_boundingContainerMap.insert(std::make_pair(entity.getID(), n_boundingContainer_ptr));
 				}
 				break;
@@ -60,9 +68,15 @@ void pn::PhysicsSystem::startUp(pn::GameState* state) {
 			// entity does not have mesh-provided bounding container, so create one
 			else {
 				switch (collideComponent->getContainerType()) {
-				case pn::BoundingContainerType::BOUNDING_BOX:
+				case pn::BoundingContainerType::BOUNDING_AABB:
 				{
-					auto boundingContainer_ptr = std::make_shared<pn::BoundingBox>(containerScale, containerScale, containerScale);
+					auto boundingContainer_ptr = std::make_shared<pn::BoundingAABB>(containerScale, containerScale, containerScale);
+					m_boundingContainerMap.insert(std::make_pair(entity.getID(), boundingContainer_ptr));
+				}
+				break;
+				case pn::BoundingContainerType::BOUNDING_OBB:
+				{
+					auto boundingContainer_ptr = std::make_shared<pn::BoundingOBB>(containerScale, containerScale, containerScale);
 					m_boundingContainerMap.insert(std::make_pair(entity.getID(), boundingContainer_ptr));
 				}
 					break;
@@ -77,7 +91,7 @@ void pn::PhysicsSystem::startUp(pn::GameState* state) {
 				}
 			}
 
-			// if it moves, add it entities to check all others for collisions with
+			// if it moves, add it to entities to check all others for collisions with
 			bool hasMove = entity.hasComponents(pn::MOVE);
 			if (hasMove) {
 				m_movingEntities.push_back(entity.getID());
@@ -91,6 +105,7 @@ void pn::PhysicsSystem::shutdown() {
 }
 
 void pn::PhysicsSystem::run(double dt) {
+	// move every object
 	integrateWorld(dt);
 
 	// update bounding containers for every collidable entity
@@ -135,8 +150,8 @@ void pn::PhysicsSystem::detectCollisions(std::vector<CollisionData>& collisionDa
 			collisionData.e1 = entityID;
 			collisionData.e2 = otherID;
 			bool isCollision = test_collision_function(&entity_boundingContainer, &other_boundingContainer, collisionData);
-			if (isCollision) {
-		//		std::cout << "Collision between " + m_gameState->getEntity(entityID).getName().getText() + " and " + m_gameState->getEntity(otherID).getName().getText() + "\n";
+			if (isCollision && (entityID == pn::PString("player").getHash() || otherID == pn::PString("player").getHash())) {
+			//	std::cout << "Collision between " + m_gameState->getEntity(entityID).getName().getText() + " and " + m_gameState->getEntity(otherID).getName().getText() + "\n";
 				collisionDataContainer.push_back(collisionData);
 			}
 
@@ -150,8 +165,16 @@ void pn::PhysicsSystem::detectCollisions(std::vector<CollisionData>& collisionDa
 
 std::function<bool(pn::BoundingContainer*, pn::BoundingContainer*, pn::CollisionData&)>
 pn::PhysicsSystem::getCollisionTestFunc(BoundingContainerType b1, BoundingContainerType b2) {
-	if ((b1 == pn::BoundingContainerType::BOUNDING_BOX) && (b2 == pn::BoundingContainerType::BOUNDING_BOX)) {
+	if ((b1 == pn::BoundingContainerType::BOUNDING_OBB) && (b2 == pn::BoundingContainerType::BOUNDING_OBB)) {
 			return ([&](BoundingContainer* b1, BoundingContainer* b2, pn::CollisionData& collisionData){ return OBB_OBB(b1, b2, collisionData); });
+	}
+
+	else if ((b1 == pn::BoundingContainerType::BOUNDING_AABB) && (b2 == pn::BoundingContainerType::BOUNDING_AABB)) {
+		return ([&](BoundingContainer* b1, BoundingContainer* b2, pn::CollisionData& collisionData){ return AABB_AABB(b1, b2, collisionData); });
+	}
+
+	else if ((b1 == pn::BoundingContainerType::BOUNDING_SPHERE) && (b2 == pn::BoundingContainerType::BOUNDING_SPHERE)) {
+		return ([&](BoundingContainer* b1, BoundingContainer* b2, pn::CollisionData& collisionData){ return Sphere_Sphere(b1, b2, collisionData); });
 	}
 
 	else {
@@ -160,12 +183,35 @@ pn::PhysicsSystem::getCollisionTestFunc(BoundingContainerType b1, BoundingContai
 	}
 }
 
+bool pn::PhysicsSystem::AABB_AABB(pn::BoundingContainer* b1, pn::BoundingContainer* b2, CollisionData& collisionData) {
+	auto b1_aabb = *(BoundingAABB*)b1;
+	auto b2_aabb = *(BoundingAABB*)b2;
+
+	float r;
+	r = b1_aabb.getRadius()[0] + b2_aabb.getRadius()[0];
+	if ((unsigned int)(b1_aabb.getCenter()[0] - b2_aabb.getCenter()[0] + r) > 2 * r) {
+		return false;
+	}
+
+	r = b1_aabb.getRadius()[1] + b2_aabb.getRadius()[1];
+	if ((unsigned int)(b1_aabb.getCenter()[1] - b2_aabb.getCenter()[1] + r) > 2 * r) {
+		return false;
+	}
+
+	r = b1_aabb.getRadius()[2] + b2_aabb.getRadius()[2];
+	if ((unsigned int)(b1_aabb.getCenter()[2] - b2_aabb.getCenter()[2] + r) > 2 * r) {
+		return false;
+	}
+
+	return true;
+}
+
 bool pn::PhysicsSystem::OBB_OBB(pn::BoundingContainer* b1, pn::BoundingContainer* b2, CollisionData& collisionData) {
 	static const float maxFloat = std::numeric_limits<float>::max();
 	static const float minFloat = std::numeric_limits<float>::min();
 
-	pn::BoundingBox* bb1 = (pn::BoundingBox*)b1;
-	pn::BoundingBox* bb2 = (pn::BoundingBox*)b2;
+	pn::BoundingOBB* bb1 = (pn::BoundingOBB*)b1;
+	pn::BoundingOBB* bb2 = (pn::BoundingOBB*)b2;
 
 	const mat4& bb1_front_square = bb1->getFrontQuad();
 	const mat4& bb1_back_square = bb1->getBackQuad();
@@ -279,6 +325,15 @@ bool pn::PhysicsSystem::OBB_OBB(pn::BoundingContainer* b1, pn::BoundingContainer
 
 	return true;
 
+}
+
+bool pn::PhysicsSystem::Sphere_Sphere(pn::BoundingContainer* b1, pn::BoundingContainer* b2, CollisionData& collisionData) {
+	pn::BoundingSphere s1 = *(BoundingSphere*)b1;
+	pn::BoundingSphere s2 = *(BoundingSphere*)b2;
+
+	vec3 between = s1.getPosition() - s2.getPosition();
+	float distanceSqr = glm::dot(between, between);
+	return distanceSqr < powf(s1.getRadius() + s2.getRadius(), 2);
 }
 
 void pn::PhysicsSystem::updateBoundingContainers(EntityID entityID, MatrixStack& matrixStack) {

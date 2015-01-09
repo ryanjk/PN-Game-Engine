@@ -10,6 +10,30 @@ The PN Game Engine is a game engine I originally developed as a hobby project to
     - <b>Move</b>: An entity containing this component moves around the game world. Contains data for the entity's velocity, acceleration, angular velocity and angular acceleration.
     - <b>Collide</b>: An entity containing this component may physically interact with other colliding entities. Contains data for the entity's shape (cube {AABB or OBB} or spherical) and size.
     - <b>Light</b>: An entity containing this component emits light into the game world. Contains data for the type of light (point light, spotlight or directional light), the color and intensity of the light, and other type-dependent characteristics (such as max radius and inner/outer angles for spotlights).
-- <b>External scene definition</b>
-  - The PN engine parses a specially-formatted JSON file to create the game world. The JSON file contains all necessary data to describe the scene.
+
+- <b>External scene (game world) definition</b>
+  - The PN engine parses a specially-formatted JSON file (saved with a *.state file extension) to create the game world. The JSON file contains all necessary data to describe the scene.
   - Changes to the game world don't require any recompilation of the engine, so iterating and debugging the gameplay can be accomplished quickly and easily.
+  - Example of a simple .state file:
+  ```JSON
+  	"entities": {
+  		"monkey": {
+  			"components": {
+  				"transform": {
+  					"translation": [-2.0, 3.0, 0.0],
+  					"scale": [2.0, 2.0, 2.0],
+  					"rotation": [0.7, 0.0, 0.0]
+  				},
+  				"render": {
+  					"mesh":"monkey.obj",
+  					"material":"dynamic_light.sp",
+  					"ambient": [0.1, 0.0, 0.0, 1.0],
+  					"diffuse": "monkey_diffuse.png",
+  					"specular": [0.4, 0.4, 0.4, 1.0],
+  					"gloss":100
+  				}
+  			}
+  		}
+  	}
+  ```
+  - This describes a scene that contains only a single entity named "monkey." The "monkey" entity has two components, a transform and render component. All of the component data is also defined in the .state file.

@@ -37,3 +37,10 @@ The PN Game Engine is a game engine I originally developed as a hobby project to
   	}
   ```
   - This describes a scene that contains only a single entity named "monkey." The "monkey" entity has two components, a transform and render component. All of the component data is also defined in the .state file.
+
+- <b>Multiple shader (material) support</b>
+  - The custom OpenGL-based rendering engine supports the addition of new GLSL shader programs.
+  - Currently, there are three shaders in use:
+    - <b>Statically-lit materials</b> are those whose final colour is a function only of their given ambient, diffuse, and specular colours. The diffuse colour is given as a texture image.
+    - <b>Dynamically-lit materials</b> are statically-lit materials with the addition of being influenced by dynamic lights in the scene. This includes point lights, spot lights and directional lights. 
+    - The <b>screen-overlay shader</b> is used to produce images rendered over the world view, as you'd expect from most GUI elements or a HUD.
